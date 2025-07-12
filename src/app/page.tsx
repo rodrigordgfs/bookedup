@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Clock, User, Star, Phone, MapPin, Mail, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { Calendar, Clock, User, Star, Phone, MapPin, Mail, CheckCircle, Info } from 'lucide-react';
 
 export default function LandingPage() {
   const services = [
@@ -178,10 +178,10 @@ export default function LandingPage() {
       <section className="py-16 bg-zinc-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => {
+            {stats.map((stat) => {
               const IconComponent = stat.icon;
               return (
-                <div key={index} className="text-center">
+                <div key={stat.label} className="text-center">
                   <div className="w-12 h-12 bg-zinc-800 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <IconComponent className="w-6 h-6 text-white" />
                   </div>
@@ -208,8 +208,8 @@ export default function LandingPage() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {services.map((service, index) => (
-              <Card key={index} className="group hover:shadow-xl transition-all duration-300 transform hover:-tranzinc-y-2">
+            {services.map((service) => (
+              <Card key={service.name} className="group hover:shadow-xl transition-all duration-300 transform hover:-tranzinc-y-2">
                 <div className="aspect-square overflow-hidden rounded-t-lg relative">
                   <img 
                     src={service.image} 
@@ -237,7 +237,7 @@ export default function LandingPage() {
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
                         <Star 
-                          key={i} 
+                          key={`${service.name}-star-${i}`} 
                           className={`w-4 h-4 ${i < Math.floor(service.rating) ? 'text-amber-500 fill-current' : 'text-zinc-300'}`} 
                         />
                       ))}
@@ -409,8 +409,8 @@ export default function LandingPage() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="p-6">
+            {testimonials.map((testimonial) => (
+              <Card key={`${testimonial.name}-${testimonial.service}`} className="p-6">
                 <CardContent className="p-0">
                   <div className="flex items-center mb-4">
                     <Avatar className="mr-4">
@@ -424,10 +424,10 @@ export default function LandingPage() {
                   </div>
                   <div className="flex items-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 text-amber-500 fill-current" />
+                      <Star key={`${testimonial.avatar}-${i}`} className="w-5 h-5 text-amber-500 fill-current" />
                     ))}
                   </div>
-                  <p className="text-zinc-600 italic">"{testimonial.comment}"</p>
+                  <p className="text-zinc-600 italic">&quot;{testimonial.comment}&quot;</p>
                 </CardContent>
               </Card>
             ))}
@@ -536,10 +536,11 @@ export default function LandingPage() {
               <CardContent>
                 <form className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 mb-2">
+                    <label htmlFor="contact-name" className="block text-sm font-medium text-zinc-700 mb-2">
                       Nome
                     </label>
                     <input 
+                      id="contact-name"
                       type="text" 
                       className="w-full px-4 py-3 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
                       placeholder="Seu nome"
@@ -547,10 +548,11 @@ export default function LandingPage() {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 mb-2">
+                    <label htmlFor="contact-email" className="block text-sm font-medium text-zinc-700 mb-2">
                       Email
                     </label>
                     <input 
+                      id="contact-email"
                       type="email" 
                       className="w-full px-4 py-3 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
                       placeholder="seu@email.com"
@@ -558,10 +560,11 @@ export default function LandingPage() {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 mb-2">
+                    <label htmlFor="contact-message" className="block text-sm font-medium text-zinc-700 mb-2">
                       Mensagem
                     </label>
                     <textarea 
+                      id="contact-message"
                       rows={4}
                       className="w-full px-4 py-3 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
                       placeholder="Sua mensagem..."
