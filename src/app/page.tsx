@@ -1,3 +1,4 @@
+// biome-ignore assist/source/organizeImports: <imports>
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Calendar, Clock, User, Star, Phone, MapPin, Mail, CheckCircle, Info } from 'lucide-react';
+import Image from 'next/image';
 
 export default function LandingPage() {
   const services = [
@@ -151,13 +153,14 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200">
-                <img 
-                  src="https://images.pexels.com/photos/1570807/pexels-photo-1570807.jpeg?auto=compress&cs=tinysrgb&w=800" 
-                  alt="Barbershop" 
-                  className="w-full h-full object-cover"
+              <Image
+                  src="https://images.pexels.com/photos/1570807/pexels-photo-1570807.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Barbershop"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
                 />
-              </div>
               <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl">
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -211,10 +214,12 @@ export default function LandingPage() {
             {services.map((service) => (
               <Card key={service.name} className="group hover:shadow-xl transition-all duration-300 transform hover:-tranzinc-y-2">
                 <div className="aspect-square overflow-hidden rounded-t-lg relative">
-                  <img 
-                    src={service.image} 
+                  <Image
+                    src={service.image}
                     alt={service.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 1024px) 100vw, 25vw"
                   />
                   {service.popular && (
                     <Badge className="absolute top-2 right-2 bg-amber-500">
