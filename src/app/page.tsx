@@ -11,12 +11,13 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Calendar, Clock, User, Star, Phone, MapPin, Mail, CheckCircle, Info } from 'lucide-react';
 import Image from 'next/image';
+import { formatToReal } from '@/lib/utils';
 
 export default function LandingPage() {
   const services = [
     {
       name: 'Corte Masculino',
-      price: 'R$ 35',
+      price: 35,
       duration: '30 min',
       image: 'https://images.pexels.com/photos/1319460/pexels-photo-1319460.jpeg?auto=compress&cs=tinysrgb&w=400',
       popular: true,
@@ -24,7 +25,7 @@ export default function LandingPage() {
     },
     {
       name: 'Barba',
-      price: 'R$ 25',
+      price: 25,
       duration: '20 min',
       image: 'https://images.pexels.com/photos/1570807/pexels-photo-1570807.jpeg?auto=compress&cs=tinysrgb&w=400',
       popular: false,
@@ -32,7 +33,7 @@ export default function LandingPage() {
     },
     {
       name: 'Corte + Barba',
-      price: 'R$ 55',
+      price: 55,
       duration: '45 min',
       image: 'https://images.pexels.com/photos/1570808/pexels-photo-1570808.jpeg?auto=compress&cs=tinysrgb&w=400',
       popular: true,
@@ -40,7 +41,7 @@ export default function LandingPage() {
     },
     {
       name: 'Tratamento Capilar',
-      price: 'R$ 45',
+      price: 45,
       duration: '40 min',
       image: 'https://images.pexels.com/photos/1570809/pexels-photo-1570809.jpeg?auto=compress&cs=tinysrgb&w=400',
       popular: false,
@@ -89,27 +90,27 @@ export default function LandingPage() {
               <div className="w-10 h-10 bg-gradient-to-r from-zinc-800 to-zinc-600 rounded-lg flex items-center justify-center">
                 <User className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-zinc-800">StyleBook</span>
+              <span className="text-xl font-bold text-foreground">StyleBook</span>
             </div>
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="#services" className="text-zinc-600 hover:text-zinc-800 transition-colors">
+              <Link href="#services" className="text-muted-foreground hover:text-foreground transition-colors">
                 Serviços
               </Link>
-              <Link href="#about" className="text-zinc-600 hover:text-zinc-800 transition-colors">
+              <Link href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
                 Sobre
               </Link>
-              <Link href="#contact" className="text-zinc-600 hover:text-zinc-800 transition-colors">
+              <Link href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
                 Contato
               </Link>
             </nav>
             <div className="flex items-center space-x-4">
               <Link href="/auth/login">
-                <Button variant="ghost" className="text-zinc-600 hover:text-zinc-800">
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                   Entrar
                 </Button>
               </Link>
               <Link href="/auth/register">
-                <Button className="bg-zinc-800 hover:bg-zinc-700">
+                <Button className="bg-foreground text-background hover:bg-foreground/90">
                   Cadastrar
                 </Button>
               </Link>
@@ -130,17 +131,17 @@ export default function LandingPage() {
                 </Badge>
                 <Badge variant="outline">Disponível 24/7</Badge>
               </div>
-              <h1 className="text-4xl lg:text-6xl font-bold text-zinc-800 leading-tight">
+              <h1 className="text-4xl lg:text-6xl font-bold text-foreground leading-tight">
                 Agende seus serviços
                 <span className="block text-amber-500">com facilidade</span>
               </h1>
-              <p className="text-xl text-zinc-600 mt-6 leading-relaxed">
+              <p className="text-xl text-muted-foreground mt-6 leading-relaxed">
                 Sistema de agendamento online para barbearias, salões de beleza e estúdios. 
                 Simplifique sua rotina e ofereça mais comodidade aos seus clientes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <Link href="/booking">
-                  <Button size="lg" className="bg-zinc-800 hover:bg-zinc-700 px-8">
+                  <Button size="lg" className="bg-foreground text-background hover:bg-foreground/90 px-8">
                     <Calendar className="w-5 h-5 mr-2" />
                     Agendar Agora
                   </Button>
@@ -202,10 +203,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <Badge variant="outline" className="mb-4">Nossos Serviços</Badge>
-            <h2 className="text-3xl lg:text-4xl font-bold text-zinc-800 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
               Serviços de Qualidade
             </h2>
-            <p className="text-xl text-zinc-600 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Oferecemos uma gama completa de serviços para cuidar da sua aparência
             </p>
           </div>
@@ -230,8 +231,8 @@ export default function LandingPage() {
                 <CardHeader className="p-6 pb-2">
                   <CardTitle className="text-xl">{service.name}</CardTitle>
                   <CardDescription className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-amber-500">{service.price}</span>
-                    <span className="text-zinc-600 flex items-center">
+                    <span className="text-2xl font-bold text-amber-500">{formatToReal(service.price)}</span>
+                    <span className="text-muted-foreground flex items-center">
                       <Clock className="w-4 h-4 mr-1" />
                       {service.duration}
                     </span>
@@ -243,14 +244,14 @@ export default function LandingPage() {
                       {[...Array(5)].map((_, i) => (
                         <Star 
                           key={`${service.name}-star-${i}`} 
-                          className={`w-4 h-4 ${i < Math.floor(service.rating) ? 'text-amber-500 fill-current' : 'text-zinc-300'}`} 
+                          className={`w-4 h-4 ${i < Math.floor(service.rating) ? 'text-amber-500 fill-current' : 'text-muted-foreground'}`} 
                         />
                       ))}
                     </div>
-                    <span className="text-sm text-zinc-600 ml-2">{service.rating}</span>
+                    <span className="text-sm text-muted-foreground ml-2">{service.rating}</span>
                   </div>
                   <Link href="/booking">
-                    <Button className="w-full bg-zinc-800 hover:bg-zinc-700">
+                    <Button className="w-full bg-foreground text-background hover:bg-foreground/90">
                       Agendar
                     </Button>
                   </Link>
@@ -262,10 +263,10 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section with Tabs */}
-      <section className="py-20 bg-zinc-50">
+      <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-zinc-800 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
               Por que escolher o StyleBook?
             </h2>
           </div>
@@ -280,8 +281,8 @@ export default function LandingPage() {
               <div className="grid md:grid-cols-3 gap-8">
                 <Card>
                   <CardHeader>
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                      <Calendar className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mb-4">
+                      <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <CardTitle>Agendamento Online</CardTitle>
                     <CardDescription>
@@ -292,8 +293,8 @@ export default function LandingPage() {
                 
                 <Card>
                   <CardHeader>
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                      <Clock className="w-6 h-6 text-green-600" />
+                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center mb-4">
+                      <Clock className="w-6 h-6 text-green-600 dark:text-green-400" />
                     </div>
                     <CardTitle>Horários Flexíveis</CardTitle>
                     <CardDescription>
@@ -304,8 +305,8 @@ export default function LandingPage() {
                 
                 <Card>
                   <CardHeader>
-                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                      <User className="w-6 h-6 text-purple-600" />
+                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center mb-4">
+                      <User className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                     </div>
                     <CardTitle>Profissionais Qualificados</CardTitle>
                     <CardDescription>
@@ -376,7 +377,7 @@ export default function LandingPage() {
                     </CardHeader>
                     <CardContent>
                       <Progress value={95} className="mb-2" />
-                      <p className="text-sm text-zinc-600">Dados criptografados e protegidos</p>
+                      <p className="text-sm text-muted-foreground">Dados criptografados e protegidos</p>
                     </CardContent>
                   </Card>
                   <Card>
@@ -385,7 +386,7 @@ export default function LandingPage() {
                     </CardHeader>
                     <CardContent>
                       <Progress value={98} className="mb-2" />
-                      <p className="text-sm text-zinc-600">Carregamento rápido e responsivo</p>
+                      <p className="text-sm text-muted-foreground">Carregamento rápido e responsivo</p>
                     </CardContent>
                   </Card>
                   <Card>
@@ -394,7 +395,7 @@ export default function LandingPage() {
                     </CardHeader>
                     <CardContent>
                       <Progress value={99} className="mb-2" />
-                      <p className="text-sm text-zinc-600">99.9% de uptime garantido</p>
+                      <p className="text-sm text-muted-foreground">99.9% de uptime garantido</p>
                     </CardContent>
                   </Card>
                 </div>
