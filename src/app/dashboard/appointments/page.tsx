@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { DrawerMenu } from '@/components/DrawerMenu';
+import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { formatToReal } from '@/lib/utils';
 import {
   User,
@@ -139,10 +140,12 @@ export default function AppointmentsPage() {
     }
   ];
 
-  // Verificar se há um cliente selecionado para agendamento
+  // Verificar se há um cliente selecionado para agendamento ou se deve abrir o modal de novo agendamento
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const selectedClientForAppointment = localStorage.getItem('selectedClientForAppointment');
+      const openNewAppointmentModal = localStorage.getItem('openNewAppointmentModal');
+      
       if (selectedClientForAppointment) {
         try {
           const clientData = JSON.parse(selectedClientForAppointment);
@@ -160,6 +163,11 @@ export default function AppointmentsPage() {
           console.error('Erro ao processar dados do cliente:', error);
           localStorage.removeItem('selectedClientForAppointment');
         }
+      } else if (openNewAppointmentModal === 'true') {
+        // Abrir modal de novo agendamento sem dados de cliente
+        setIsAddAppointmentOpen(true);
+        // Limpar o localStorage após usar
+        localStorage.removeItem('openNewAppointmentModal');
       }
     }
   }, []);
@@ -423,16 +431,14 @@ export default function AppointmentsPage() {
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold">StyleBook</h1>
+                  <h1 className="text-xl font-bold">BookedUp</h1>
                   <p className="text-sm text-muted-foreground">Gerenciar Agendamentos</p>
                 </div>
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Bell className="w-5 h-5" />
-              </Button>
+              <NotificationsDropdown />
               <ThemeToggle />
               <Link href="/dashboard/settings">
                 <Button variant="ghost" size="sm">

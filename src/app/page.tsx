@@ -90,7 +90,7 @@ export default function LandingPage() {
               <div className="w-10 h-10 bg-gradient-to-r from-zinc-800 to-zinc-600 rounded-lg flex items-center justify-center">
                 <User className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-foreground">StyleBook</span>
+              <span className="text-xl font-bold text-foreground">BookedUp</span>
             </div>
             <nav className="hidden md:flex items-center space-x-8">
               <Link href="#services" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -267,7 +267,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Por que escolher o StyleBook?
+              Por que escolher o BookedUp?
             </h2>
           </div>
           
@@ -514,7 +514,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-zinc-800">Email</p>
-                    <p className="text-zinc-600">contato@stylebook.com</p>
+                    <p className="text-zinc-600">contato@bookedup.com</p>
                   </div>
                 </div>
                 
@@ -596,7 +596,7 @@ export default function LandingPage() {
                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
                   <User className="w-5 h-5 text-zinc-800" />
                 </div>
-                <span className="text-lg font-bold">StyleBook</span>
+                <span className="text-lg font-bold">BookedUp</span>
               </div>
               <p className="text-zinc-300">
                 Plataforma de agendamento online para profissionais da beleza.
@@ -626,7 +626,7 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold mb-4">Contato</h3>
               <ul className="space-y-2 text-zinc-300">
-                <li>contato@stylebook.com</li>
+                <li>contato@bookedup.com</li>
                 <li>(11) 99999-9999</li>
                 <li>Rua das Flores, 123</li>
                 <li>São Paulo, SP</li>
@@ -637,7 +637,7 @@ export default function LandingPage() {
           <Separator className="my-8 bg-zinc-700" />
           
           <div className="text-center text-zinc-300">
-            <p>&copy; 2024 StyleBook. Todos os direitos reservados.</p>
+            <p>&copy; 2024 BookedUp. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>

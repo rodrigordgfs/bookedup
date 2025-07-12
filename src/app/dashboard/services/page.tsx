@@ -11,9 +11,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { DrawerMenu } from '@/components/DrawerMenu';
+import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { formatToReal } from '@/lib/utils';
 import {
-  Bell,
   Settings,
   LogOut,
   Plus,
@@ -44,6 +44,16 @@ interface NewService {
   category: string;
 }
 
+interface Category {
+  id: number;
+  name: string;
+  active: boolean;
+}
+
+interface NewCategory {
+  name: string;
+}
+
 export default function ServicesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -67,6 +77,14 @@ export default function ServicesPage() {
     price: '',
     category: ''
   });
+
+  // Estados para categorias
+  const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
+  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [newCategory, setNewCategory] = useState<NewCategory>({ name: '' });
+  const [editCategory, setEditCategory] = useState<NewCategory>({ name: '' });
 
   const user = {
     name: 'João Silva',
@@ -114,6 +132,14 @@ export default function ServicesPage() {
     }
   ];
 
+  // Dados das categorias
+  const [categories, setCategories] = useState<Category[]>([
+    { id: 1, name: 'Cabelo', active: true },
+    { id: 2, name: 'Barba', active: true },
+    { id: 3, name: 'Combo', active: true },
+    { id: 4, name: 'Tratamento', active: true }
+  ]);
+
   const handleAddService = () => {
     console.log('Adding service:', newService);
     setIsAddServiceOpen(false);
@@ -157,6 +183,55 @@ export default function ServicesPage() {
     // Implementar lógica de alteração de status
   };
 
+  // Funções para gerenciar categorias
+  const handleAddCategory = () => {
+    if (newCategory.name.trim()) {
+      const newCategoryObj: Category = {
+        id: Date.now(),
+        name: newCategory.name.trim(),
+        active: true
+      };
+      setCategories(prev => [...prev, newCategoryObj]);
+      setNewCategory({ name: '' });
+      setIsAddCategoryOpen(false);
+    }
+  };
+
+  const handleEditCategory = () => {
+    if (selectedCategory && editCategory.name.trim()) {
+      setCategories(prev => 
+        prev.map(cat => 
+          cat.id === selectedCategory.id 
+            ? { ...cat, name: editCategory.name.trim() }
+            : cat
+        )
+      );
+      setEditCategory({ name: '' });
+      setIsEditCategoryOpen(false);
+      setSelectedCategory(null);
+    }
+  };
+
+  const handleDeleteCategory = (categoryId: number) => {
+    setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+  };
+
+  const handleToggleCategoryStatus = (categoryId: number) => {
+    setCategories(prev => 
+      prev.map(cat => 
+        cat.id === categoryId 
+          ? { ...cat, active: !cat.active }
+          : cat
+      )
+    );
+  };
+
+  const handleCategoryClick = (category: Category) => {
+    setSelectedCategory(category);
+    setEditCategory({ name: category.name });
+    setIsEditCategoryOpen(true);
+  };
+
   const filteredServices = services.filter(service => {
     const matchesSearch = 
       service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -191,16 +266,14 @@ export default function ServicesPage() {
                   <Scissors className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold">StyleBook</h1>
+                  <h1 className="text-xl font-bold">BookedUp</h1>
                   <p className="text-sm text-muted-foreground">Serviços</p>
                 </div>
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Bell className="w-5 h-5" />
-              </Button>
+              <NotificationsDropdown />
               <ThemeToggle />
               <Link href="/dashboard/settings">
                 <Button variant="ghost" size="sm">
@@ -228,6 +301,13 @@ export default function ServicesPage() {
             <div className="text-sm text-muted-foreground">
               <span className="font-medium text-foreground">{filteredServices.length}</span> serviços encontrados
             </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsCategoriesModalOpen(true)}
+              className="cursor-pointer"
+            >
+              Gerenciar Categorias
+            </Button>
             <Dialog open={isAddServiceOpen} onOpenChange={setIsAddServiceOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer">
@@ -289,10 +369,11 @@ export default function ServicesPage() {
                         <SelectValue placeholder="Selecione uma categoria" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Cabelo">Cabelo</SelectItem>
-                        <SelectItem value="Barba">Barba</SelectItem>
-                        <SelectItem value="Combo">Combo</SelectItem>
-                        <SelectItem value="Tratamento">Tratamento</SelectItem>
+                        {categories.filter(cat => cat.active).map((category) => (
+                          <SelectItem key={category.id} value={category.name}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -324,36 +405,19 @@ export default function ServicesPage() {
                 />
               </div>
               <div className="flex gap-2">
-                <Button 
-                  variant={categoryFilter === 'all' ? 'default' : 'outline'}
-                  onClick={() => setCategoryFilter('all')}
-                >
-                  Todas as categorias
-                </Button>
-                <Button 
-                  variant={categoryFilter === 'Cabelo' ? 'default' : 'outline'}
-                  onClick={() => setCategoryFilter('Cabelo')}
-                >
-                  Cabelo
-                </Button>
-                <Button 
-                  variant={categoryFilter === 'Barba' ? 'default' : 'outline'}
-                  onClick={() => setCategoryFilter('Barba')}
-                >
-                  Barba
-                </Button>
-                <Button 
-                  variant={categoryFilter === 'Combo' ? 'default' : 'outline'}
-                  onClick={() => setCategoryFilter('Combo')}
-                >
-                  Combo
-                </Button>
-                <Button 
-                  variant={categoryFilter === 'Tratamento' ? 'default' : 'outline'}
-                  onClick={() => setCategoryFilter('Tratamento')}
-                >
-                  Tratamento
-                </Button>
+                <Select value={categoryFilter} onValueChange={(value) => setCategoryFilter(value)}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Filtrar por categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas as categorias</SelectItem>
+                    {categories.filter(cat => cat.active).map((category) => (
+                      <SelectItem key={category.id} value={category.name}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </CardContent>
@@ -636,10 +700,11 @@ export default function ServicesPage() {
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Cabelo">Cabelo</SelectItem>
-                    <SelectItem value="Barba">Barba</SelectItem>
-                    <SelectItem value="Combo">Combo</SelectItem>
-                    <SelectItem value="Tratamento">Tratamento</SelectItem>
+                    {categories.filter(cat => cat.active).map((category) => (
+                      <SelectItem key={category.id} value={category.name}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -649,6 +714,142 @@ export default function ServicesPage() {
                 Cancelar
               </Button>
               <Button onClick={handleSaveEditService}>
+                Salvar Alterações
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Categorias */}
+        <Dialog open={isCategoriesModalOpen} onOpenChange={setIsCategoriesModalOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Gerenciar Categorias</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              {/* Lista de Categorias */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-medium">Categorias Cadastradas</h3>
+                  <Button 
+                    size="sm" 
+                    onClick={() => setIsAddCategoryOpen(true)}
+                    className="cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nova Categoria
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  {categories.map((category) => (
+                    <div 
+                      key={category.id}
+                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                      onClick={() => handleCategoryClick(category)}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
+                          <Scissors className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium">{category.name}</h4>
+                          <Badge variant={category.active ? 'default' : 'secondary'} className="text-xs">
+                            {category.active ? 'Ativa' : 'Inativa'}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleCategoryStatus(category.id);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {category.active ? 'Desativar' : 'Ativar'}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteCategory(category.id);
+                          }}
+                          className="text-red-600 hover:text-red-700 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Adicionar Categoria */}
+        <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Adicionar Nova Categoria</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="categoryName">Nome da Categoria</Label>
+                <Input
+                  id="categoryName"
+                  value={newCategory.name}
+                  onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
+                  placeholder="Ex: Cabelo, Barba, Tratamento..."
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleAddCategory();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsAddCategoryOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleAddCategory}>
+                Adicionar Categoria
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Editar Categoria */}
+        <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Editar Categoria</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="editCategoryName">Nome da Categoria</Label>
+                <Input
+                  id="editCategoryName"
+                  value={editCategory.name}
+                  onChange={(e) => setEditCategory({...editCategory, name: e.target.value})}
+                  placeholder="Ex: Cabelo, Barba, Tratamento..."
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleEditCategory();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsEditCategoryOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleEditCategory}>
                 Salvar Alterações
               </Button>
             </div>

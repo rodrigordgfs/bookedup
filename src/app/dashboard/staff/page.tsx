@@ -10,10 +10,9 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { DrawerMenu } from '@/components/DrawerMenu';
+import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import {
-  User,
-  Bell,
-  Settings,
+  User, Settings,
   LogOut,
   Plus,
   Edit,
@@ -71,7 +70,7 @@ export default function StaffPage() {
     {
       id: 1,
       name: 'João Silva',
-      email: 'joao@stylebook.com',
+      email: 'joao@bookedup.com',
       phone: '(11) 99999-9999',
       specialties: ['Corte Masculino', 'Barba'],
       workingHours: 'Seg-Sex: 9h-18h',
@@ -80,7 +79,7 @@ export default function StaffPage() {
     {
       id: 2,
       name: 'Maria Santos',
-      email: 'maria@stylebook.com',
+      email: 'maria@bookedup.com',
       phone: '(11) 88888-8888',
       specialties: ['Tratamento Capilar', 'Corte Feminino'],
       workingHours: 'Ter-Sáb: 10h-19h',
@@ -89,7 +88,7 @@ export default function StaffPage() {
     {
       id: 3,
       name: 'Pedro Costa',
-      email: 'pedro@stylebook.com',
+      email: 'pedro@bookedup.com',
       phone: '(11) 77777-7777',
       specialties: ['Corte Masculino', 'Corte + Barba'],
       workingHours: 'Qua-Dom: 8h-17h',
@@ -179,16 +178,14 @@ export default function StaffPage() {
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold">StyleBook</h1>
+                  <h1 className="text-xl font-bold">BookedUp</h1>
                   <p className="text-sm text-muted-foreground">Funcionários</p>
                 </div>
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Bell className="w-5 h-5" />
-              </Button>
+              <NotificationsDropdown />
               <ThemeToggle />
               <Link href="/dashboard/settings">
                 <Button variant="ghost" size="sm">

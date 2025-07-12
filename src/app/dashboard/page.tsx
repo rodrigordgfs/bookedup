@@ -8,9 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Calendar, Clock, User, Bell, Settings, LogOut, Plus, Filter, Scissors } from 'lucide-react';
+import { Calendar, Clock, User, Settings, LogOut, Plus, Filter, Scissors } from 'lucide-react';
 import Link from 'next/link';
 import { DrawerMenu } from '@/components/DrawerMenu';
+import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { formatToReal } from '@/lib/utils';
 
 export default function DashboardPage() {
@@ -109,15 +110,13 @@ export default function DashboardPage() {
                 <User className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">StyleBook</h1>
+                <h1 className="text-xl font-bold text-foreground">BookedUp</h1>
                 <p className="text-sm text-muted-foreground">Dashboard</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Bell className="w-5 h-5" />
-              </Button>
+              <NotificationsDropdown />
               <ThemeToggle />
               <Link href="/dashboard/settings">
                 <Button variant="ghost" size="sm">
@@ -341,7 +340,12 @@ export default function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full justify-start bg-slate-800 hover:bg-slate-700 dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-slate-300 cursor-pointer">
+                <Button 
+                  className="w-full justify-start bg-slate-800 hover:bg-slate-700 dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-slate-300 cursor-pointer"
+                  onClick={() => {
+                    localStorage.setItem('openNewAppointmentModal', 'true');
+                  }}
+                >
                   <Link href="/dashboard/appointments" className="flex items-center w-full">
                     <Plus className="w-4 h-4 mr-2" />
                     Novo Agendamento

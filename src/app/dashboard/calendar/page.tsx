@@ -7,11 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { DrawerMenu } from '@/components/DrawerMenu';
+import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { formatToReal } from '@/lib/utils';
 import {
-  User,
-  Bell,
-  Settings,
+  User, Settings,
   LogOut,
   Plus,
   ChevronLeft,
@@ -137,16 +136,14 @@ export default function CalendarPage() {
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold">StyleBook</h1>
+                  <h1 className="text-xl font-bold">BookedUp</h1>
                   <p className="text-sm text-muted-foreground">Calendário</p>
                 </div>
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Bell className="w-5 h-5" />
-              </Button>
+              <NotificationsDropdown />
               <ThemeToggle />
               <Link href="/dashboard/settings">
                 <Button variant="ghost" size="sm">
