@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Calendar, Clock, User, Settings, LogOut, Plus, Filter, Scissors } from 'lucide-react';
+import { SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { DrawerMenu } from '@/components/DrawerMenu';
 import { NotificationsDropdown } from '@/components/NotificationsDropdown';
@@ -123,9 +124,11 @@ export default function DashboardPage() {
                   <Settings className="w-5 h-5" />
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer">
-                <LogOut className="w-5 h-5" />
-              </Button>
+              <SignOutButton>
+                <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer">
+                  <LogOut className="w-5 h-5" />
+                </Button>
+              </SignOutButton>
             </div>
           </div>
         </div>

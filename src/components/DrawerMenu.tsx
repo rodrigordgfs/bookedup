@@ -1,6 +1,7 @@
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { User, LogOut, Settings, Calendar, Users, Scissors, Menu, BarChart3 } from 'lucide-react';
+import { SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -22,6 +23,7 @@ export function DrawerMenu({ user }: DrawerMenuProps) {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-72">
+        <SheetTitle className="sr-only">Menu de Navegação</SheetTitle>
         <div className="bg-card px-6 py-6 border-b">
           <div className="flex items-center space-x-4">
             <div className="w-14 h-14 rounded-full overflow-hidden bg-muted flex items-center justify-center">
@@ -73,10 +75,12 @@ export function DrawerMenu({ user }: DrawerMenuProps) {
             <Settings className="w-5 h-5" />
             Configurações
           </Link>
-          <Button variant="ghost" className="flex items-center gap-3 px-4 py-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-muted transition-colors cursor-pointer mt-2 justify-start">
-            <LogOut className="w-5 h-5" />
-            Sair
-          </Button>
+          <SignOutButton>
+            <Button variant="ghost" className="flex items-center gap-3 px-4 py-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-muted transition-colors cursor-pointer mt-2 justify-start w-full">
+              <LogOut className="w-5 h-5" />
+              Sair
+            </Button>
+          </SignOutButton>
         </nav>
       </SheetContent>
     </Sheet>

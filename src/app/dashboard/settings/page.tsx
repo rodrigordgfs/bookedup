@@ -1,5 +1,6 @@
 'use client';
 
+import { SignOutButton } from '@clerk/nextjs';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -86,9 +87,11 @@ export default function SettingsPage() {
             <div className="flex items-center space-x-4">
               <NotificationsDropdown />
               <ThemeToggle />
-              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                <LogOut className="w-5 h-5" />
-              </Button>
+              <SignOutButton>
+                <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                  <LogOut className="w-5 h-5" />
+                </Button>
+              </SignOutButton>
             </div>
           </div>
         </div>

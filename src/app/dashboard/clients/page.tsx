@@ -1,5 +1,6 @@
 'use client';
 
+import { SignOutButton } from '@clerk/nextjs';
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -203,9 +204,11 @@ export default function ClientsPage() {
                   <Settings className="w-5 h-5" />
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-                <LogOut className="w-5 h-5" />
-              </Button>
+              <SignOutButton>
+                <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
+                  <LogOut className="w-5 h-5" />
+                </Button>
+              </SignOutButton>
             </div>
           </div>
         </div>

@@ -11,14 +11,10 @@ import { DrawerMenu } from '@/components/DrawerMenu';
 import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { 
   BarChart3, 
-  LineChart, 
-  PieChart, 
-  TrendingUp, 
   Download, 
   Calendar,
   Users,
   DollarSign,
-  Clock,
   Star,
   Filter,
   FileText,

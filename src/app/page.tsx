@@ -1,3 +1,5 @@
+"use client";
+
 // biome-ignore assist/source/organizeImports: <imports>
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -13,8 +15,11 @@ import { Calendar, Clock, User, Star, Phone, MapPin, Mail, CheckCircle, Info } f
 import Image from 'next/image';
 import { formatToReal } from '@/lib/utils';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { UserMenu } from '@/components/auth/user-menu';
+import { SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 
 export default function LandingPage() {
+  const { isSignedIn, isLoaded } = useUser();
   const services = [
     {
       name: 'Consultoria',
@@ -106,16 +111,26 @@ export default function LandingPage() {
             </nav>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              <Link href="/auth/login">
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                  Entrar
-                </Button>
-              </Link>
-              <Link href="/auth/register">
-                <Button className="bg-foreground text-background hover:bg-foreground/90">
-                  Cadastrar
-                </Button>
-              </Link>
+              {isLoaded && (
+                <>
+                  {isSignedIn ? (
+                    <UserMenu />
+                  ) : (
+                    <>
+                      <SignInButton mode="modal">
+                        <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                          Entrar
+                        </Button>
+                      </SignInButton>
+                      <SignUpButton mode="modal">
+                        <Button className="bg-foreground text-background hover:bg-foreground/90">
+                          Cadastrar
+                        </Button>
+                      </SignUpButton>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -148,11 +163,11 @@ export default function LandingPage() {
                     Agendar Agora
                   </Button>
                 </Link>
-                <Link href="/auth/register">
+                <SignUpButton mode="modal">
                   <Button size="lg" variant="outline" className="border-zinc-300 px-8">
                     Cadastrar Negócio
                   </Button>
-                </Link>
+                </SignUpButton>
               </div>
             </div>
             <div className="relative">
