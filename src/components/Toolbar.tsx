@@ -18,7 +18,12 @@ interface ToolbarProps {
   rightActions?: React.ReactNode;
   navLinks?: Array<{ label: string; href: string }>;
   className?: string;
-  user?: any;
+  user?: {
+    name?: string;
+    email?: string;
+    avatarUrl?: string;
+    role?: string;
+  };
 }
 
 export function Toolbar({
