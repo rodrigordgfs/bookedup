@@ -14,17 +14,15 @@ import { Separator } from '@/components/ui/separator';
 import { Calendar, Clock, User, Star, Phone, MapPin, Mail, CheckCircle, Info } from 'lucide-react';
 import Image from 'next/image';
 import { formatToReal } from '@/lib/utils';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { UserMenu } from '@/components/auth/user-menu';
 import { SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { Toolbar } from '@/components/Toolbar';
 
 export default function LandingPage() {
   const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
 
-  // Redireciona usuário logado para /dashboard
   React.useEffect(() => {
     if (isLoaded && isSignedIn) {
       router.push('/dashboard');
@@ -99,53 +97,26 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-zinc-800 to-zinc-600 rounded-lg flex items-center justify-center">
-                <User className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-bold text-foreground">BookedUp</span>
-            </div>
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link href="#services" className="text-muted-foreground hover:text-foreground transition-colors">
-                Serviços
-              </Link>
-              <Link href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
-                Sobre
-              </Link>
-              <Link href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
-                Contato
-              </Link>
-            </nav>
-            <div className="flex items-center space-x-4">
-              <ThemeToggle />
-              {isLoaded && (
-                <>
-                  {isSignedIn ? (
-                    <UserMenu />
-                  ) : (
-                    <>
-                      <SignInButton mode="modal">
-                        <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                          Entrar
-                        </Button>
-                      </SignInButton>
-                      <SignUpButton mode="modal">
-                        <Button className="bg-foreground text-background hover:bg-foreground/90">
-                          Cadastrar
-                        </Button>
-                      </SignUpButton>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      <Toolbar
+        title="BookedUp"
+        navLinks={[
+          { label: 'Serviços', href: '#services' },
+          { label: 'Sobre', href: '#about' },
+          { label: 'Contato', href: '#contact' },
+        ]}
+        showThemeToggle
+        showUserMenu={isLoaded && isSignedIn}
+        rightActions={
+          isLoaded && !isSignedIn && <>
+            <SignInButton mode="modal">
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground cursor-pointer">Entrar</Button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer">Cadastrar</Button>
+            </SignUpButton>
+          </>
+        }
+      />
 
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32">
@@ -169,13 +140,13 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <Link href="/booking">
-                  <Button size="lg" className="bg-foreground text-background hover:bg-foreground/90 px-8">
+                  <Button size="lg" className="bg-foreground text-background hover:bg-foreground/90 px-8 cursor-pointer">
                     <Calendar className="w-5 h-5 mr-2" />
                     Agendar Agora
                   </Button>
                 </Link>
                 <SignUpButton mode="modal">
-                  <Button size="lg" variant="outline" className="border-zinc-300 px-8">
+                  <Button size="lg" variant="outline" className="border-zinc-300 px-8 cursor-pointer">
                     Cadastrar Negócio
                   </Button>
                 </SignUpButton>
@@ -279,7 +250,7 @@ export default function LandingPage() {
                     <span className="text-sm text-muted-foreground ml-2">{service.rating}</span>
                   </div>
                   <Link href="/booking">
-                    <Button className="w-full bg-foreground text-background hover:bg-foreground/90">
+                    <Button className="w-full bg-foreground text-background hover:bg-foreground/90 cursor-pointer">
                       Agendar
                     </Button>
                   </Link>
@@ -621,7 +592,7 @@ export default function LandingPage() {
                     />
                   </div>
                   
-                  <Button className="w-full bg-foreground text-background hover:bg-foreground/90 py-3">
+                  <Button className="w-full bg-foreground text-background hover:bg-foreground/90 py-3 cursor-pointer">
                     Enviar Mensagem
                   </Button>
                 </form>

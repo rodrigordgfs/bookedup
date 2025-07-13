@@ -7,11 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { DrawerMenu } from '@/components/DrawerMenu';
-import { NotificationsDropdown } from '@/components/NotificationsDropdown';
+import { Toolbar } from '@/components/Toolbar';
 import {
   User, Settings,
   LogOut,
@@ -179,40 +177,30 @@ export default function ClientsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <DrawerMenu user={user} />
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                  <User className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold">BookedUp</h1>
-                  <p className="text-sm text-muted-foreground">Gerenciar Clientes</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <NotificationsDropdown />
-              <ThemeToggle />
-              <Link href="/dashboard/settings">
-                <Button variant="ghost" size="sm">
-                  <Settings className="w-5 h-5" />
-                </Button>
-              </Link>
-              <SignOutButton>
-                <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-                  <LogOut className="w-5 h-5" />
-                </Button>
-              </SignOutButton>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Toolbar
+        title="BookedUp"
+        subtitle="Gerenciar Clientes"
+        icon={<User className="w-5 h-5 text-white" />}
+        showDrawer
+        user={user}
+        showNotifications
+        showThemeToggle
+        showUserMenu={false}
+        rightActions={
+          <>
+            <Link href="/dashboard/settings">
+              <Button variant="ghost" size="sm" className="cursor-pointer">
+                <Settings className="w-5 h-5" />
+              </Button>
+            </Link>
+            <SignOutButton>
+              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
+                <LogOut className="w-5 h-5" />
+              </Button>
+            </SignOutButton>
+          </>
+        }
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
@@ -477,6 +465,9 @@ export default function ClientsPage() {
                 <User className="w-5 h-5" />
                 <span>Detalhes do Cliente</span>
               </DialogTitle>
+              <DialogDescription>
+                Visualize informações detalhadas sobre o cliente selecionado.
+              </DialogDescription>
             </DialogHeader>
             {selectedClient && (
               <div className="space-y-6">
@@ -553,7 +544,7 @@ export default function ClientsPage() {
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="text-gray-600 border-gray-200 hover:bg-gray-50"
+                          className="text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer"
                           onClick={() => {
                             console.log('Desativar cliente:', selectedClient.id);
                             setIsClientDetailOpen(false);
@@ -566,7 +557,7 @@ export default function ClientsPage() {
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="text-green-600 border-green-200 hover:bg-green-50"
+                          className="text-green-600 border-green-200 hover:bg-green-50 cursor-pointer"
                           onClick={() => {
                             console.log('Ativar cliente:', selectedClient.id);
                             setIsClientDetailOpen(false);
@@ -585,6 +576,7 @@ export default function ClientsPage() {
                       <Button 
                         size="sm"
                         variant="outline"
+                        className="cursor-pointer"
                         onClick={() => handleScheduleForClient(selectedClient)}
                       >
                         <Calendar className="w-4 h-4 mr-2" />
@@ -594,6 +586,7 @@ export default function ClientsPage() {
                       <Button 
                         size="sm"
                         variant="outline"
+                        className="cursor-pointer"
                         onClick={() => handleEditClient(selectedClient)}
                       >
                         <Edit className="w-4 h-4 mr-2" />
@@ -603,7 +596,7 @@ export default function ClientsPage() {
                       <Button 
                         size="sm"
                         variant="outline"
-                        className="text-red-600 border-red-200 hover:bg-red-50"
+                        className="text-red-600 border-red-200 hover:bg-red-50 cursor-pointer"
                         onClick={() => {
                           console.log('Excluir cliente:', selectedClient.id);
                           setIsClientDetailOpen(false);
@@ -617,7 +610,7 @@ export default function ClientsPage() {
 
                   {/* Close Button */}
                   <div className="flex justify-end pt-2">
-                    <Button variant="outline" onClick={() => setIsClientDetailOpen(false)}>
+                    <Button variant="outline" onClick={() => setIsClientDetailOpen(false)} className="cursor-pointer">
                       Fechar
                     </Button>
                   </div>
@@ -635,6 +628,9 @@ export default function ClientsPage() {
                 <Edit className="w-5 h-5" />
                 <span>Editar Cliente</span>
               </DialogTitle>
+              <DialogDescription>
+                Modifique as informações do cliente conforme necessário.
+              </DialogDescription>
             </DialogHeader>
             {editingClient && (
               <div className="grid gap-4 py-4">

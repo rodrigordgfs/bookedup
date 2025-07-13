@@ -8,7 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem, DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Bell, CheckCircle, XCircle, Clock, User, Scissors, Calendar } from 'lucide-react';
+import { Bell, CheckCircle, XCircle, Clock, User, Archive, Calendar } from 'lucide-react';
 
 interface Notification {
   id: number;
@@ -87,7 +87,7 @@ export function NotificationsDropdown() {
       case 'new_appointment':
         return <Calendar className="w-4 h-4 text-orange-600" />;
       case 'system':
-        return <Scissors className="w-4 h-4 text-gray-600" />;
+        return <Archive className="w-4 h-4 text-gray-600" />;
       default:
         return <Bell className="w-4 h-4 text-gray-600" />;
     }

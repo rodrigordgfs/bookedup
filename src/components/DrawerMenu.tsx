@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { User, LogOut, Settings, Calendar, Users, Scissors, Menu, BarChart3 } from 'lucide-react';
-import { SignOutButton } from '@clerk/nextjs';
+import { User, LogOut, Settings, Calendar, Users, Menu, BarChart3, Archive } from 'lucide-react';
+import { SignOutButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -14,7 +14,15 @@ type DrawerMenuProps = {
   };
 };
 
-export function DrawerMenu({ user }: DrawerMenuProps) {
+export function DrawerMenu({ user: userProp }: DrawerMenuProps) {
+  const { user, isLoaded } = useUser();
+  const displayUser = isLoaded && user ? {
+    name: user.fullName || 'Usuário',
+    email: user.primaryEmailAddress?.emailAddress || 'email@exemplo.com',
+    avatarUrl: user.imageUrl,
+    role: userProp?.role || 'Cliente',
+  } : userProp || {};
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -27,10 +35,10 @@ export function DrawerMenu({ user }: DrawerMenuProps) {
         <div className="bg-card px-6 py-6 border-b">
           <div className="flex items-center space-x-4">
             <div className="w-14 h-14 rounded-full overflow-hidden bg-muted flex items-center justify-center">
-              {user?.avatarUrl ? (
+              {displayUser.avatarUrl ? (
                 <Image
-                  src={user.avatarUrl as string}
-                  alt={user.name ?? 'Avatar do usuário'}
+                  src={displayUser.avatarUrl}
+                  alt={displayUser.name ?? 'Avatar do usuário'}
                   className="w-full h-full object-cover"
                   width={56}
                   height={56}
@@ -40,9 +48,9 @@ export function DrawerMenu({ user }: DrawerMenuProps) {
               )}
             </div>
             <div>
-              <div className="font-bold text-lg text-foreground">{user?.name || 'Usuário'}</div>
-              <div className="text-sm text-muted-foreground">{user?.email || 'email@exemplo.com'}</div>
-              <div className="text-xs text-muted-foreground mt-1">{user?.role || 'Cliente'}</div>
+              <div className="font-bold text-lg text-foreground">{displayUser.name || 'Usuário'}</div>
+              <div className="text-sm text-muted-foreground">{displayUser.email || 'email@exemplo.com'}</div>
+              <div className="text-xs text-muted-foreground mt-1">{displayUser.role || 'Cliente'}</div>
             </div>
           </div>
         </div>
@@ -60,7 +68,7 @@ export function DrawerMenu({ user }: DrawerMenuProps) {
             Clientes
           </Link>
           <Link href="/dashboard/services" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
-            <Scissors className="w-5 h-5" />
+            <Archive className="w-5 h-5" />
             Serviços
           </Link>
           <Link href="/dashboard/staff" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">

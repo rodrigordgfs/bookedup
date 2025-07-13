@@ -7,24 +7,22 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { DrawerMenu } from '@/components/DrawerMenu';
-import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { formatToReal } from '@/lib/utils';
 import {
   Settings,
   LogOut,
   Plus,
   Edit,
-  Trash2, Scissors,
+  Trash2, Archive,
   Clock,
   DollarSign,
   ChevronLeft,
   ChevronRight,
   Search
 } from 'lucide-react';
+import { Toolbar } from '@/components/Toolbar';
 
 interface Service {
   id: number;
@@ -85,13 +83,6 @@ export default function ServicesPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [newCategory, setNewCategory] = useState<NewCategory>({ name: '' });
   const [editCategory, setEditCategory] = useState<NewCategory>({ name: '' });
-
-  const user = {
-    name: 'João Silva',
-    email: 'joao@email.com',
-    avatarUrl: '',
-    role: 'Administrador',
-  };
 
   const services: Service[] = [
     {
@@ -255,38 +246,27 @@ export default function ServicesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <DrawerMenu user={user} />
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                  <Scissors className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold">BookedUp</h1>
-                  <p className="text-sm text-muted-foreground">Serviços</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <NotificationsDropdown />
-              <ThemeToggle />
-              <Link href="/dashboard/settings">
-                <Button variant="ghost" size="sm">
-                  <Settings className="w-5 h-5" />
-                </Button>
-              </Link>
-              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-                <LogOut className="w-5 h-5" />
+      <Toolbar
+        title="BookedUp"
+        subtitle="Serviços"
+        icon={<Archive className="w-5 h-5 text-white" />}
+        showDrawer
+        showNotifications
+        showThemeToggle
+        showUserMenu={false}
+        rightActions={
+          <>
+            <Link href="/dashboard/settings">
+              <Button variant="ghost" size="sm" className="cursor-pointer">
+                <Settings className="w-5 h-5" />
               </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+            </Link>
+            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </>
+        }
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
@@ -318,6 +298,9 @@ export default function ServicesPage() {
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>Adicionar Novo Serviço</DialogTitle>
+                  <DialogDescription>
+                    Crie um novo serviço para oferecer aos seus clientes.
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="space-y-2">
@@ -454,7 +437,7 @@ export default function ServicesPage() {
                     >
                       <td className="p-4">
                         <div className="flex items-center space-x-3">
-                          <Scissors className="w-4 h-4 text-muted-foreground" />
+                          <Archive className="w-4 h-4 text-muted-foreground" />
                           <div>
                             <div className="font-medium">{service.name}</div>
                             <div className="text-sm text-muted-foreground truncate max-w-[200px]">
@@ -542,7 +525,7 @@ export default function ServicesPage() {
         {filteredServices.length === 0 && (
           <Card>
             <CardContent className="p-12 text-center">
-              <Scissors className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <Archive className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">Nenhum serviço encontrado</h3>
               <p className="text-muted-foreground mb-4">
                 {searchTerm || categoryFilter !== 'all' 
@@ -563,13 +546,16 @@ export default function ServicesPage() {
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>Detalhes do Serviço</DialogTitle>
+              <DialogDescription>
+                Visualize informações completas sobre o serviço selecionado.
+              </DialogDescription>
             </DialogHeader>
             {selectedService && (
               <div className="space-y-6">
                 {/* Informações do Serviço */}
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                    <Scissors className="w-8 h-8 text-white" />
+                    <Archive className="w-8 h-8 text-white" />
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">{selectedService.name}</h3>
@@ -618,14 +604,14 @@ export default function ServicesPage() {
                   <Button 
                     variant="outline" 
                     onClick={handleToggleStatus}
-                    className="flex-1"
+                    className="flex-1 cursor-pointer"
                   >
                     {selectedService.active ? 'Desativar' : 'Ativar'} Serviço
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={handleEditService}
-                    className="flex-1"
+                    className="flex-1 cursor-pointer"
                   >
                     <Edit className="w-4 h-4 mr-2" />
                     Editar Serviço
@@ -633,7 +619,7 @@ export default function ServicesPage() {
                   <Button 
                     variant="outline" 
                     onClick={handleDeleteService}
-                    className="text-red-600 hover:text-red-700 flex-1"
+                    className="text-red-600 hover:text-red-700 flex-1 cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Excluir Serviço
@@ -649,6 +635,9 @@ export default function ServicesPage() {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Editar Serviço</DialogTitle>
+              <DialogDescription>
+                Modifique as informações do serviço conforme necessário.
+              </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
@@ -725,6 +714,9 @@ export default function ServicesPage() {
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>Gerenciar Categorias</DialogTitle>
+              <DialogDescription>
+                Organize seus serviços em categorias para melhor organização.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-6">
               {/* Lista de Categorias */}
@@ -749,7 +741,7 @@ export default function ServicesPage() {
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                          <Scissors className="w-4 h-4 text-white" />
+                          <Archive className="w-4 h-4 text-white" />
                         </div>
                         <div>
                           <h4 className="font-medium">{category.name}</h4>
@@ -795,6 +787,9 @@ export default function ServicesPage() {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Adicionar Nova Categoria</DialogTitle>
+              <DialogDescription>
+                Crie uma nova categoria para organizar seus serviços.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
@@ -828,6 +823,9 @@ export default function ServicesPage() {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Editar Categoria</DialogTitle>
+              <DialogDescription>
+                Modifique o nome da categoria conforme necessário.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">

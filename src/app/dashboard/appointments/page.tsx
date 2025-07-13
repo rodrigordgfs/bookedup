@@ -6,12 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { DrawerMenu } from '@/components/DrawerMenu';
-import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { formatToReal } from '@/lib/utils';
 import {
   User,
@@ -28,7 +25,7 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight, MoreVertical,
-  Scissors,
+  Archive,
   Users
 } from 'lucide-react';
 import {
@@ -38,6 +35,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Toolbar } from '@/components/Toolbar';
 
 export default function AppointmentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -188,13 +186,6 @@ export default function AppointmentsPage() {
       };
     }
   }, []);
-
-  const user = {
-    name: 'João Silva',
-    email: 'joao@email.com',
-    avatarUrl: '',
-    role: 'Administrador',
-  };
 
   const appointments = [
     {
@@ -420,38 +411,27 @@ export default function AppointmentsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <DrawerMenu user={user} />
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                  <User className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold">BookedUp</h1>
-                  <p className="text-sm text-muted-foreground">Gerenciar Agendamentos</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <NotificationsDropdown />
-              <ThemeToggle />
-              <Link href="/dashboard/settings">
-                <Button variant="ghost" size="sm">
-                  <Settings className="w-5 h-5" />
-                </Button>
-              </Link>
-              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-                <LogOut className="w-5 h-5" />
+      <Toolbar
+        title="BookedUp"
+        subtitle="Gerenciar Agendamentos"
+        icon={<Calendar className="w-5 h-5 text-white" />}
+        showDrawer
+        showNotifications
+        showThemeToggle
+        showUserMenu={false}
+        rightActions={
+          <>
+            <Link href="/dashboard/settings">
+              <Button variant="ghost" size="sm" className="cursor-pointer">
+                <Settings className="w-5 h-5" />
               </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+            </Link>
+            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </>
+        }
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
@@ -476,6 +456,9 @@ export default function AppointmentsPage() {
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                   <DialogTitle>Novo Agendamento</DialogTitle>
+                  <DialogDescription>
+                    Preencha as informações para criar um novo agendamento.
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="space-y-2">
@@ -769,7 +752,7 @@ export default function AppointmentsPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center space-x-2">
-                          <Scissors className="w-4 h-4 text-muted-foreground" />
+                          <Archive className="w-4 h-4 text-muted-foreground" />
                           <span className="text-sm">{appointment.service}</span>
                         </div>
                       </td>
@@ -883,6 +866,9 @@ export default function AppointmentsPage() {
                 <Calendar className="w-5 h-5" />
                 <span>Detalhes do Agendamento</span>
               </DialogTitle>
+              <DialogDescription>
+                Visualize e gerencie os detalhes completos do agendamento.
+              </DialogDescription>
             </DialogHeader>
             {selectedAppointment && (
               <div className="space-y-6">
@@ -930,7 +916,7 @@ export default function AppointmentsPage() {
                 {/* Informações do Serviço */}
                 <div className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center space-x-2">
-                    <Scissors className="w-5 h-5" />
+                    <Archive className="w-5 h-5" />
                     <span>Detalhes do Serviço</span>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
@@ -1021,7 +1007,7 @@ export default function AppointmentsPage() {
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
                           onClick={() => {
                             updateAppointmentStatus(selectedAppointment.id, 'completed');
                             setIsAppointmentDetailOpen(false);
@@ -1036,7 +1022,7 @@ export default function AppointmentsPage() {
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="text-gray-600 border-gray-200 hover:bg-gray-50"
+                          className="text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer"
                           onClick={() => {
                             updateAppointmentStatus(selectedAppointment.id, 'cancelled');
                             setIsAppointmentDetailOpen(false);
@@ -1061,6 +1047,7 @@ export default function AppointmentsPage() {
                           console.log('Reenviar confirmação para:', selectedAppointment.client.email);
                           setIsAppointmentDetailOpen(false);
                         }}
+                        className="cursor-pointer"
                       >
                         <Bell className="w-4 h-4 mr-2" />
                         Reenviar Confirmação
@@ -1068,7 +1055,7 @@ export default function AppointmentsPage() {
                       
                                               <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button size="sm" variant="outline">
+                            <Button size="sm" variant="outline" className="cursor-pointer">
                               <MoreVertical className="w-4 h-4 mr-2" />
                               Mais Opções
                             </Button>
@@ -1124,6 +1111,9 @@ export default function AppointmentsPage() {
                 <Edit className="w-5 h-5" />
                 <span>Editar Agendamento</span>
               </DialogTitle>
+              <DialogDescription>
+                Modifique as informações do agendamento conforme necessário.
+              </DialogDescription>
             </DialogHeader>
             {editingAppointment && (
               <div className="grid gap-4 py-4">
@@ -1244,6 +1234,9 @@ export default function AppointmentsPage() {
                 <User className="w-5 h-5" />
                 <span>Histórico do Cliente</span>
               </DialogTitle>
+              <DialogDescription>
+                Visualize o histórico completo de agendamentos do cliente.
+              </DialogDescription>
             </DialogHeader>
             {selectedAppointment && (
               <div className="space-y-6">
@@ -1335,7 +1328,7 @@ export default function AppointmentsPage() {
 
                 {/* Botões de Ação */}
                 <div className="flex justify-end space-x-2 pt-4 border-t">
-                  <Button variant="outline" onClick={() => setIsClientHistoryOpen(false)}>
+                  <Button variant="outline" onClick={() => setIsClientHistoryOpen(false)} className="cursor-pointer">
                     Fechar
                   </Button>
                 </div>

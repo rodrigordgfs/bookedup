@@ -7,10 +7,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { DrawerMenu } from '@/components/DrawerMenu';
-import { NotificationsDropdown } from '@/components/NotificationsDropdown';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { Toolbar } from '@/components/Toolbar';
 import {
   User, Settings,
   LogOut,
@@ -58,13 +56,6 @@ export default function StaffPage() {
     specialties: [] as string[],
     workingHours: ''
   });
-
-  const user = {
-    name: 'João Silva',
-    email: 'joao@email.com',
-    avatarUrl: '',
-    role: 'Administrador',
-  };
 
   const staff: StaffMember[] = [
     {
@@ -167,38 +158,27 @@ export default function StaffPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <DrawerMenu user={user} />
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                  <Users className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold">BookedUp</h1>
-                  <p className="text-sm text-muted-foreground">Funcionários</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <NotificationsDropdown />
-              <ThemeToggle />
-              <Link href="/dashboard/settings">
-                <Button variant="ghost" size="sm">
-                  <Settings className="w-5 h-5" />
-                </Button>
-              </Link>
-              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-                <LogOut className="w-5 h-5" />
+      <Toolbar
+        title="BookedUp"
+        subtitle="Funcionários"
+        icon={<Users className="w-5 h-5 text-white" />}
+        showDrawer
+        showNotifications
+        showThemeToggle
+        showUserMenu={false}
+        rightActions={
+          <>
+            <Link href="/dashboard/settings">
+              <Button variant="ghost" size="sm">
+                <Settings className="w-5 h-5" />
               </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+            </Link>
+            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </>
+        }
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
@@ -463,6 +443,9 @@ export default function StaffPage() {
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>Detalhes do Funcionário</DialogTitle>
+              <DialogDescription>
+                Visualize informações detalhadas sobre o funcionário selecionado.
+              </DialogDescription>
             </DialogHeader>
             {selectedStaff && (
               <div className="space-y-6">
@@ -553,6 +536,9 @@ export default function StaffPage() {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Editar Funcionário</DialogTitle>
+              <DialogDescription>
+                Modifique as informações do funcionário conforme necessário.
+              </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">

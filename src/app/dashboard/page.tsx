@@ -4,16 +4,16 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { Calendar, Clock, User, Settings, LogOut, Plus, Filter, Scissors } from 'lucide-react';
+import { Calendar, Clock, User, Settings, LogOut, Plus, Filter, Archive } from 'lucide-react';
 import { SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import { DrawerMenu } from '@/components/DrawerMenu';
-import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { formatToReal } from '@/lib/utils';
+import { Toolbar } from '@/components/Toolbar';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export default function DashboardPage() {
   const [selectedDate] = useState(new Date());
@@ -24,13 +24,6 @@ export default function DashboardPage() {
     dateRange: '',
     professional: ''
   });
-
-  const user = {
-    name: 'João Silva',
-    email: 'joao@email.com',
-    avatarUrl: '', // coloque uma url se quiser testar com foto
-    role: 'Administrador',
-  };
 
   const upcomingAppointments = [
     {
@@ -96,43 +89,90 @@ export default function DashboardPage() {
     }
   };
 
+  const recentActivities = [
+    {
+      id: 1,
+      type: 'appointment_confirmed',
+      clientName: 'João Silva',
+      timestamp: new Date(Date.now() - 2 * 60 * 1000), // 2 minutos atrás
+      color: 'bg-green-500'
+    },
+    {
+      id: 2,
+      type: 'new_client',
+      clientName: 'Maria Santos',
+      timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutos atrás
+      color: 'bg-blue-500'
+    },
+    {
+      id: 3,
+      type: 'appointment_rescheduled',
+      clientName: 'Pedro Oliveira',
+      timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 hora atrás
+      color: 'bg-yellow-500'
+    },
+    {
+      id: 4,
+      type: 'appointment_cancelled',
+      clientName: 'Ana Costa',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
+      color: 'bg-red-500'
+    },
+    {
+      id: 5,
+      type: 'payment_received',
+      clientName: 'Carlos Ferreira',
+      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 horas atrás
+      color: 'bg-green-600'
+    }
+  ];
 
+  const getActivityMessage = (type: string, clientName: string) => {
+    switch (type) {
+      case 'appointment_confirmed':
+        return `${clientName} confirmou agendamento`;
+      case 'new_client':
+        return `${clientName} se cadastrou`;
+      case 'appointment_rescheduled':
+        return `${clientName} reagendou`;
+      case 'appointment_cancelled':
+        return `${clientName} cancelou agendamento`;
+      case 'payment_received':
+        return `Pagamento recebido de ${clientName}`;
+      case 'service_completed':
+        return `Serviço concluído para ${clientName}`;
+      case 'reminder_sent':
+        return `Lembrete enviado para ${clientName}`;
+      default:
+        return `Atividade de ${clientName}`;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              {/* Botão DrawerMenu (hamburguer) */}
-              <DrawerMenu user={user} />
-              <div className="w-8 h-8 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">BookedUp</h1>
-                <p className="text-sm text-muted-foreground">Dashboard</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <NotificationsDropdown />
-              <ThemeToggle />
-              <Link href="/dashboard/settings">
-                <Button variant="ghost" size="sm">
-                  <Settings className="w-5 h-5" />
-                </Button>
-              </Link>
-              <SignOutButton>
-                <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer">
-                  <LogOut className="w-5 h-5" />
-                </Button>
-              </SignOutButton>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Toolbar
+        title="BookedUp"
+        subtitle="Dashboard"
+        icon={<User className="w-5 h-5 text-white" />}
+        showDrawer
+        showNotifications
+        showThemeToggle
+        showUserMenu={false}
+        rightActions={
+          <>
+            <Link href="/dashboard/settings">
+              <Button variant="ghost" size="sm" className="cursor-pointer">
+                <Settings className="w-5 h-5" />
+              </Button>
+            </Link>
+            <SignOutButton>
+              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer">
+                <LogOut className="w-5 h-5" />
+              </Button>
+            </SignOutButton>
+          </>
+        }
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
@@ -216,7 +256,7 @@ export default function DashboardPage() {
                   <div className="flex items-center space-x-2">
                     <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="cursor-pointer">
                           <Filter className="w-4 h-4 mr-2" />
                           Filtrar
                         </Button>
@@ -224,11 +264,14 @@ export default function DashboardPage() {
                       <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
                           <DialogTitle>Filtros de Agendamentos</DialogTitle>
+                          <DialogDescription>
+                            Configure os filtros para visualizar agendamentos específicos.
+                          </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                           <div className="space-y-2">
                             <Label htmlFor="status">Status</Label>
-                            <Select value={filters.status} onValueChange={(value) => setFilters({...filters, status: value})}>
+                            <Select value={filters.status} onValueChange={(value) => setFilters({ ...filters, status: value })}>
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Todos os status" />
                               </SelectTrigger>
@@ -243,7 +286,7 @@ export default function DashboardPage() {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="service">Serviço</Label>
-                            <Select value={filters.service} onValueChange={(value) => setFilters({...filters, service: value})}>
+                            <Select value={filters.service} onValueChange={(value) => setFilters({ ...filters, service: value })}>
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Todos os serviços" />
                               </SelectTrigger>
@@ -258,7 +301,7 @@ export default function DashboardPage() {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="professional">Profissional</Label>
-                            <Select value={filters.professional} onValueChange={(value) => setFilters({...filters, professional: value})}>
+                            <Select value={filters.professional} onValueChange={(value) => setFilters({ ...filters, professional: value })}>
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Todos os profissionais" />
                               </SelectTrigger>
@@ -272,7 +315,7 @@ export default function DashboardPage() {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="dateRange">Período</Label>
-                            <Select value={filters.dateRange} onValueChange={(value) => setFilters({...filters, dateRange: value})}>
+                            <Select value={filters.dateRange} onValueChange={(value) => setFilters({ ...filters, dateRange: value })}>
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Selecione o período" />
                               </SelectTrigger>
@@ -280,18 +323,18 @@ export default function DashboardPage() {
                                 <SelectItem value="today">Hoje</SelectItem>
                                 <SelectItem value="week">Esta semana</SelectItem>
                                 <SelectItem value="month">Este mês</SelectItem>
-                                <SelectItem value="custom">Personalizado</SelectItem>
+                                <SelectItem value="custom">Período personalizado</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
-                        </div>
-                        <div className="flex justify-end space-x-2">
-                          <Button variant="outline" onClick={() => setFilters({status: '', service: '', dateRange: '', professional: ''})}>
-                            Limpar
-                          </Button>
-                          <Button onClick={() => setFilterOpen(false)}>
-                            Aplicar Filtros
-                          </Button>
+                          <div className="flex justify-end space-x-2">
+                            <Button variant="outline" onClick={() => setFilters({ status: '', service: '', dateRange: '', professional: '' })}>
+                              Limpar
+                            </Button>
+                            <Button onClick={() => setFilterOpen(false)}>
+                              Aplicar
+                            </Button>
+                          </div>
                         </div>
                       </DialogContent>
                     </Dialog>
@@ -301,30 +344,25 @@ export default function DashboardPage() {
               <CardContent>
                 <div className="space-y-4">
                   {upcomingAppointments.map((appointment) => (
-                    <div 
-                      key={appointment.id}
-                      className="flex items-center justify-between p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
-                    >
+                    <div key={appointment.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
                           <User className="w-6 h-6 text-muted-foreground" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-foreground">{appointment.client}</h3>
+                          <h4 className="font-medium">{appointment.client}</h4>
                           <p className="text-sm text-muted-foreground">{appointment.service}</p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <Clock className="w-3 h-3 text-muted-foreground" />
-                            <span className="text-sm text-muted-foreground">
-                              {appointment.time} • {appointment.duration}
-                            </span>
-                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-foreground mb-2">{formatToReal(parseInt(appointment.price.replace('R$ ', '')))}</p>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <p className="font-medium">{appointment.time}</p>
+                          <p className="text-sm text-muted-foreground">{appointment.duration}</p>
+                        </div>
                         <Badge className={getStatusColor(appointment.status)}>
                           {getStatusText(appointment.status)}
                         </Badge>
+                        <p className="font-medium">{appointment.price}</p>
                       </div>
                     </div>
                   ))}
@@ -333,7 +371,7 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          {/* Quick Actions & Calendar */}
+          {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Actions */}
             <Card>
@@ -368,7 +406,7 @@ export default function DashboardPage() {
                 </Button>
                 <Button variant="outline" className="w-full justify-start cursor-pointer">
                   <Link href="/dashboard/services" className="flex items-center w-full">
-                    <Scissors className="w-4 h-4 mr-2" />
+                    <Archive className="w-4 h-4 mr-2" />
                     Gerenciar Serviços
                   </Link>
                 </Button>
@@ -417,32 +455,27 @@ export default function DashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg font-bold text-foreground">
-                  Atividade Recente
+                  Atividades Recentes
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <div className="text-sm">
-                      <p className="text-foreground">João Silva confirmou agendamento</p>
-                      <p className="text-muted-foreground">há 2 minutos</p>
+                <div className="space-y-4">
+                  {recentActivities.map((activity) => (
+                    <div key={activity.id} className="flex items-start gap-3">
+                      <div className={`w-2 h-2 rounded-full mt-2 ${activity.color}`} />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">
+                          {getActivityMessage(activity.type, activity.clientName)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(activity.timestamp, { 
+                            addSuffix: true, 
+                            locale: ptBR 
+                          })}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <div className="text-sm">
-                      <p className="text-foreground">Novo cliente cadastrado</p>
-                      <p className="text-muted-foreground">há 15 minutos</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    <div className="text-sm">
-                      <p className="text-foreground">Agendamento reagendado</p>
-                      <p className="text-muted-foreground">há 1 hora</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

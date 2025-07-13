@@ -6,11 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { DrawerMenu } from '@/components/DrawerMenu';
-import { NotificationsDropdown } from '@/components/NotificationsDropdown';
+import { Toolbar } from '@/components/Toolbar';
 import {
   Bell,
   Settings,
@@ -19,7 +17,7 @@ import {
   XCircle,
   Clock,
   User,
-  Scissors,
+  Archive,
   Calendar,
   ChevronLeft,
   ChevronRight,
@@ -124,13 +122,6 @@ export default function NotificationsPage() {
     }
   ]);
 
-  const user = {
-    name: 'João Silva',
-    email: 'joao@email.com',
-    avatarUrl: '',
-    role: 'Administrador',
-  };
-
   const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
       case 'appointment_confirmed':
@@ -144,7 +135,7 @@ export default function NotificationsPage() {
       case 'new_appointment':
         return <Calendar className="w-5 h-5 text-orange-600" />;
       case 'system':
-        return <Scissors className="w-5 h-5 text-gray-600" />;
+        return <Archive className="w-5 h-5 text-gray-600" />;
       default:
         return <Bell className="w-5 h-5 text-gray-600" />;
     }
@@ -257,38 +248,27 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <DrawerMenu user={user} />
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                  <Bell className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold">BookedUp</h1>
-                  <p className="text-sm text-muted-foreground">Notificações</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <NotificationsDropdown />
-              <ThemeToggle />
-              <Link href="/dashboard/settings">
-                <Button variant="ghost" size="sm">
-                  <Settings className="w-5 h-5" />
-                </Button>
-              </Link>
-              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-                <LogOut className="w-5 h-5" />
+      <Toolbar
+        title="BookedUp"
+        subtitle="Notificações"
+        icon={<Bell className="w-5 h-5 text-white" />}
+        showDrawer
+        showNotifications
+        showThemeToggle
+        showUserMenu={false}
+        rightActions={
+          <>
+            <Link href="/dashboard/settings">
+              <Button variant="ghost" size="sm">
+                <Settings className="w-5 h-5" />
               </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+            </Link>
+            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </>
+        }
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
@@ -490,6 +470,9 @@ export default function NotificationsPage() {
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>Detalhes da Notificação</DialogTitle>
+              <DialogDescription>
+                Visualize informações detalhadas sobre a notificação selecionada.
+              </DialogDescription>
             </DialogHeader>
             {selectedNotification && (
               <div className="space-y-6">
