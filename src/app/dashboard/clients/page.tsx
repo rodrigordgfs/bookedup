@@ -459,7 +459,7 @@ export default function ClientsPage() {
 
         {/* Modal de Detalhes do Cliente */}
         <Dialog open={isClientDetailOpen} onOpenChange={setIsClientDetailOpen}>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-[600px] sm:mx-0 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-2">
                 <User className="w-5 h-5" />
@@ -470,17 +470,17 @@ export default function ClientsPage() {
               </DialogDescription>
             </DialogHeader>
             {selectedClient && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Status do Cliente */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-muted-foreground">Status:</span>
                     <Badge variant={selectedClient.status === 'active' ? 'default' : 'secondary'}>
                       {selectedClient.status === 'active' ? 'Ativo' : 'Inativo'}
                     </Badge>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-left sm:text-right">
+                    <div className="text-xl sm:text-2xl font-bold text-blue-600">
                       {selectedClient.totalAppointments}
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -495,7 +495,7 @@ export default function ClientsPage() {
                     <User className="w-5 h-5" />
                     <span>Informações do Cliente</span>
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
+                  <div className="grid grid-cols-1 gap-4 p-4 bg-muted/30 rounded-lg">
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Nome</label>
                       <p className="text-sm font-medium">{selectedClient.name}</p>
@@ -537,14 +537,14 @@ export default function ClientsPage() {
                 {/* Ações */}
                 <div className="space-y-4 pt-4 border-t">
                   {/* Status Actions */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <span className="text-sm font-medium text-muted-foreground">Alterar Status:</span>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap gap-2">
                       {selectedClient.status === 'active' && (
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer"
+                          className="text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer flex-1 sm:flex-none"
                           onClick={() => {
                             console.log('Desativar cliente:', selectedClient.id);
                             setIsClientDetailOpen(false);
@@ -557,7 +557,7 @@ export default function ClientsPage() {
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="text-green-600 border-green-200 hover:bg-green-50 cursor-pointer"
+                          className="text-green-600 border-green-200 hover:bg-green-50 cursor-pointer flex-1 sm:flex-none"
                           onClick={() => {
                             console.log('Ativar cliente:', selectedClient.id);
                             setIsClientDetailOpen(false);
@@ -570,13 +570,13 @@ export default function ClientsPage() {
                   </div>
 
                   {/* Other Actions */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <span className="text-sm font-medium text-muted-foreground">Outras Ações:</span>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button 
                         size="sm"
                         variant="outline"
-                        className="cursor-pointer"
+                        className="cursor-pointer flex-1 sm:flex-none"
                         onClick={() => handleScheduleForClient(selectedClient)}
                       >
                         <Calendar className="w-4 h-4 mr-2" />
@@ -586,7 +586,7 @@ export default function ClientsPage() {
                       <Button 
                         size="sm"
                         variant="outline"
-                        className="cursor-pointer"
+                        className="cursor-pointer flex-1 sm:flex-none"
                         onClick={() => handleEditClient(selectedClient)}
                       >
                         <Edit className="w-4 h-4 mr-2" />
@@ -596,7 +596,7 @@ export default function ClientsPage() {
                       <Button 
                         size="sm"
                         variant="outline"
-                        className="text-red-600 border-red-200 hover:bg-red-50 cursor-pointer"
+                        className="text-red-600 border-red-200 hover:bg-red-50 cursor-pointer flex-1 sm:flex-none"
                         onClick={() => {
                           console.log('Excluir cliente:', selectedClient.id);
                           setIsClientDetailOpen(false);

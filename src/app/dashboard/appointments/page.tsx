@@ -413,7 +413,7 @@ export default function AppointmentsPage() {
     <div className="min-h-screen bg-background">
       <Toolbar
         title="BookedUp"
-        subtitle="Gerenciar Agendamentos"
+        subtitle="Agendamentos"
         icon={<Calendar className="w-5 h-5 text-white" />}
         showDrawer
         showNotifications
@@ -443,9 +443,6 @@ export default function AppointmentsPage() {
             </p>
           </div>
           <div className="mt-4 sm:mt-0 flex items-center space-x-4">
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{filteredAppointments.length}</span> agendamentos encontrados
-            </div>
             <Dialog open={isAddAppointmentOpen} onOpenChange={setIsAddAppointmentOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer">
@@ -453,7 +450,7 @@ export default function AppointmentsPage() {
                   Novo Agendamento
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
+              <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-[500px] sm:mx-0">
                 <DialogHeader>
                   <DialogTitle>Novo Agendamento</DialogTitle>
                   <DialogDescription>
@@ -499,7 +496,7 @@ export default function AppointmentsPage() {
                     </div>
                   </div>
                   {newAppointment.clientName && (
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="clientPhone">Telefone</Label>
                         <Input
@@ -521,11 +518,11 @@ export default function AppointmentsPage() {
                       </div>
                     </div>
                   )}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="service">Serviço</Label>
                       <Select value={newAppointment.service} onValueChange={(value) => setNewAppointment(prev => ({...prev, service: value}))}>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione o serviço" />
                         </SelectTrigger>
                         <SelectContent>
@@ -539,7 +536,7 @@ export default function AppointmentsPage() {
                     <div className="space-y-2">
                       <Label htmlFor="professional">Profissional</Label>
                       <Select value={newAppointment.professional} onValueChange={(value) => setNewAppointment(prev => ({...prev, professional: value}))}>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione o profissional" />
                         </SelectTrigger>
                         <SelectContent>
@@ -550,7 +547,7 @@ export default function AppointmentsPage() {
                       </Select>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="date">Data</Label>
                       <Input
@@ -716,7 +713,7 @@ export default function AppointmentsPage() {
         {/* Appointments List */}
         <Card>
           <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <h3 className="text-lg font-semibold">Lista de Agendamentos</h3>
               <div className="text-sm text-muted-foreground">
                 Mostrando {startIndex + 1}-{Math.min(endIndex, filteredAppointments.length)} de {filteredAppointments.length} agendamentos
@@ -860,7 +857,7 @@ export default function AppointmentsPage() {
 
         {/* Modal de Detalhes do Agendamento */}
         <Dialog open={isAppointmentDetailOpen} onOpenChange={setIsAppointmentDetailOpen}>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-[600px] sm:mx-0 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-2">
                 <Calendar className="w-5 h-5" />
@@ -871,9 +868,9 @@ export default function AppointmentsPage() {
               </DialogDescription>
             </DialogHeader>
             {selectedAppointment && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Status do Agendamento */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-muted-foreground">Status:</span>
                     <Badge className={`${getStatusColor(selectedAppointment.status)} flex items-center space-x-1`}>
@@ -881,8 +878,8 @@ export default function AppointmentsPage() {
                       <span className="text-xs">{getStatusText(selectedAppointment.status)}</span>
                     </Badge>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-green-600">
+                  <div className="text-left sm:text-right">
+                    <div className="text-xl sm:text-2xl font-bold text-green-600">
                       {formatToReal(selectedAppointment.price)}
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -897,10 +894,10 @@ export default function AppointmentsPage() {
                     <Users className="w-5 h-5" />
                     <span>Informações do Cliente</span>
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
+                  <div className="grid grid-cols-1 gap-4 p-4 bg-muted/30 rounded-lg">
                     <div>
                       <label className="text-sm font-medium text-muted-foreground" htmlFor="detailClientName">Nome</label>
-                      <p className="text-sm" id="detailClientName">{selectedAppointment.client.name}</p>
+                      <p className="text-sm font-medium" id="detailClientName">{selectedAppointment.client.name}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-muted-foreground" htmlFor="detailClientEmail">Email</label>
@@ -919,7 +916,7 @@ export default function AppointmentsPage() {
                     <Archive className="w-5 h-5" />
                     <span>Detalhes do Serviço</span>
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
+                  <div className="grid grid-cols-1 gap-4 p-4 bg-muted/30 rounded-lg">
                     <div>
                       <label className="text-sm font-medium text-muted-foreground" htmlFor="detailService">Serviço</label>
                       <p className="text-sm font-medium" id="detailService">{selectedAppointment.service}</p>
@@ -940,7 +937,7 @@ export default function AppointmentsPage() {
                     <Clock className="w-5 h-5" />
                     <span>Data e Horário</span>
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
+                  <div className="grid grid-cols-1 gap-4 p-4 bg-muted/30 rounded-lg">
                     <div>
                       <label className="text-sm font-medium text-muted-foreground" htmlFor="detailDate">Data</label>
                       <div className="flex items-center space-x-2" id="detailDate">
@@ -971,15 +968,15 @@ export default function AppointmentsPage() {
                 {/* Ações */}
                 <div className="space-y-4 pt-4 border-t">
                   {/* Status Actions */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <span className="text-sm font-medium text-muted-foreground">Alterar Status:</span>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap gap-2">
                       {selectedAppointment.status === 'pending' && (
                         <>
                           <Button 
                             size="sm"
                             variant="outline" 
-                            className="text-green-600 border-green-200 hover:bg-green-50"
+                            className="text-green-600 border-green-200 hover:bg-green-50 flex-1 sm:flex-none"
                             onClick={() => {
                               updateAppointmentStatus(selectedAppointment.id, 'confirmed');
                               setIsAppointmentDetailOpen(false);
@@ -991,7 +988,7 @@ export default function AppointmentsPage() {
                           <Button 
                             size="sm"
                             variant="outline" 
-                            className="text-red-600 border-red-200 hover:bg-red-50"
+                            className="text-red-600 border-red-200 hover:bg-red-50 flex-1 sm:flex-none"
                             onClick={() => {
                               updateAppointmentStatus(selectedAppointment.id, 'cancelled');
                               setIsAppointmentDetailOpen(false);
@@ -1007,7 +1004,7 @@ export default function AppointmentsPage() {
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer flex-1 sm:flex-none"
                           onClick={() => {
                             updateAppointmentStatus(selectedAppointment.id, 'completed');
                             setIsAppointmentDetailOpen(false);
@@ -1022,7 +1019,7 @@ export default function AppointmentsPage() {
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer"
+                          className="text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer flex-1 sm:flex-none"
                           onClick={() => {
                             updateAppointmentStatus(selectedAppointment.id, 'cancelled');
                             setIsAppointmentDetailOpen(false);
@@ -1036,9 +1033,9 @@ export default function AppointmentsPage() {
                   </div>
 
                   {/* Other Actions */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <span className="text-sm font-medium text-muted-foreground">Outras Ações:</span>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button 
                         size="sm"
                         variant="outline"
@@ -1047,44 +1044,44 @@ export default function AppointmentsPage() {
                           console.log('Reenviar confirmação para:', selectedAppointment.client.email);
                           setIsAppointmentDetailOpen(false);
                         }}
-                        className="cursor-pointer"
+                        className="cursor-pointer flex-1 sm:flex-none"
                       >
                         <Bell className="w-4 h-4 mr-2" />
                         Reenviar Confirmação
                       </Button>
                       
-                                              <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button size="sm" variant="outline" className="cursor-pointer">
-                              <MoreVertical className="w-4 h-4 mr-2" />
-                              Mais Opções
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {selectedAppointment.status !== 'cancelled' && selectedAppointment.status !== 'completed' && (
-                              <DropdownMenuItem 
-                                onClick={() => {
-                                  console.log('Edit clicked for appointment:', selectedAppointment);
-                                  handleEditAppointment(selectedAppointment);
-                                }}
-                              >
-                                <Edit className="mr-2 h-4 w-4" />
-                                Editar Agendamento
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem onClick={() => handleViewClientHistory(selectedAppointment)}>
-                              <User className="mr-2 h-4 w-4" />
-                              Ver Histórico do Cliente
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="sm" variant="outline" className="cursor-pointer flex-1 sm:flex-none">
+                            <MoreVertical className="w-4 h-4 mr-2" />
+                            Mais Opções
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {selectedAppointment.status !== 'cancelled' && selectedAppointment.status !== 'completed' && (
+                            <DropdownMenuItem 
+                              onClick={() => {
+                                console.log('Edit clicked for appointment:', selectedAppointment);
+                                handleEditAppointment(selectedAppointment);
+                              }}
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              Editar Agendamento
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            {selectedAppointment.status === 'pending' && (
-                              <DropdownMenuItem className="text-red-600">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Excluir Agendamento
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                          )}
+                          <DropdownMenuItem onClick={() => handleViewClientHistory(selectedAppointment)}>
+                            <User className="mr-2 h-4 w-4" />
+                            Ver Histórico do Cliente
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          {selectedAppointment.status === 'pending' && (
+                            <DropdownMenuItem className="text-red-600">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Excluir Agendamento
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
 
@@ -1228,7 +1225,7 @@ export default function AppointmentsPage() {
 
         {/* Modal de Histórico do Cliente */}
         <Dialog open={isClientHistoryOpen} onOpenChange={setIsClientHistoryOpen}>
-          <DialogContent className="sm:max-w-[700px]">
+          <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-[700px] sm:mx-0 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-2">
                 <User className="w-5 h-5" />
@@ -1239,14 +1236,14 @@ export default function AppointmentsPage() {
               </DialogDescription>
             </DialogHeader>
             {selectedAppointment && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Informações do Cliente */}
                 <div className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center space-x-2">
                     <Users className="w-5 h-5" />
                     <span>Informações do Cliente</span>
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg">
+                  <div className="grid grid-cols-1 gap-4 p-4 bg-muted/30 rounded-lg">
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Nome</label>
                       <p className="text-sm font-medium">{selectedAppointment.client.name}</p>
@@ -1265,22 +1262,22 @@ export default function AppointmentsPage() {
                 {/* Estatísticas */}
                 <div className="space-y-3">
                   <h3 className="text-lg font-semibold">Estatísticas</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="p-4 bg-muted/30 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-blue-600">12</div>
-                      <div className="text-sm text-muted-foreground">Total de Visitas</div>
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    <div className="p-3 sm:p-4 bg-muted/30 rounded-lg text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-blue-600">12</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">Total de Visitas</div>
                     </div>
-                    <div className="p-4 bg-muted/30 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-green-600">8</div>
-                      <div className="text-sm text-muted-foreground">Agendamentos Concluídos</div>
+                    <div className="p-3 sm:p-4 bg-muted/30 rounded-lg text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-green-600">8</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">Concluídos</div>
                     </div>
-                    <div className="p-4 bg-muted/30 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-yellow-600">2</div>
-                      <div className="text-sm text-muted-foreground">Agendamentos Pendentes</div>
+                    <div className="p-3 sm:p-4 bg-muted/30 rounded-lg text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-yellow-600">2</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">Pendentes</div>
                     </div>
-                    <div className="p-4 bg-muted/30 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-red-600">2</div>
-                      <div className="text-sm text-muted-foreground">Agendamentos Cancelados</div>
+                    <div className="p-3 sm:p-4 bg-muted/30 rounded-lg text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-red-600">2</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">Cancelados</div>
                     </div>
                   </div>
                 </div>
@@ -1294,19 +1291,21 @@ export default function AppointmentsPage() {
                       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                       .map((appointment) => (
                         <div key={appointment.id} className="p-3 border rounded-lg hover:bg-muted/30 transition-colors">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                               <div className="flex items-center space-x-2">
                                 <Calendar className="w-4 h-4 text-muted-foreground" />
                                 <span className="text-sm font-medium">
                                   {new Date(appointment.date).toLocaleDateString('pt-BR')}
                                 </span>
+                              </div>
+                              <div className="flex items-center space-x-2">
                                 <Clock className="w-4 h-4 text-muted-foreground" />
                                 <span className="text-sm">{appointment.time}</span>
                               </div>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <Badge className={`${getStatusColor(appointment.status)} flex items-center space-x-1`}>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                              <Badge className={`${getStatusColor(appointment.status)} flex items-center space-x-1 w-fit`}>
                                 {getStatusIcon(appointment.status)}
                                 <span className="text-xs">{getStatusText(appointment.status)}</span>
                               </Badge>
@@ -1327,8 +1326,12 @@ export default function AppointmentsPage() {
                 </div>
 
                 {/* Botões de Ação */}
-                <div className="flex justify-end space-x-2 pt-4 border-t">
-                  <Button variant="outline" onClick={() => setIsClientHistoryOpen(false)} className="cursor-pointer">
+                <div className="flex justify-end pt-4 border-t">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsClientHistoryOpen(false)} 
+                    className="cursor-pointer w-full sm:w-auto"
+                  >
                     Fechar
                   </Button>
                 </div>

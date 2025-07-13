@@ -190,9 +190,6 @@ export default function StaffPage() {
             </p>
           </div>
           <div className="mt-4 sm:mt-0 flex items-center space-x-4">
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{filteredStaff.length}</span> funcionários encontrados
-            </div>
             <Dialog open={isAddStaffOpen} onOpenChange={setIsAddStaffOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer">
@@ -296,11 +293,11 @@ export default function StaffPage() {
         {/* Staff List */}
         <Card>
           <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
+            <div>
               <h3 className="text-lg font-semibold">Lista de Funcionários</h3>
-              <div className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mt-1">
                 Mostrando {startIndex + 1}-{Math.min(endIndex, filteredStaff.length)} de {filteredStaff.length} funcionários
-              </div>
+              </p>
             </div>
           </CardHeader>
           <CardContent className="p-0">

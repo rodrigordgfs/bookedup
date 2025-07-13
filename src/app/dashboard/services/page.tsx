@@ -278,9 +278,6 @@ export default function ServicesPage() {
             </p>
           </div>
           <div className="mt-4 sm:mt-0 flex items-center space-x-4">
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{filteredServices.length}</span> serviços encontrados
-            </div>
             <Button 
               variant="outline" 
               onClick={() => setIsCategoriesModalOpen(true)}
@@ -409,11 +406,11 @@ export default function ServicesPage() {
         {/* Services List */}
         <Card>
           <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
+            <div>
               <h3 className="text-lg font-semibold">Lista de Serviços</h3>
-              <div className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mt-1">
                 Mostrando {startIndex + 1}-{Math.min(endIndex, filteredServices.length)} de {filteredServices.length} serviços
-              </div>
+              </p>
             </div>
           </CardHeader>
           <CardContent className="p-0">

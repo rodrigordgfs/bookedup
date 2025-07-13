@@ -189,49 +189,51 @@ export default function SettingsPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {Object.entries(workingHours).map(([day, hours]) => (
-                  <div key={day} className="flex items-center justify-between p-4 border border-border rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <Switch
-                        checked={hours.enabled}
-                        onCheckedChange={(checked) => 
-                          setWorkingHours({
-                            ...workingHours,
-                            [day]: { ...hours, enabled: checked }
-                          })
-                        }
-                      />
-                      <span className="font-medium w-24">{dayNames[day as keyof typeof dayNames]}</span>
-                    </div>
-                    {hours.enabled && (
-                      <div className="flex items-center space-x-2">
-                        <Input
-                          type="time"
-                          value={hours.open}
-                          onChange={(e) => 
+                  <div key={day} className="p-4 border border-border rounded-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="flex items-center space-x-4">
+                        <Switch
+                          checked={hours.enabled}
+                          onCheckedChange={(checked) => 
                             setWorkingHours({
                               ...workingHours,
-                              [day]: { ...hours, open: e.target.value }
+                              [day]: { ...hours, enabled: checked }
                             })
                           }
-                          className="w-24"
                         />
-                        <span>às</span>
-                        <Input
-                          type="time"
-                          value={hours.close}
-                          onChange={(e) => 
-                            setWorkingHours({
-                              ...workingHours,
-                              [day]: { ...hours, close: e.target.value }
-                            })
-                          }
-                          className="w-24"
-                        />
+                        <span className="font-medium min-w-[120px]">{dayNames[day as keyof typeof dayNames]}</span>
                       </div>
-                    )}
-                    {!hours.enabled && (
-                      <span className="text-muted-foreground">Fechado</span>
-                    )}
+                      {hours.enabled && (
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-2">
+                          <Input
+                            type="time"
+                            value={hours.open}
+                            onChange={(e) => 
+                              setWorkingHours({
+                                ...workingHours,
+                                [day]: { ...hours, open: e.target.value }
+                              })
+                            }
+                            className="w-full sm:w-24"
+                          />
+                          <span className="hidden sm:inline">às</span>
+                          <Input
+                            type="time"
+                            value={hours.close}
+                            onChange={(e) => 
+                              setWorkingHours({
+                                ...workingHours,
+                                [day]: { ...hours, close: e.target.value }
+                              })
+                            }
+                            className="w-full sm:w-24"
+                          />
+                        </div>
+                      )}
+                      {!hours.enabled && (
+                        <span className="text-muted-foreground">Fechado</span>
+                      )}
+                    </div>
                   </div>
                 ))}
                 <Button>Salvar Horários</Button>
