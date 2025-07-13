@@ -31,27 +31,27 @@ export default function DashboardPage() {
       client: 'João Silva',
       service: 'Corte + Barba',
       time: '09:00',
-      duration: '45 min',
+      duration: '30 min',
       status: 'confirmed',
-      price: 'R$ 55'
+      price: 45
     },
     {
       id: 2,
-      client: 'Pedro Santos',
-      service: 'Corte Masculino',
+      client: 'Maria Santos',
+      service: 'Tratamento Capilar',
       time: '10:30',
-      duration: '30 min',
+      duration: '60 min',
       status: 'pending',
-      price: 'R$ 35'
+      price: 80
     },
     {
       id: 3,
-      client: 'Carlos Lima',
-      service: 'Tratamento Capilar',
+      client: 'Pedro Oliveira',
+      service: 'Corte Masculino',
       time: '14:00',
-      duration: '40 min',
+      duration: '25 min',
       status: 'confirmed',
-      price: 'R$ 45'
+      price: 35
     },
     {
       id: 4,
@@ -60,7 +60,7 @@ export default function DashboardPage() {
       time: '16:00',
       duration: '20 min',
       status: 'confirmed',
-      price: 'R$ 25'
+      price: 25
     }
   ];
 
@@ -249,7 +249,7 @@ export default function DashboardPage() {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <CardTitle className="text-xl font-bold text-foreground">
                     Agendamentos de Hoje
                   </CardTitle>
@@ -344,25 +344,25 @@ export default function DashboardPage() {
               <CardContent>
                 <div className="space-y-4">
                   {upcomingAppointments.map((appointment) => (
-                    <div key={appointment.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
-                          <User className="w-6 h-6 text-muted-foreground" />
+                    <div key={appointment.id} className="flex items-center justify-between p-3 sm:p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
+                        <div className="hidden sm:flex w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-lg items-center justify-center flex-shrink-0">
+                          <User className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
                         </div>
-                        <div>
-                          <h4 className="font-medium">{appointment.client}</h4>
-                          <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm sm:text-base truncate">{appointment.client}</h4>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{appointment.service}</p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <p className="font-medium">{appointment.time}</p>
-                          <p className="text-sm text-muted-foreground">{appointment.duration}</p>
+                      <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+                        <div className="text-right hidden sm:block">
+                          <p className="font-medium text-sm">{appointment.time}</p>
+                          <p className="text-xs text-muted-foreground">{appointment.duration}</p>
                         </div>
-                        <Badge className={getStatusColor(appointment.status)}>
+                        <Badge className={`${getStatusColor(appointment.status)} text-xs`}>
                           {getStatusText(appointment.status)}
                         </Badge>
-                        <p className="font-medium">{appointment.price}</p>
+                        <p className="font-medium text-sm sm:text-base">{formatToReal(appointment.price)}</p>
                       </div>
                     </div>
                   ))}
