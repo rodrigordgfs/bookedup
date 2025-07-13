@@ -61,7 +61,9 @@ export function Toolbar({
             {showNotifications && <NotificationsDropdown />}
             {showThemeToggle && <ThemeToggle />}
             {showUserMenu && <UserMenu />}
-            {rightActions}
+            <div className="hidden md:flex items-center space-x-4">
+              {rightActions}
+            </div>
           </div>
         </div>
       </div>
