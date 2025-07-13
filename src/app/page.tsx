@@ -17,9 +17,20 @@ import { formatToReal } from '@/lib/utils';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { UserMenu } from '@/components/auth/user-menu';
 import { SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
 export default function LandingPage() {
   const { isSignedIn, isLoaded } = useUser();
+  const router = useRouter();
+
+  // Redireciona usuário logado para /dashboard
+  React.useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.push('/dashboard');
+    }
+  }, [isLoaded, isSignedIn, router]);
+
   const services = [
     {
       name: 'Consultoria',
