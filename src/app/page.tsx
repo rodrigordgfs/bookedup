@@ -12,38 +12,39 @@ import { Separator } from '@/components/ui/separator';
 import { Calendar, Clock, User, Star, Phone, MapPin, Mail, CheckCircle, Info } from 'lucide-react';
 import Image from 'next/image';
 import { formatToReal } from '@/lib/utils';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function LandingPage() {
   const services = [
     {
-      name: 'Corte Masculino',
-      price: 35,
-      duration: '30 min',
-      image: 'https://images.pexels.com/photos/1319460/pexels-photo-1319460.jpeg?auto=compress&cs=tinysrgb&w=400',
+      name: 'Consultoria',
+      price: 150,
+      duration: '60 min',
+      image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400',
       popular: true,
       rating: 4.8
     },
     {
-      name: 'Barba',
-      price: 25,
-      duration: '20 min',
-      image: 'https://images.pexels.com/photos/1570807/pexels-photo-1570807.jpeg?auto=compress&cs=tinysrgb&w=400',
+      name: 'Avaliação',
+      price: 80,
+      duration: '30 min',
+      image: 'https://images.pexels.com/photos/3183153/pexels-photo-3183153.jpeg?auto=compress&cs=tinysrgb&w=400',
       popular: false,
       rating: 4.6
     },
     {
-      name: 'Corte + Barba',
-      price: 55,
-      duration: '45 min',
-      image: 'https://images.pexels.com/photos/1570808/pexels-photo-1570808.jpeg?auto=compress&cs=tinysrgb&w=400',
+      name: 'Sessão Completa',
+      price: 200,
+      duration: '90 min',
+      image: 'https://images.pexels.com/photos/3183155/pexels-photo-3183155.jpeg?auto=compress&cs=tinysrgb&w=400',
       popular: true,
       rating: 4.9
     },
     {
-      name: 'Tratamento Capilar',
-      price: 45,
-      duration: '40 min',
-      image: 'https://images.pexels.com/photos/1570809/pexels-photo-1570809.jpeg?auto=compress&cs=tinysrgb&w=400',
+      name: 'Manutenção',
+      price: 120,
+      duration: '45 min',
+      image: 'https://images.pexels.com/photos/3183158/pexels-photo-3183158.jpeg?auto=compress&cs=tinysrgb&w=400',
       popular: false,
       rating: 4.7
     }
@@ -53,37 +54,37 @@ export default function LandingPage() {
     {
       name: 'João Silva',
       rating: 5,
-      comment: 'Excelente atendimento! Sempre saio satisfeito com o resultado.',
-      service: 'Corte + Barba',
+      comment: 'Excelente plataforma! Facilita muito o agendamento dos meus clientes.',
+      service: 'Consultoria',
       avatar: 'JS'
     },
     {
-      name: 'Pedro Santos',
+      name: 'Maria Santos',
       rating: 5,
-      comment: 'Profissionais muito competentes. Recomendo!',
-      service: 'Corte Masculino',
-      avatar: 'PS'
+      comment: 'Sistema muito intuitivo e profissional. Recomendo!',
+      service: 'Avaliação',
+      avatar: 'MS'
     },
     {
       name: 'Carlos Lima',
       rating: 5,
-      comment: 'O agendamento online é muito prático. Adorei!',
-      service: 'Tratamento Capilar',
+      comment: 'O agendamento online é muito prático. Adorei a experiência!',
+      service: 'Sessão Completa',
       avatar: 'CL'
     }
   ];
 
   const stats = [
-    { label: 'Clientes Satisfeitos', value: '2.5k+', icon: CheckCircle },
-    { label: 'Agendamentos Realizados', value: '15k+', icon: Calendar },
-    { label: 'Profissionais Ativos', value: '50+', icon: User },
+    { label: 'Clientes Satisfeitos', value: '10k+', icon: CheckCircle },
+    { label: 'Agendamentos Realizados', value: '50k+', icon: Calendar },
+    { label: 'Profissionais Ativos', value: '500+', icon: User },
     { label: 'Avaliação Média', value: '4.8/5', icon: Star }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-card shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
@@ -104,6 +105,7 @@ export default function LandingPage() {
               </Link>
             </nav>
             <div className="flex items-center space-x-4">
+              <ThemeToggle />
               <Link href="/auth/login">
                 <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                   Entrar
@@ -136,7 +138,7 @@ export default function LandingPage() {
                 <span className="block text-amber-500">com facilidade</span>
               </h1>
               <p className="text-xl text-muted-foreground mt-6 leading-relaxed">
-                Sistema de agendamento online para barbearias, salões de beleza e estúdios. 
+                Plataforma completa de agendamento online para profissionais e empresas. 
                 Simplifique sua rotina e ofereça mais comodidade aos seus clientes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
@@ -155,21 +157,21 @@ export default function LandingPage() {
             </div>
             <div className="relative">
               <Image
-                  src="https://images.pexels.com/photos/1570807/pexels-photo-1570807.jpeg?auto=compress&cs=tinysrgb&w=800"
-                  alt="Barbershop"
+                  src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Professional Consultation"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl">
+              <div className="absolute -bottom-6 -left-6 bg-card p-6 rounded-xl shadow-xl">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <p className="font-semibold text-zinc-800">Agendamento Rápido</p>
-                    <p className="text-sm text-zinc-600">Em apenas 2 minutos</p>
+                    <p className="font-semibold text-foreground">Agendamento Rápido</p>
+                    <p className="text-sm text-muted-foreground">Em apenas 2 minutos</p>
                   </div>
                 </div>
               </div>
@@ -179,18 +181,18 @@ export default function LandingPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-zinc-50">
+      <section className="py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => {
               const IconComponent = stat.icon;
               return (
                 <div key={stat.label} className="text-center">
-                  <div className="w-12 h-12 bg-zinc-800 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <IconComponent className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 bg-foreground rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <IconComponent className="w-6 h-6 text-background" />
                   </div>
-                  <h3 className="text-2xl font-bold text-zinc-800 mb-2">{stat.value}</h3>
-                  <p className="text-zinc-600">{stat.label}</p>
+                  <h3 className="text-2xl font-bold text-foreground mb-2">{stat.value}</h3>
+                  <p className="text-muted-foreground">{stat.label}</p>
                 </div>
               );
             })}
@@ -204,10 +206,10 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <Badge variant="outline" className="mb-4">Nossos Serviços</Badge>
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Serviços de Qualidade
+              Serviços Profissionais
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Oferecemos uma gama completa de serviços para cuidar da sua aparência
+              Oferecemos uma gama completa de serviços para atender suas necessidades
             </p>
           </div>
           
@@ -310,7 +312,7 @@ export default function LandingPage() {
                     </div>
                     <CardTitle>Profissionais Qualificados</CardTitle>
                     <CardDescription>
-                      Nossa equipe é composta por profissionais experientes e qualificados
+                      Conectamos você com profissionais experientes e qualificados
                     </CardDescription>
                   </CardHeader>
                 </Card>
@@ -336,6 +338,10 @@ export default function LandingPage() {
                         <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
                         Avaliações e comentários
                       </li>
+                      <li className="flex items-center">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                        Pagamento online seguro
+                      </li>
                     </ul>
                   </CardContent>
                 </Card>
@@ -357,6 +363,10 @@ export default function LandingPage() {
                         <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
                         Integração com pagamentos
                       </li>
+                      <li className="flex items-center">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                        Marketing e promoções
+                      </li>
                     </ul>
                   </CardContent>
                 </Card>
@@ -367,7 +377,7 @@ export default function LandingPage() {
                 <Alert>
                   <Info className="h-4 w-4" />
                   <AlertDescription>
-                    Nossa plataforma utiliza as mais recentes tecnologias para garantir uma experiência excepcional.
+                    Nossa plataforma utiliza as mais recentes tecnologias para garantir uma experiência excepcional e segura.
                   </AlertDescription>
                 </Alert>
                 <div className="grid md:grid-cols-3 gap-6">
@@ -409,7 +419,7 @@ export default function LandingPage() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-zinc-800 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
               O que nossos clientes dizem
             </h2>
           </div>
@@ -424,8 +434,8 @@ export default function LandingPage() {
                       <AvatarFallback>{testimonial.avatar}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-semibold text-zinc-800">{testimonial.name}</p>
-                      <p className="text-sm text-zinc-500">{testimonial.service}</p>
+                      <p className="font-semibold text-foreground">{testimonial.name}</p>
+                      <p className="text-sm text-muted-foreground">{testimonial.service}</p>
                     </div>
                   </div>
                   <div className="flex items-center mb-4">
@@ -433,7 +443,7 @@ export default function LandingPage() {
                       <Star key={`${testimonial.avatar}-${i}`} className="w-5 h-5 text-amber-500 fill-current" />
                     ))}
                   </div>
-                  <p className="text-zinc-600 italic">&quot;{testimonial.comment}&quot;</p>
+                  <p className="text-muted-foreground italic">&quot;{testimonial.comment}&quot;</p>
                 </CardContent>
               </Card>
             ))}
@@ -442,10 +452,10 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-zinc-50">
+      <section className="py-20 bg-muted/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-zinc-800 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
               Perguntas Frequentes
             </h2>
           </div>
@@ -479,6 +489,13 @@ export default function LandingPage() {
                 importante para nós e ajuda outros clientes a escolherem nossos serviços.
               </AccordionContent>
             </AccordionItem>
+            <AccordionItem value="item-5">
+              <AccordionTrigger>Posso usar para diferentes tipos de negócio?</AccordionTrigger>
+              <AccordionContent>
+                Sim! Nossa plataforma é versátil e pode ser adaptada para diversos tipos de negócios: 
+                consultorias, terapias, aulas, serviços técnicos, e muito mais.
+              </AccordionContent>
+            </AccordionItem>
           </Accordion>
         </div>
       </section>
@@ -488,45 +505,46 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
             <div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-zinc-800 mb-6">
+              <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-6">
                 Entre em Contato
               </h2>
-              <p className="text-xl text-zinc-600 mb-8">
-                Estamos aqui para ajudar. Entre em contato conosco para agendar ou tirar dúvidas.
+              <p className="text-xl text-muted-foreground mb-8">
+                Estamos aqui para ajudar. Entre em contato conosco para implementar o sistema de agendamento 
+                em seu negócio ou tirar dúvidas.
               </p>
               
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-zinc-100 rounded-lg flex items-center justify-center">
-                    <Phone className="w-6 h-6 text-zinc-600" />
+                  <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                    <Phone className="w-6 h-6 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="font-semibold text-zinc-800">Telefone</p>
-                    <p className="text-zinc-600">(11) 99999-9999</p>
+                    <p className="font-semibold text-foreground">Telefone</p>
+                    <p className="text-muted-foreground">(11) 99999-9999</p>
                   </div>
                 </div>
                 
                 <Separator />
                 
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-zinc-100 rounded-lg flex items-center justify-center">
-                    <Mail className="w-6 h-6 text-zinc-600" />
+                  <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                    <Mail className="w-6 h-6 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="font-semibold text-zinc-800">Email</p>
-                    <p className="text-zinc-600">contato@bookedup.com</p>
+                    <p className="font-semibold text-foreground">Email</p>
+                    <p className="text-muted-foreground">contato@bookedup.com</p>
                   </div>
                 </div>
                 
                 <Separator />
                 
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-zinc-100 rounded-lg flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-zinc-600" />
+                  <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="font-semibold text-zinc-800">Endereço</p>
-                    <p className="text-zinc-600">Rua das Flores, 123 - São Paulo, SP</p>
+                    <p className="font-semibold text-foreground">Endereço</p>
+                    <p className="text-muted-foreground">Rua das Flores, 123 - São Paulo, SP</p>
                   </div>
                 </div>
               </div>
@@ -542,42 +560,42 @@ export default function LandingPage() {
               <CardContent>
                 <form className="space-y-6">
                   <div>
-                    <label htmlFor="contact-name" className="block text-sm font-medium text-zinc-700 mb-2">
+                    <label htmlFor="contact-name" className="block text-sm font-medium text-foreground mb-2">
                       Nome
                     </label>
                     <input 
                       id="contact-name"
                       type="text" 
-                      className="w-full px-4 py-3 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                       placeholder="Seu nome"
                     />
                   </div>
                   
                   <div>
-                    <label htmlFor="contact-email" className="block text-sm font-medium text-zinc-700 mb-2">
+                    <label htmlFor="contact-email" className="block text-sm font-medium text-foreground mb-2">
                       Email
                     </label>
                     <input 
                       id="contact-email"
                       type="email" 
-                      className="w-full px-4 py-3 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                       placeholder="seu@email.com"
                     />
                   </div>
                   
                   <div>
-                    <label htmlFor="contact-message" className="block text-sm font-medium text-zinc-700 mb-2">
+                    <label htmlFor="contact-message" className="block text-sm font-medium text-foreground mb-2">
                       Mensagem
                     </label>
                     <textarea 
                       id="contact-message"
                       rows={4}
-                      className="w-full px-4 py-3 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                       placeholder="Sua mensagem..."
                     />
                   </div>
                   
-                  <Button className="w-full bg-zinc-800 hover:bg-zinc-700 py-3">
+                  <Button className="w-full bg-foreground text-background hover:bg-foreground/90 py-3">
                     Enviar Mensagem
                   </Button>
                 </form>
@@ -588,44 +606,45 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-zinc-800 text-white py-12">
+      <footer className="bg-card text-card-foreground py-12 border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                  <User className="w-5 h-5 text-zinc-800" />
+                <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
+                  <User className="w-5 h-5 text-background" />
                 </div>
                 <span className="text-lg font-bold">BookedUp</span>
               </div>
-              <p className="text-zinc-300">
-                Plataforma de agendamento online para profissionais da beleza.
+              <p className="text-muted-foreground">
+                Plataforma completa de agendamento online para profissionais e empresas.
               </p>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Serviços</h3>
-              <ul className="space-y-2 text-zinc-300">
-                <li><Link href="#" className="hover:text-white transition-colors">Agendamento Online</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Gestão de Horários</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Notificações</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Relatórios</Link></li>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><Link href="#" className="hover:text-foreground transition-colors">Agendamento Online</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Gestão de Horários</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Notificações</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Relatórios</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Integração de Pagamentos</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Empresa</h3>
-              <ul className="space-y-2 text-zinc-300">
-                <li><Link href="#" className="hover:text-white transition-colors">Sobre</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Contato</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Suporte</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Política de Privacidade</Link></li>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><Link href="#" className="hover:text-foreground transition-colors">Sobre</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Contato</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Suporte</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Política de Privacidade</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Contato</h3>
-              <ul className="space-y-2 text-zinc-300">
+              <ul className="space-y-2 text-muted-foreground">
                 <li>contato@bookedup.com</li>
                 <li>(11) 99999-9999</li>
                 <li>Rua das Flores, 123</li>
@@ -634,9 +653,9 @@ export default function LandingPage() {
             </div>
           </div>
           
-          <Separator className="my-8 bg-zinc-700" />
+          <Separator className="my-8" />
           
-          <div className="text-center text-zinc-300">
+          <div className="text-center text-muted-foreground">
             <p>&copy; 2024 BookedUp. Todos os direitos reservados.</p>
           </div>
         </div>

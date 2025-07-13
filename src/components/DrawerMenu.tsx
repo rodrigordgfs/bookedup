@@ -1,6 +1,6 @@
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { User, LogOut, Settings, Calendar, Users, Scissors, Menu } from 'lucide-react';
+import { User, LogOut, Settings, Calendar, Users, Scissors, Menu, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -64,6 +64,10 @@ export function DrawerMenu({ user }: DrawerMenuProps) {
           <Link href="/dashboard/staff" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
             <Users className="w-5 h-5" />
             Funcionários
+          </Link>
+          <Link href="/dashboard/reports" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
+            <BarChart3 className="w-5 h-5" />
+            Relatórios
           </Link>
           <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
             <Settings className="w-5 h-5" />
