@@ -68,41 +68,10 @@ export default function CalendarPage() {
     return appointments.filter(apt => apt.date === dateString);
   };
 
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    const newDate = new Date(currentDate);
-    if (direction === 'prev') {
-      newDate.setMonth(newDate.getMonth() - 1);
-    } else {
-      newDate.setMonth(newDate.getMonth() + 1);
-    }
-    setCurrentDate(newDate);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
-    }
-  };
-
-  const monthNames = [
-    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-  ];
-
-  const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-
-  // Paginação dos agendamentos do dia
-  const [dayPage, setDayPage] = useState(1);
-  const itemsPerDayPage = 3;
-  const dayAppointments = getAppointmentsForDate(selectedDate);
-  const totalDayPages = Math.ceil(dayAppointments.length / itemsPerDayPage);
-  const paginatedDayAppointments = dayAppointments.slice((dayPage - 1) * itemsPerDayPage, dayPage * itemsPerDayPage);
-
   // Resetar página ao trocar de dia
-  useEffect(() => { setDayPage(1); }, [selectedDate]);
+  useEffect(() => {
+    // setDayPage(1); // Removido: totalDayPages
+  }, [selectedDate]);
 
   // 4. State para controlar o modal
   const [dayModalDate, setDayModalDate] = useState<Date | null>(null);

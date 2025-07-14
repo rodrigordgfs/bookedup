@@ -26,20 +26,6 @@ export default function DashboardPage() {
     professional: ''
   });
 
-  // Próximos agendamentos: pegar os 4 próximos confirmados
-  const upcomingAppointments = appointments
-    .filter(a => a.status === 'confirmed')
-    .slice(0, 4)
-    .map(a => ({
-      id: a.id,
-      client: a.client.name,
-      service: a.service,
-      time: a.time,
-      duration: `${a.duration} min`,
-      status: a.status,
-      price: a.price
-    }));
-
   // Estatísticas do dia
   const todayDate = new Date();
   const todayStr = todayDate.toISOString().slice(0, 10);
@@ -55,13 +41,6 @@ export default function DashboardPage() {
   const mm = String(todayDate.getMonth() + 1).padStart(2, '0');
   const monthStr = `${yyyy}-${mm}`;
   const monthAppointments = appointments.filter(a => a.date.startsWith(monthStr));
-  const monthStats = {
-    total: monthAppointments.length,
-    confirmed: monthAppointments.filter(a => a.status === 'confirmed').length,
-    pending: monthAppointments.filter(a => a.status === 'pending').length,
-    cancelled: monthAppointments.filter(a => a.status === 'cancelled').length,
-    revenue: monthAppointments.filter(a => a.status === 'confirmed' || a.status === 'completed').reduce((acc, a) => acc + a.price, 0)
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {

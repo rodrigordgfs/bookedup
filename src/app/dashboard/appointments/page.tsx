@@ -191,7 +191,7 @@ export default function AppointmentsPage() {
         localStorage.removeItem('openAppointmentDetailId');
       }
     }
-  }, [appointments]);
+  }, []);
 
   // Fechar dropdown quando clicar fora
   useEffect(() => {
