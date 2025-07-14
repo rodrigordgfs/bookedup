@@ -36,11 +36,6 @@ export default function DashboardPage() {
     completed: todayAppointments.filter(a => a.status === 'completed').length,
     pending: todayAppointments.filter(a => a.status === 'pending').length
   };
-  // Estatísticas do mês
-  const yyyy = todayDate.getFullYear();
-  const mm = String(todayDate.getMonth() + 1).padStart(2, '0');
-  const monthStr = `${yyyy}-${mm}`;
-  const monthAppointments = appointments.filter(a => a.date.startsWith(monthStr));
 
   const getStatusColor = (status: string) => {
     switch (status) {
