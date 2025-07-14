@@ -4,7 +4,6 @@ import { User, LogOut, Settings, Calendar, Users, Menu, BarChart3, Archive } fro
 import { SignOutButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar as MiniCalendar } from '@/components/ui/calendar';
 
 type DrawerMenuProps = {
   user?: {

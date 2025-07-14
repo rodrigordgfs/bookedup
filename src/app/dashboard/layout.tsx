@@ -1,6 +1,3 @@
-import { ProtectedRoute } from "@/components/auth/protected-route";
-import { useUser } from '@clerk/nextjs';
-import { AuthLoading } from '@/components/auth/auth-loading';
 import ClientAccess from './ClientAccess';
 
 export default function DashboardLayout({

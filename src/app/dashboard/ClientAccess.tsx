@@ -5,34 +5,10 @@ import { AuthLoading } from "@/components/auth/auth-loading";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Calendar, CheckCircle, User, LogOut } from "lucide-react";
+import { Calendar, CheckCircle, User } from "lucide-react";
 import { useEffect } from "react";
 import { Toolbar } from "@/components/Toolbar";
-import { DrawerMenu } from '@/components/DrawerMenu';
-import { SignOutButton } from '@clerk/nextjs';
 import { Badge } from '@/components/ui/badge';
-import { Clock } from 'lucide-react';
-
-function ClientDrawerMenu() {
-  return (
-    <nav className="flex flex-col gap-1 py-4 px-2">
-      <Button
-        variant="outline"
-        className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-muted transition-colors cursor-pointer justify-start"
-        onClick={() => window.location.href = '/booking'}
-      >
-        <Calendar className="w-5 h-5" />
-        Novo Agendamento
-      </Button>
-      <SignOutButton>
-        <Button variant="ghost" className="flex items-center gap-3 px-4 py-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-muted transition-colors cursor-pointer mt-2 justify-start w-full">
-          <LogOut className="w-5 h-5" />
-          Sair
-        </Button>
-      </SignOutButton>
-    </nav>
-  );
-}
 
 function ClientHome() {
   const { user, isLoaded } = useUser();
