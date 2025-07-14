@@ -18,8 +18,7 @@ import {
   Edit,
   Trash2,
   Phone,
-  Mail, Calendar, ChevronLeft,
-  ChevronRight
+  Mail, Calendar
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PaginationBar } from '@/components/ui/pagination';

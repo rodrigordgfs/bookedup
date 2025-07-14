@@ -14,7 +14,7 @@ import { formatToReal } from '@/lib/utils';
 import { Toolbar } from '@/components/Toolbar';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { appointments, clients, services, staff, notifications } from '@/mocks/data';
+import { appointments, clients, notifications } from '@/mocks/data';
 
 export default function DashboardPage() {
   const [selectedDate] = useState(new Date());

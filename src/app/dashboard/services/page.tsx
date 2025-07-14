@@ -17,10 +17,7 @@ import {
   Edit,
   Trash2, Archive,
   Clock,
-  DollarSign,
-  ChevronLeft,
-  ChevronRight,
-  Search
+  DollarSign, Search
 } from 'lucide-react';
 import { Toolbar } from '@/components/Toolbar';
 import { PaginationBar } from '@/components/ui/pagination';

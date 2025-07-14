@@ -18,10 +18,7 @@ import {
   Clock,
   User,
   Archive,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Check,
+  Calendar, Check,
   Trash2
 } from 'lucide-react';
 import { PaginationBar } from '@/components/ui/pagination';

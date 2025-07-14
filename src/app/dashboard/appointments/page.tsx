@@ -22,9 +22,7 @@ import {
   Clock, CheckCircle,
   XCircle,
   AlertCircle,
-  Filter,
-  ChevronLeft,
-  ChevronRight, MoreVertical,
+  Filter, MoreVertical,
   Archive,
   Users
 } from 'lucide-react';
@@ -37,7 +35,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Toolbar } from '@/components/Toolbar';
 import { PaginationBar } from '@/components/ui/pagination';
-import type { Appointment } from '@/mocks/data';
 import { appointments } from '@/mocks/data';
 
 export default function AppointmentsPage() {

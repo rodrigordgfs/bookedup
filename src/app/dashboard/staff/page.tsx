@@ -17,10 +17,7 @@ import {
   Trash2, Users,
   Mail,
   Phone,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-  Search
+  Clock, Search
 } from 'lucide-react';
 import { PaginationBar } from '@/components/ui/pagination';
 import type { StaffMember } from '@/mocks/data';
