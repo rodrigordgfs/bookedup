@@ -116,12 +116,78 @@ function PaginationEllipsis({
   )
 }
 
-export {
-  Pagination,
-  PaginationContent,
-  PaginationLink,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
-  PaginationEllipsis,
+// Componente de paginação pronto para uso nas páginas
+interface PaginationBarProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  className?: string;
 }
+
+export const PaginationBar: React.FC<PaginationBarProps> = ({ currentPage, totalPages, onPageChange, className }) => {
+  if (totalPages <= 1) return null;
+
+  // Lógica para mostrar até 5 páginas, com ellipsis se necessário
+  let pages: (number | 'ellipsis')[] = [];
+  if (totalPages <= 5) {
+    pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  } else {
+    if (currentPage <= 3) {
+      pages = [1, 2, 3, 4, 'ellipsis', totalPages];
+    } else if (currentPage >= totalPages - 2) {
+      pages = [1, 'ellipsis', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    } else {
+      pages = [1, 'ellipsis', currentPage - 1, currentPage, currentPage + 1, 'ellipsis', totalPages];
+    }
+  }
+
+  return (
+    <Pagination className={className}>
+      <PaginationContent>
+        <PaginationItem>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="cursor-pointer"
+          >
+            <ChevronLeftIcon className="w-4 h-4" />
+            <span className="hidden sm:inline ml-1">Anterior</span>
+          </Button>
+        </PaginationItem>
+        {pages.map((page, idx) =>
+          page === 'ellipsis' ? (
+            <PaginationItem key={`ellipsis-${idx}`}>
+              <PaginationEllipsis />
+            </PaginationItem>
+          ) : (
+            <PaginationItem key={page}>
+              <Button
+                variant={currentPage === page ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => onPageChange(page as number)}
+                className="w-8 h-8 p-0 cursor-pointer"
+                aria-current={currentPage === page ? 'page' : undefined}
+              >
+                {page}
+              </Button>
+            </PaginationItem>
+          )
+        )}
+        <PaginationItem>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="cursor-pointer"
+          >
+            <span className="hidden sm:inline mr-1">Próxima</span>
+            <ChevronRightIcon className="w-4 h-4" />
+          </Button>
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+};

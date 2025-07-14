@@ -22,16 +22,9 @@ import {
   ChevronRight,
   Search
 } from 'lucide-react';
-
-interface StaffMember {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  specialties: string[];
-  workingHours: string;
-  active: boolean;
-}
+import { PaginationBar } from '@/components/ui/pagination';
+import type { StaffMember } from '@/mocks/data';
+import { staff } from '@/mocks/data';
 
 export default function StaffPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -56,36 +49,6 @@ export default function StaffPage() {
     specialties: [] as string[],
     workingHours: ''
   });
-
-  const staff: StaffMember[] = [
-    {
-      id: 1,
-      name: 'João Silva',
-      email: 'joao@bookedup.com',
-      phone: '(11) 99999-9999',
-      specialties: ['Corte Masculino', 'Barba'],
-      workingHours: 'Seg-Sex: 9h-18h',
-      active: true
-    },
-    {
-      id: 2,
-      name: 'Maria Santos',
-      email: 'maria@bookedup.com',
-      phone: '(11) 88888-8888',
-      specialties: ['Tratamento Capilar', 'Corte Feminino'],
-      workingHours: 'Ter-Sáb: 10h-19h',
-      active: true
-    },
-    {
-      id: 3,
-      name: 'Pedro Costa',
-      email: 'pedro@bookedup.com',
-      phone: '(11) 77777-7777',
-      specialties: ['Corte Masculino', 'Corte + Barba'],
-      workingHours: 'Qua-Dom: 8h-17h',
-      active: false
-    }
-  ];
 
   const handleAddStaff = () => {
     console.log('Adding staff:', newStaff);
@@ -367,52 +330,13 @@ export default function StaffPage() {
                 </tbody>
               </table>
             </div>
-            
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 border-t">
-                <div className="text-sm text-muted-foreground">
-                  Página {currentPage} de {totalPages}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="cursor-pointer"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    Anterior
-                  </Button>
-                  
-                  <div className="flex items-center space-x-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <Button
-                        key={page}
-                        variant={currentPage === page ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(page)}
-                        className="w-8 h-8 p-0 cursor-pointer"
-                      >
-                        {page}
-                      </Button>
-                    ))}
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="cursor-pointer"
-                  >
-                    Próxima
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
+            <PaginationBar
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              className="py-4"
+            />
           </CardContent>
         </Card>
 

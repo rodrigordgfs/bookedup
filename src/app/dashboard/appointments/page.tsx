@@ -36,6 +36,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Toolbar } from '@/components/Toolbar';
+import { PaginationBar } from '@/components/ui/pagination';
+import type { Appointment } from '@/mocks/data';
+import { appointments } from '@/mocks/data';
 
 export default function AppointmentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -178,6 +181,21 @@ export default function AppointmentsPage() {
     }
   }, []);
 
+  // Abrir modal de detalhes automaticamente se vier do calendário
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const openAppointmentDetailId = localStorage.getItem('openAppointmentDetailId');
+      if (openAppointmentDetailId) {
+        const apt = appointments.find(a => a.id === Number(openAppointmentDetailId));
+        if (apt) {
+          setSelectedAppointment(apt);
+          setIsAppointmentDetailOpen(true);
+        }
+        localStorage.removeItem('openAppointmentDetailId');
+      }
+    }
+  }, [appointments]);
+
   // Fechar dropdown quando clicar fora
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -194,89 +212,6 @@ export default function AppointmentsPage() {
       };
     }
   }, []);
-
-  const appointments = [
-    {
-      id: 1,
-      client: {
-        name: 'João Silva',
-        email: 'joao@email.com',
-        phone: '(11) 99999-9999'
-      },
-      service: 'Corte + Barba',
-      professional: 'João Barbeiro',
-      date: '2024-01-15',
-      time: '09:00',
-      duration: 45,
-      price: 55,
-      status: 'confirmed',
-      notes: 'Cliente preferencial'
-    },
-    {
-      id: 2,
-      client: {
-        name: 'Pedro Santos',
-        email: 'pedro@email.com',
-        phone: '(11) 88888-8888'
-      },
-      service: 'Corte Masculino',
-      professional: 'Maria Silva',
-      date: '2024-01-15',
-      time: '10:30',
-      duration: 30,
-      price: 35,
-      status: 'pending',
-      notes: ''
-    },
-    {
-      id: 3,
-      client: {
-        name: 'Carlos Lima',
-        email: 'carlos@email.com',
-        phone: '(11) 77777-7777'
-      },
-      service: 'Tratamento Capilar',
-      professional: 'João Barbeiro',
-      date: '2024-01-16',
-      time: '14:00',
-      duration: 40,
-      price: 45,
-      status: 'confirmed',
-      notes: 'Alérgico a produtos com álcool'
-    },
-    {
-      id: 4,
-      client: {
-        name: 'Roberto Costa',
-        email: 'roberto@email.com',
-        phone: '(11) 66666-6666'
-      },
-      service: 'Barba',
-      professional: 'Pedro Costa',
-      date: '2024-01-17',
-      time: '16:00',
-      duration: 20,
-      price: 25,
-      status: 'cancelled',
-      notes: 'Cancelado pelo cliente'
-    },
-    {
-      id: 5,
-      client: {
-        name: 'Lucas Oliveira',
-        email: 'lucas@email.com',
-        phone: '(11) 55555-5555'
-      },
-      service: 'Corte Masculino',
-      professional: 'Maria Silva',
-      date: '2024-01-14',
-      time: '11:00',
-      duration: 30,
-      price: 35,
-      status: 'completed',
-      notes: ''
-    }
-  ];
 
   const filteredAppointments = appointments.filter(appointment => {
     const matchesSearch = 
@@ -795,52 +730,12 @@ export default function AppointmentsPage() {
             </div>
             
             {/* Pagination */}
-            {totalPages > 1 ? (
-              <div className="flex items-center justify-between p-4 border-t">
-                <div className="text-sm text-muted-foreground">
-                  Página {currentPage} de {totalPages}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="cursor-pointer"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    Anterior
-                  </Button>
-                  <div className="flex items-center space-x-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <Button
-                        key={page}
-                        variant={currentPage === page ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(page)}
-                        className="w-8 h-8 p-0 cursor-pointer"
-                      >
-                        {page}
-                      </Button>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="cursor-pointer"
-                  >
-                    Próxima
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="p-4 text-center text-muted-foreground">
-                Carregando dados do agendamento...
-              </div>
-            )}
+            <PaginationBar
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              className="py-4"
+            />
           </CardContent>
         </Card>
 

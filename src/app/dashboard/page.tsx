@@ -14,6 +14,7 @@ import { formatToReal } from '@/lib/utils';
 import { Toolbar } from '@/components/Toolbar';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { appointments, clients, services, staff, notifications } from '@/mocks/data';
 
 export default function DashboardPage() {
   const [selectedDate] = useState(new Date());
@@ -25,50 +26,41 @@ export default function DashboardPage() {
     professional: ''
   });
 
-  const upcomingAppointments = [
-    {
-      id: 1,
-      client: 'João Silva',
-      service: 'Corte + Barba',
-      time: '09:00',
-      duration: '30 min',
-      status: 'confirmed',
-      price: 45
-    },
-    {
-      id: 2,
-      client: 'Maria Santos',
-      service: 'Tratamento Capilar',
-      time: '10:30',
-      duration: '60 min',
-      status: 'pending',
-      price: 80
-    },
-    {
-      id: 3,
-      client: 'Pedro Oliveira',
-      service: 'Corte Masculino',
-      time: '14:00',
-      duration: '25 min',
-      status: 'confirmed',
-      price: 35
-    },
-    {
-      id: 4,
-      client: 'Roberto Costa',
-      service: 'Barba',
-      time: '16:00',
-      duration: '20 min',
-      status: 'confirmed',
-      price: 25
-    }
-  ];
+  // Próximos agendamentos: pegar os 4 próximos confirmados
+  const upcomingAppointments = appointments
+    .filter(a => a.status === 'confirmed')
+    .slice(0, 4)
+    .map(a => ({
+      id: a.id,
+      client: a.client.name,
+      service: a.service,
+      time: a.time,
+      duration: `${a.duration} min`,
+      status: a.status,
+      price: a.price
+    }));
 
+  // Estatísticas do dia
+  const todayDate = new Date();
+  const todayStr = todayDate.toISOString().slice(0, 10);
+  const todayAppointments = appointments.filter(a => a.date === todayStr);
   const todayStats = {
-    appointments: 8,
-    revenue: 385,
-    completed: 4,
-    pending: 2
+    appointments: todayAppointments.length,
+    revenue: todayAppointments.reduce((acc, a) => acc + a.price, 0),
+    completed: todayAppointments.filter(a => a.status === 'completed').length,
+    pending: todayAppointments.filter(a => a.status === 'pending').length
+  };
+  // Estatísticas do mês
+  const yyyy = todayDate.getFullYear();
+  const mm = String(todayDate.getMonth() + 1).padStart(2, '0');
+  const monthStr = `${yyyy}-${mm}`;
+  const monthAppointments = appointments.filter(a => a.date.startsWith(monthStr));
+  const monthStats = {
+    total: monthAppointments.length,
+    confirmed: monthAppointments.filter(a => a.status === 'confirmed').length,
+    pending: monthAppointments.filter(a => a.status === 'pending').length,
+    cancelled: monthAppointments.filter(a => a.status === 'cancelled').length,
+    revenue: monthAppointments.filter(a => a.status === 'confirmed' || a.status === 'completed').reduce((acc, a) => acc + a.price, 0)
   };
 
   const getStatusColor = (status: string) => {
@@ -89,43 +81,25 @@ export default function DashboardPage() {
     }
   };
 
-  const recentActivities = [
-    {
-      id: 1,
-      type: 'appointment_confirmed',
-      clientName: 'João Silva',
-      timestamp: new Date(Date.now() - 2 * 60 * 1000), // 2 minutos atrás
-      color: 'bg-green-500'
-    },
-    {
-      id: 2,
-      type: 'new_client',
-      clientName: 'Maria Santos',
-      timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutos atrás
-      color: 'bg-blue-500'
-    },
-    {
-      id: 3,
-      type: 'appointment_rescheduled',
-      clientName: 'Pedro Oliveira',
-      timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 hora atrás
-      color: 'bg-yellow-500'
-    },
-    {
-      id: 4,
-      type: 'appointment_cancelled',
-      clientName: 'Ana Costa',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-      color: 'bg-red-500'
-    },
-    {
-      id: 5,
-      type: 'payment_received',
-      clientName: 'Carlos Ferreira',
-      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 horas atrás
-      color: 'bg-green-600'
-    }
-  ];
+  // Atividades recentes: baseadas nas notificações mockadas
+  const notificationTypeColor = {
+    appointment_confirmed: 'bg-green-500',
+    appointment_cancelled: 'bg-red-500',
+    appointment_reminder: 'bg-blue-500',
+    new_client: 'bg-purple-500',
+    new_appointment: 'bg-orange-500',
+    system: 'bg-gray-500'
+  };
+  const recentActivities = notifications.slice(0, 5).map((n) => {
+    const date = new Date(n.timestamp);
+    return {
+      id: n.id,
+      type: n.type,
+      clientName: clients.find(c => c.id === n.data?.clientId)?.name || 'Cliente',
+      timestamp: isNaN(date.getTime()) ? new Date() : date,
+      color: notificationTypeColor[n.type] || 'bg-gray-500'
+    };
+  });
 
   const getActivityMessage = (type: string, clientName: string) => {
     switch (type) {
@@ -343,29 +317,36 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {upcomingAppointments.map((appointment) => (
-                    <div key={appointment.id} className="flex items-center justify-between p-3 sm:p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                      <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
-                        <div className="hidden sm:flex w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-lg items-center justify-center flex-shrink-0">
-                          <User className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
+                  {/* Ordenar e limitar os agendamentos de hoje */}
+                  {[...todayAppointments]
+                    .sort((a, b) => b.time.localeCompare(a.time))
+                    .slice(0, 10)
+                    .map((appointment) => (
+                      <div key={appointment.id} className="flex items-center justify-between p-3 sm:p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                        <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
+                          <div className="hidden sm:flex w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-lg items-center justify-center flex-shrink-0">
+                            <User className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-sm sm:text-base truncate">{appointment.client.name}</h4>
+                            <p className="text-xs sm:text-sm text-muted-foreground truncate">{appointment.service}</p>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-sm sm:text-base truncate">{appointment.client}</h4>
-                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{appointment.service}</p>
+                        <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+                          <div className="text-right hidden sm:block">
+                            <p className="font-medium text-sm">{appointment.time}</p>
+                            <p className="text-xs text-muted-foreground">{appointment.duration} min</p>
+                          </div>
+                          <Badge className={`${getStatusColor(appointment.status)} text-xs`}>
+                            {getStatusText(appointment.status)}
+                          </Badge>
+                          <p className="font-medium text-sm sm:text-base">{formatToReal(appointment.price)}</p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
-                        <div className="text-right hidden sm:block">
-                          <p className="font-medium text-sm">{appointment.time}</p>
-                          <p className="text-xs text-muted-foreground">{appointment.duration}</p>
-                        </div>
-                        <Badge className={`${getStatusColor(appointment.status)} text-xs`}>
-                          {getStatusText(appointment.status)}
-                        </Badge>
-                        <p className="font-medium text-sm sm:text-base">{formatToReal(appointment.price)}</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  <Button className="mt-4 w-full bg-slate-800 hover:bg-slate-700 dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-slate-300 cursor-pointer" asChild>
+                    <Link href="/dashboard/appointments">Ver todos os agendamentos</Link>
+                  </Button>
                 </div>
               </CardContent>
             </Card>

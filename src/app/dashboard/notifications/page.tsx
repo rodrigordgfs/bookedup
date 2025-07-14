@@ -24,20 +24,9 @@ import {
   Check,
   Trash2
 } from 'lucide-react';
-
-interface Notification {
-  id: number;
-  type: 'appointment_confirmed' | 'appointment_cancelled' | 'appointment_reminder' | 'new_client' | 'new_appointment' | 'system';
-  title: string;
-  message: string;
-  timestamp: string;
-  read: boolean;
-  data?: {
-    appointmentId?: number;
-    clientId?: number;
-    serviceId?: number;
-  };
-}
+import { PaginationBar } from '@/components/ui/pagination';
+import type { Notification } from '@/mocks/data';
+import { notifications } from '@/mocks/data';
 
 export default function NotificationsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,79 +37,7 @@ export default function NotificationsPage() {
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isNotificationDetailOpen, setIsNotificationDetailOpen] = useState(false);
 
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: 1,
-      type: 'appointment_confirmed',
-      title: 'Agendamento Confirmado',
-      message: 'João Silva confirmou o agendamento para amanhã às 09:00',
-      timestamp: '2024-01-15T10:30:00Z',
-      read: false,
-      data: { appointmentId: 1, clientId: 1 }
-    },
-    {
-      id: 2,
-      type: 'appointment_reminder',
-      title: 'Lembrete de Agendamento',
-      message: 'Você tem um agendamento em 30 minutos com Pedro Santos',
-      timestamp: '2024-01-15T09:00:00Z',
-      read: false,
-      data: { appointmentId: 2, clientId: 2 }
-    },
-    {
-      id: 3,
-      type: 'new_client',
-      title: 'Novo Cliente Cadastrado',
-      message: 'Carlos Lima foi cadastrado no sistema',
-      timestamp: '2024-01-15T08:45:00Z',
-      read: true,
-      data: { clientId: 3 }
-    },
-    {
-      id: 4,
-      type: 'appointment_cancelled',
-      title: 'Agendamento Cancelado',
-      message: 'Roberto Costa cancelou o agendamento de hoje às 16:00',
-      timestamp: '2024-01-15T08:30:00Z',
-      read: false,
-      data: { appointmentId: 4, clientId: 4 }
-    },
-    {
-      id: 5,
-      type: 'system',
-      title: 'Manutenção Programada',
-      message: 'O sistema ficará indisponível das 02:00 às 04:00 para manutenção',
-      timestamp: '2024-01-14T20:00:00Z',
-      read: true
-    },
-    {
-      id: 6,
-      type: 'new_appointment',
-      title: 'Novo Agendamento',
-      message: 'Lucas Oliveira agendou um corte masculino para hoje às 14:00',
-      timestamp: '2024-01-14T15:30:00Z',
-      read: true,
-      data: { appointmentId: 6, clientId: 5 }
-    },
-    {
-      id: 7,
-      type: 'appointment_reminder',
-      title: 'Lembrete de Agendamento',
-      message: 'Você tem um agendamento em 1 hora com Maria Santos',
-      timestamp: '2024-01-14T14:00:00Z',
-      read: true,
-      data: { appointmentId: 7, clientId: 6 }
-    },
-    {
-      id: 8,
-      type: 'appointment_confirmed',
-      title: 'Agendamento Confirmado',
-      message: 'Ana Silva confirmou o agendamento para quinta-feira às 10:00',
-      timestamp: '2024-01-14T12:00:00Z',
-      read: true,
-      data: { appointmentId: 8, clientId: 7 }
-    }
-  ]);
+  const [notificationsState, setNotificationsState] = useState<Notification[]>(notifications);
 
   const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
@@ -197,7 +114,7 @@ export default function NotificationsPage() {
   };
 
   const markAsRead = (notificationId: number) => {
-    setNotifications(prev => 
+    setNotificationsState(prev => 
       prev.map(n => 
         n.id === notificationId ? { ...n, read: true } : n
       )
@@ -205,13 +122,13 @@ export default function NotificationsPage() {
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => 
+    setNotificationsState(prev => 
       prev.map(n => ({ ...n, read: true }))
     );
   };
 
   const deleteNotification = (notificationId: number) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    setNotificationsState(prev => prev.filter(n => n.id !== notificationId));
   };
 
   const handleNotificationClick = (notification: Notification) => {
@@ -220,7 +137,7 @@ export default function NotificationsPage() {
     markAsRead(notification.id);
   };
 
-  const filteredNotifications = notifications.filter(notification => {
+  const filteredNotifications = notificationsState.filter(notification => {
     const matchesSearch = 
       notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       notification.message.toLowerCase().includes(searchTerm.toLowerCase());
@@ -244,7 +161,7 @@ export default function NotificationsPage() {
     setCurrentPage(page);
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notificationsState.filter(n => !n.read).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -434,36 +351,12 @@ export default function NotificationsPage() {
         </Card>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6">
-            <div className="text-sm text-muted-foreground">
-              Página {currentPage} de {totalPages}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="cursor-pointer"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                Anterior
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="cursor-pointer"
-              >
-                Próxima
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+        <PaginationBar
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          className="mt-6"
+        />
 
         {/* Notification Detail Modal */}
         <Dialog open={isNotificationDetailOpen} onOpenChange={setIsNotificationDetailOpen}>

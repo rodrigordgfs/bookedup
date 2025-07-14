@@ -23,16 +23,9 @@ import {
   Search
 } from 'lucide-react';
 import { Toolbar } from '@/components/Toolbar';
-
-interface Service {
-  id: number;
-  name: string;
-  description: string;
-  duration: number;
-  price: number;
-  category: string;
-  active: boolean;
-}
+import { PaginationBar } from '@/components/ui/pagination';
+import type { Service } from '@/mocks/data';
+import { services, categories } from '@/mocks/data';
 
 interface NewService {
   name: string;
@@ -84,52 +77,8 @@ export default function ServicesPage() {
   const [newCategory, setNewCategory] = useState<NewCategory>({ name: '' });
   const [editCategory, setEditCategory] = useState<NewCategory>({ name: '' });
 
-  const services: Service[] = [
-    {
-      id: 1,
-      name: 'Corte Masculino',
-      description: 'Corte tradicional masculino com acabamento',
-      duration: 30,
-      price: 35,
-      category: 'Cabelo',
-      active: true
-    },
-    {
-      id: 2,
-      name: 'Barba',
-      description: 'Aparar e modelar barba',
-      duration: 20,
-      price: 25,
-      category: 'Barba',
-      active: true
-    },
-    {
-      id: 3,
-      name: 'Corte + Barba',
-      description: 'Pacote completo de corte e barba',
-      duration: 45,
-      price: 55,
-      category: 'Combo',
-      active: true
-    },
-    {
-      id: 4,
-      name: 'Tratamento Capilar',
-      description: 'Hidratação e tratamento para cabelos',
-      duration: 40,
-      price: 45,
-      category: 'Tratamento',
-      active: true
-    }
-  ];
-
   // Dados das categorias
-  const [categories, setCategories] = useState<Category[]>([
-    { id: 1, name: 'Cabelo', active: true },
-    { id: 2, name: 'Barba', active: true },
-    { id: 3, name: 'Combo', active: true },
-    { id: 4, name: 'Tratamento', active: true }
-  ]);
+  const [categoriesState, setCategoriesState] = useState<Category[]>(categories);
 
   const handleAddService = () => {
     console.log('Adding service:', newService);
@@ -182,7 +131,7 @@ export default function ServicesPage() {
         name: newCategory.name.trim(),
         active: true
       };
-      setCategories(prev => [...prev, newCategoryObj]);
+      setCategoriesState(prev => [...prev, newCategoryObj]);
       setNewCategory({ name: '' });
       setIsAddCategoryOpen(false);
     }
@@ -190,7 +139,7 @@ export default function ServicesPage() {
 
   const handleEditCategory = () => {
     if (selectedCategory && editCategory.name.trim()) {
-      setCategories(prev => 
+      setCategoriesState(prev => 
         prev.map(cat => 
           cat.id === selectedCategory.id 
             ? { ...cat, name: editCategory.name.trim() }
@@ -204,11 +153,11 @@ export default function ServicesPage() {
   };
 
   const handleDeleteCategory = (categoryId: number) => {
-    setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+    setCategoriesState(prev => prev.filter(cat => cat.id !== categoryId));
   };
 
   const handleToggleCategoryStatus = (categoryId: number) => {
-    setCategories(prev => 
+    setCategoriesState(prev => 
       prev.map(cat => 
         cat.id === categoryId 
           ? { ...cat, active: !cat.active }
@@ -349,7 +298,7 @@ export default function ServicesPage() {
                         <SelectValue placeholder="Selecione uma categoria" />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.filter(cat => cat.active).map((category) => (
+                        {categoriesState.filter(cat => cat.active).map((category) => (
                           <SelectItem key={category.id} value={category.name}>
                             {category.name}
                           </SelectItem>
@@ -391,7 +340,7 @@ export default function ServicesPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as categorias</SelectItem>
-                    {categories.filter(cat => cat.active).map((category) => (
+                    {categoriesState.filter(cat => cat.active).map((category) => (
                       <SelectItem key={category.id} value={category.name}>
                         {category.name}
                       </SelectItem>
@@ -470,52 +419,13 @@ export default function ServicesPage() {
                 </tbody>
               </table>
             </div>
-            
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 border-t">
-                <div className="text-sm text-muted-foreground">
-                  Página {currentPage} de {totalPages}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="cursor-pointer"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    Anterior
-                  </Button>
-                  
-                  <div className="flex items-center space-x-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <Button
-                        key={page}
-                        variant={currentPage === page ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(page)}
-                        className="w-8 h-8 p-0 cursor-pointer"
-                      >
-                        {page}
-                      </Button>
-                    ))}
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="cursor-pointer"
-                  >
-                    Próxima
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
+            <PaginationBar
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              className="py-4"
+            />
           </CardContent>
         </Card>
 
@@ -686,7 +596,7 @@ export default function ServicesPage() {
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.filter(cat => cat.active).map((category) => (
+                    {categoriesState.filter(cat => cat.active).map((category) => (
                       <SelectItem key={category.id} value={category.name}>
                         {category.name}
                       </SelectItem>
@@ -730,7 +640,7 @@ export default function ServicesPage() {
                   </Button>
                 </div>
                 <div className="space-y-2">
-                  {categories.map((category) => (
+                  {categoriesState.map((category) => (
                     <div 
                       key={category.id}
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"

@@ -22,17 +22,9 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-interface Client {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  totalAppointments: number;
-  lastVisit: string;
-  status: 'active' | 'inactive';
-  notes: string;
-}
+import { PaginationBar } from '@/components/ui/pagination';
+import type { Client } from '@/mocks/data';
+import { clients } from '@/mocks/data';
 
 export default function ClientsPage() {
   const router = useRouter();
@@ -58,49 +50,6 @@ export default function ClientsPage() {
     avatarUrl: '',
     role: 'Administrador',
   };
-
-  const clients: Client[] = [
-    {
-      id: 1,
-      name: 'João Silva',
-      email: 'joao@email.com',
-      phone: '(11) 99999-9999',
-      totalAppointments: 15,
-      lastVisit: '2024-01-10',
-      status: 'active',
-      notes: 'Cliente preferencial'
-    },
-    {
-      id: 2,
-      name: 'Pedro Santos',
-      email: 'pedro@email.com',
-      phone: '(11) 88888-8888',
-      totalAppointments: 8,
-      lastVisit: '2024-01-08',
-      status: 'active',
-      notes: ''
-    },
-    {
-      id: 3,
-      name: 'Carlos Lima',
-      email: 'carlos@email.com',
-      phone: '(11) 77777-7777',
-      totalAppointments: 22,
-      lastVisit: '2024-01-05',
-      status: 'active',
-      notes: 'Alérgico a produtos com álcool'
-    },
-    {
-      id: 4,
-      name: 'Roberto Costa',
-      email: 'roberto@email.com',
-      phone: '(11) 66666-6666',
-      totalAppointments: 3,
-      lastVisit: '2023-12-20',
-      status: 'inactive',
-      notes: ''
-    }
-  ];
 
   const filteredClients = clients.filter(client => {
     const matchesSearch = 
@@ -391,52 +340,13 @@ export default function ClientsPage() {
                 </tbody>
               </table>
             </div>
-            
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 border-t">
-                <div className="text-sm text-muted-foreground">
-                  Página {currentPage} de {totalPages}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="cursor-pointer"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    Anterior
-                  </Button>
-                  
-                  <div className="flex items-center space-x-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <Button
-                        key={page}
-                        variant={currentPage === page ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(page)}
-                        className="w-8 h-8 p-0 cursor-pointer"
-                      >
-                        {page}
-                      </Button>
-                    ))}
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="cursor-pointer"
-                  >
-                    Próxima
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
+            <PaginationBar
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              className="py-4"
+            />
           </CardContent>
         </Card>
 
