@@ -1,4 +1,7 @@
 import { ProtectedRoute } from "@/components/auth/protected-route";
+import { useUser } from '@clerk/nextjs';
+import { AuthLoading } from '@/components/auth/auth-loading';
+import ClientAccess from './ClientAccess';
 
 export default function DashboardLayout({
   children,
@@ -6,12 +9,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute>
+    <ClientAccess>
       <div className="flex h-screen bg-background">
         <main className="flex-1 overflow-auto">
           {children}
         </main>
       </div>
-    </ProtectedRoute>
+    </ClientAccess>
   );
 } 

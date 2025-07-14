@@ -9,6 +9,7 @@ import {
   DropdownMenuItem, DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Bell, CheckCircle, XCircle, Clock, User, Archive, Calendar } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Notification {
   id: number;
@@ -25,6 +26,7 @@ interface Notification {
 }
 
 export function NotificationsDropdown() {
+  const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: 1,
@@ -150,11 +152,11 @@ export function NotificationsDropdown() {
     if (notification.data?.appointmentId) {
       // Navegar para detalhes do agendamento
       localStorage.setItem('openAppointmentDetail', notification.data.appointmentId.toString());
-      window.location.href = '/dashboard/appointments';
+      router.push('/dashboard/appointments');
     } else if (notification.data?.clientId) {
       // Navegar para detalhes do cliente
       localStorage.setItem('openClientDetail', notification.data.clientId.toString());
-      window.location.href = '/dashboard/clients';
+      router.push('/dashboard/clients');
     }
   };
 
@@ -235,7 +237,7 @@ export function NotificationsDropdown() {
               variant="ghost" 
               size="sm" 
               className="w-full text-xs"
-              onClick={() => window.location.href = '/dashboard/notifications'}
+              onClick={() => router.push('/dashboard/notifications')}
             >
               Ver todas as notificações
             </Button>

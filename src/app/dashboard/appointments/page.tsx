@@ -143,6 +143,7 @@ export default function AppointmentsPage() {
     if (typeof window !== 'undefined') {
       const selectedClientForAppointment = localStorage.getItem('selectedClientForAppointment');
       const openNewAppointmentModal = localStorage.getItem('openNewAppointmentModal');
+      const selectedDateForAppointment = localStorage.getItem('selectedDateForAppointment');
       
       if (selectedClientForAppointment) {
         try {
@@ -166,6 +167,13 @@ export default function AppointmentsPage() {
         setIsAddAppointmentOpen(true);
         // Limpar o localStorage após usar
         localStorage.removeItem('openNewAppointmentModal');
+        if (selectedDateForAppointment) {
+          setNewAppointment(prev => ({
+            ...prev,
+            date: selectedDateForAppointment
+          }));
+          localStorage.removeItem('selectedDateForAppointment');
+        }
       }
     }
   }, []);

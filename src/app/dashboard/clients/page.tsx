@@ -21,6 +21,7 @@ import {
   Mail, Calendar, ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Client {
   id: number;
@@ -34,6 +35,7 @@ interface Client {
 }
 
 export default function ClientsPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isAddClientOpen, setIsAddClientOpen] = useState(false);
@@ -161,7 +163,7 @@ export default function ClientsPage() {
         phone: client.phone
       }));
       // Redirecionar para a tela de appointments
-      window.location.href = '/dashboard/appointments';
+      router.push('/dashboard/appointments');
     }
   };
 

@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Clock, User, ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { formatToReal } from '@/lib/utils';
+import { useUser } from '@clerk/nextjs';
+import { useEffect } from 'react';
 
 export default function BookingPage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -21,6 +23,18 @@ export default function BookingPage() {
     phone: '',
     notes: ''
   });
+
+  const { user, isLoaded } = useUser();
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      setCustomerInfo((prev) => ({
+        ...prev,
+        name: prev.name || user.fullName || '',
+        email: prev.email || user.primaryEmailAddress?.emailAddress || ''
+      }));
+    }
+  }, [isLoaded, user]);
 
   const services = [
     { id: 'consultoria', name: 'Consultoria', price: 150, duration: 60 },

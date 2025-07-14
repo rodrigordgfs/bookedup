@@ -14,10 +14,12 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { Toolbar } from '@/components/Toolbar';
+import { useRouter } from 'next/navigation';
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const router = useRouter();
 
   // Mock appointments data
   const appointments = [
@@ -149,16 +151,28 @@ export default function CalendarPage() {
                     {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
                   </CardTitle>
                   <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm" onClick={() => navigateMonth('prev')}>
+                    <Button variant="outline" size="sm" onClick={() => navigateMonth('prev')} className="cursor-pointer">
                       <ChevronLeft className="w-4 h-4" />
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => setCurrentDate(new Date())}>
+                    <Button variant="outline" size="sm" onClick={() => setCurrentDate(new Date())} className="cursor-pointer">
                       Hoje
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => navigateMonth('next')}>
+                    <Button variant="outline" size="sm" onClick={() => navigateMonth('next')} className="cursor-pointer">
                       <ChevronRight className="w-4 h-4" />
                     </Button>
-                    <Button size="sm" className="bg-slate-800 hover:bg-slate-700 dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-slate-300">
+                    {/* Novo Agendamento só se a data for hoje ou futura */}
+                    <Button
+                      size="sm"
+                      className="bg-slate-800 hover:bg-slate-700 dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-slate-300 cursor-pointer"
+                      disabled={selectedDate && (() => { const today = new Date(); today.setHours(0,0,0,0); const sel = new Date(selectedDate); sel.setHours(0,0,0,0); return sel < today; })()}
+                      onClick={() => {
+                        if (typeof window !== 'undefined') {
+                          localStorage.setItem('openNewAppointmentModal', 'true');
+                          localStorage.setItem('selectedDateForAppointment', selectedDate.toISOString().split('T')[0]);
+                        }
+                        router.push('/dashboard/appointments');
+                      }}
+                    >
                       <Plus className="w-4 h-4 mr-2" />
                       Novo Agendamento
                     </Button>

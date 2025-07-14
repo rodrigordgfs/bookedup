@@ -444,8 +444,10 @@ export default function DashboardPage() {
                       year: 'numeric'
                     })}
                   </div>
-                  <Button variant="outline" className="w-full cursor-pointer">
-                    Ver Calendário Completo
+                  <Button variant="outline" className="w-full cursor-pointer" asChild>
+                    <Link href="/dashboard/calendar">
+                      Ver Calendário Completo
+                    </Link>
                   </Button>
                 </div>
               </CardContent>
