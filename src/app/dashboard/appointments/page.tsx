@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import NewAppointmentDialog from '@/components/appointments/NewAppointmentDialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { formatToReal } from '@/lib/utils';
@@ -32,6 +32,13 @@ import {
 import { PaginationBar } from '@/components/ui/pagination';
 import { appointments } from '@/mocks/data';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import AppointmentsTable from '@/components/appointments/AppointmentsTable';
+import AppointmentsFilters from '@/components/appointments/AppointmentsFilters';
+import AppointmentDetailsDialog from '@/components/appointments/AppointmentDetailsDialog';
+import EditAppointmentDialog from '@/components/appointments/EditAppointmentDialog';
+import ClientHistoryDialog from '@/components/appointments/ClientHistoryDialog';
+import NoAppointmentsCard from '@/components/appointments/NoAppointmentsCard';
 
 export default function AppointmentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -366,903 +373,94 @@ export default function AppointmentsPage() {
             </p>
           </div>
           <div className="mt-4 sm:mt-0 flex items-center space-x-4">
-            <Dialog open={isAddAppointmentOpen} onOpenChange={setIsAddAppointmentOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Novo Agendamento
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-[500px] sm:mx-0">
-                <DialogHeader>
-                  <DialogTitle>Novo Agendamento</DialogTitle>
-                  <DialogDescription>
-                    Preencha as informações para criar um novo agendamento.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="clientSelect">Selecionar Cliente</Label>
-                    <div className="relative">
-                      <Input
-                        id="clientSelect"
-                        placeholder="Digite para buscar um cliente..."
-                        value={clientSearchTerm}
-                        onChange={(e) => {
-                          setClientSearchTerm(e.target.value);
-                          setIsClientSelectOpen(true);
-                        }}
-                        onFocus={() => setIsClientSelectOpen(true)}
-                      />
-                      {isClientSelectOpen && (
-                        <div className="absolute z-50 w-full mt-1 bg-background border border-input rounded-md shadow-lg max-h-60 overflow-y-auto client-dropdown">
-                          {filteredClients.length > 0 ? (
-                            filteredClients.map((client) => (
-                              <div
-                                key={client.id}
-                                className="px-3 py-2 hover:bg-muted cursor-pointer border-b last:border-b-0"
-                                onClick={() => handleClientSelect(client)}
-                              >
-                                <div className="font-medium">{client.name}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  {client.email} • {client.phone}
-                                </div>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="px-3 py-2 text-sm text-muted-foreground">
-                              Nenhum cliente encontrado
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {newAppointment.clientName && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="clientPhone">Telefone</Label>
-                        <Input
-                          id="clientPhone"
-                          value={newAppointment.clientPhone}
-                          onChange={(e) => setNewAppointment(prev => ({...prev, clientPhone: e.target.value}))}
-                          placeholder="(11) 99999-9999"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="clientEmail">Email</Label>
-                        <Input
-                          id="clientEmail"
-                          type="email"
-                          value={newAppointment.clientEmail}
-                          onChange={(e) => setNewAppointment(prev => ({...prev, clientEmail: e.target.value}))}
-                          placeholder="email@exemplo.com"
-                        />
-                      </div>
-                    </div>
-                  )}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="service">Serviço</Label>
-                      <Select value={newAppointment.service} onValueChange={(value) => setNewAppointment(prev => ({...prev, service: value}))}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione o serviço" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="haircut">Corte Masculino</SelectItem>
-                          <SelectItem value="beard">Barba</SelectItem>
-                          <SelectItem value="haircut-beard">Corte + Barba</SelectItem>
-                          <SelectItem value="treatment">Tratamento Capilar</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="professional">Profissional</Label>
-                      <Select value={newAppointment.professional} onValueChange={(value) => setNewAppointment(prev => ({...prev, professional: value}))}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione o profissional" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="joao">João Barbeiro</SelectItem>
-                          <SelectItem value="maria">Maria Silva</SelectItem>
-                          <SelectItem value="pedro">Pedro Costa</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="date">Data</Label>
-                      <Input
-                        id="date"
-                        type="date"
-                        value={newAppointment.date}
-                        onChange={(e) => setNewAppointment(prev => ({...prev, date: e.target.value}))}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="time">Horário</Label>
-                      <Input
-                        id="time"
-                        type="time"
-                        value={newAppointment.time}
-                        onChange={(e) => setNewAppointment(prev => ({...prev, time: e.target.value}))}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">Observações</Label>
-                    <textarea
-                      id="notes"
-                      value={newAppointment.notes}
-                      onChange={(e) => setNewAppointment(prev => ({...prev, notes: e.target.value}))}
-                      placeholder="Observações sobre o agendamento..."
-                      className="w-full px-3 py-2 border border-input rounded-md text-sm"
-                      rows={3}
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsAddAppointmentOpen(false)}>
-                    Cancelar
-                  </Button>
-                  <Button onClick={handleAddAppointment}>
-                    Criar Agendamento
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <NewAppointmentDialog
+              open={isAddAppointmentOpen}
+              onOpenChange={setIsAddAppointmentOpen}
+              clientSearchTerm={clientSearchTerm}
+              setClientSearchTerm={setClientSearchTerm}
+              isClientSelectOpen={isClientSelectOpen}
+              setIsClientSelectOpen={setIsClientSelectOpen}
+              filteredClients={filteredClients}
+              handleClientSelect={handleClientSelect}
+              newAppointment={newAppointment}
+              setNewAppointment={setNewAppointment}
+              handleAddAppointment={handleAddAppointment}
+            />
           </div>
         </div>
 
         {/* Search and Filters */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            {loading ? (
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Skeleton className="h-10 w-full sm:w-1/2 mb-2" />
-                <Skeleton className="h-10 w-48 mb-2" />
-                <Skeleton className="h-10 w-48 mb-2" />
-              </div>
-            ) : (
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input
-                    placeholder="Buscar por cliente, serviço ou profissional..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Filtrar por status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos os status</SelectItem>
-                    <SelectItem value="confirmed">Confirmado</SelectItem>
-                    <SelectItem value="pending">Pendente</SelectItem>
-                    <SelectItem value="completed">Concluído</SelectItem>
-                    <SelectItem value="cancelled">Cancelado</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="cursor-pointer">
-                      <Filter className="w-4 h-4 mr-2" />
-                      Filtros Avançados
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                      <DialogTitle>Filtros de Agendamentos</DialogTitle>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="filterStatus">Status</Label>
-                        <Select value={filters.status} onValueChange={(value) => setFilters({...filters, status: value})}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Selecione o status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">Todos os status</SelectItem>
-                            <SelectItem value="confirmed">Confirmado</SelectItem>
-                            <SelectItem value="pending">Pendente</SelectItem>
-                            <SelectItem value="completed">Concluído</SelectItem>
-                            <SelectItem value="cancelled">Cancelado</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="filterService">Serviço</Label>
-                        <Select value={filters.service} onValueChange={(value) => setFilters({...filters, service: value})}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Selecione o serviço" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">Todos os serviços</SelectItem>
-                            <SelectItem value="haircut">Corte Masculino</SelectItem>
-                            <SelectItem value="beard">Barba</SelectItem>
-                            <SelectItem value="haircut-beard">Corte + Barba</SelectItem>
-                            <SelectItem value="treatment">Tratamento Capilar</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="filterProfessional">Profissional</Label>
-                        <Select value={filters.professional} onValueChange={(value) => setFilters({...filters, professional: value})}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Selecione o profissional" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">Todos os profissionais</SelectItem>
-                            <SelectItem value="joao">João Barbeiro</SelectItem>
-                            <SelectItem value="maria">Maria Silva</SelectItem>
-                            <SelectItem value="pedro">Pedro Costa</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="filterDateRange">Período</Label>
-                        <Select value={filters.dateRange} onValueChange={(value) => setFilters({...filters, dateRange: value})}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Selecione o período" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">Todos os períodos</SelectItem>
-                            <SelectItem value="today">Hoje</SelectItem>
-                            <SelectItem value="week">Esta semana</SelectItem>
-                            <SelectItem value="month">Este mês</SelectItem>
-                            <SelectItem value="past">Passado</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={() => {
-                        setFilters({
-                          status: 'all',
-                          service: 'all',
-                          professional: 'all',
-                          dateRange: 'all'
-                        });
-                      }}>
-                        Limpar Filtros
-                      </Button>
-                      <Button onClick={() => setIsFilterModalOpen(false)}>
-                        Aplicar Filtros
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <AppointmentsFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          filters={filters}
+          setFilters={setFilters}
+          isFilterModalOpen={isFilterModalOpen}
+          setIsFilterModalOpen={setIsFilterModalOpen}
+          loading={loading}
+        />
 
         {/* Appointments List */}
-        <Card>
-          <CardHeader className="pb-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <h3 className="text-lg font-semibold">Lista de Agendamentos</h3>
-              <div className="text-sm text-muted-foreground">
-                Mostrando {startIndex + 1}-{Math.min(endIndex, filteredAppointments.length)} de {filteredAppointments.length} agendamentos
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            {loading ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="text-left p-4 font-medium text-sm">Cliente</th>
-                      <th className="text-left p-4 font-medium text-sm">Serviço</th>
-                      <th className="text-left p-4 font-medium text-sm">Data</th>
-                      <th className="text-left p-4 font-medium text-sm">Horário</th>
-                      <th className="text-left p-4 font-medium text-sm">Profissional</th>
-                      <th className="text-left p-4 font-medium text-sm">Valor</th>
-                      <th className="text-left p-4 font-medium text-sm">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: 10 }).map((_, i) => (
-                      <tr key={i} className="border-b">
-                        <td className="p-4"><Skeleton className="h-6 w-32" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-24" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-24" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-16" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="text-left p-4 font-medium text-sm">Cliente</th>
-                      <th className="text-left p-4 font-medium text-sm">Serviço</th>
-                      <th className="text-left p-4 font-medium text-sm">Data</th>
-                      <th className="text-left p-4 font-medium text-sm">Horário</th>
-                      <th className="text-left p-4 font-medium text-sm">Profissional</th>
-                      <th className="text-left p-4 font-medium text-sm">Valor</th>
-                      <th className="text-left p-4 font-medium text-sm">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentAppointments.map((appointment) => (
-                      <tr 
-                        key={appointment.id} 
-                        className="border-b hover:bg-muted/30 transition-colors cursor-pointer"
-                        onClick={() => handleAppointmentClick(appointment)}
-                      >
-                        <td className="p-4">
-                          <div className="flex items-center space-x-2">
-                            <Users className="w-4 h-4 text-muted-foreground" />
-                            <span className="font-medium">{appointment.client.name}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center space-x-2">
-                            <Archive className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">{appointment.service}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center space-x-2">
-                            <Calendar className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">{new Date(appointment.date).toLocaleDateString('pt-BR')}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center space-x-2">
-                            <Clock className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">{appointment.time} ({appointment.duration} min)</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center space-x-2">
-                            <User className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">{appointment.professional}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <span className="font-semibold">{formatToReal(appointment.price)}</span>
-                        </td>
-                        <td className="p-4">
-                          <Badge className={`${getStatusColor(appointment.status)} flex items-center space-x-1 w-fit`}>
-                            {getStatusIcon(appointment.status)}
-                            <span className="text-xs">{getStatusText(appointment.status)}</span>
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            
-            {/* Pagination */}
-            {!loading && (
-              <PaginationBar
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                className="py-4"
-              />
-            )}
-          </CardContent>
-        </Card>
+        <AppointmentsTable
+          appointments={currentAppointments}
+          loading={loading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          startIndex={startIndex}
+          endIndex={endIndex}
+          totalCount={filteredAppointments.length}
+          onPageChange={handlePageChange}
+          onAppointmentClick={handleAppointmentClick}
+          getStatusColor={getStatusColor}
+          getStatusIcon={getStatusIcon}
+          getStatusText={getStatusText}
+        />
 
         {filteredAppointments.length === 0 && (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Nenhum agendamento encontrado</h3>
-              <p className="text-muted-foreground mb-4">
-                {searchTerm || statusFilter !== 'all' 
-                  ? 'Tente ajustar os filtros de busca' 
-                  : 'Comece criando seu primeiro agendamento'
-                }
-              </p>
-              <Button onClick={() => setIsAddAppointmentOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Novo Agendamento
-              </Button>
-            </CardContent>
-          </Card>
+          <NoAppointmentsCard
+            searchTerm={searchTerm}
+            statusFilter={statusFilter}
+            onAddAppointment={() => setIsAddAppointmentOpen(true)}
+          />
         )}
 
         {/* Modal de Detalhes do Agendamento */}
-        <Dialog open={isAppointmentDetailOpen} onOpenChange={setIsAppointmentDetailOpen}>
-          <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-[600px] sm:mx-0 max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center space-x-2">
-                <Calendar className="w-5 h-5" />
-                <span>Detalhes do Agendamento</span>
-              </DialogTitle>
-              <DialogDescription>
-                Visualize e gerencie os detalhes completos do agendamento.
-              </DialogDescription>
-            </DialogHeader>
-            {selectedAppointment && (
-              <div className="space-y-4 sm:space-y-6">
-                {/* Status do Agendamento */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-muted-foreground">Status:</span>
-                    <Badge className={`${getStatusColor(selectedAppointment.status)} flex items-center space-x-1`}>
-                      {getStatusIcon(selectedAppointment.status)}
-                      <span className="text-xs">{getStatusText(selectedAppointment.status)}</span>
-                    </Badge>
-                  </div>
-                  <div className="text-left sm:text-right">
-                    <div className="text-xl sm:text-2xl font-bold text-green-600">
-                      {formatToReal(selectedAppointment.price)}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {selectedAppointment.duration} minutos
-                    </div>
-                  </div>
-                </div>
-
-                {/* Informações do Cliente */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold flex items-center space-x-2">
-                    <Users className="w-5 h-5" />
-                    <span>Informações do Cliente</span>
-                  </h3>
-                  <div className="grid grid-cols-1 gap-4 p-4 bg-muted/30 rounded-lg">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground" htmlFor="detailClientName">Nome</label>
-                      <p className="text-sm font-medium" id="detailClientName">{selectedAppointment.client.name}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground" htmlFor="detailClientEmail">Email</label>
-                      <p className="text-sm" id="detailClientEmail">{selectedAppointment.client.email}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground" htmlFor="detailClientPhone">Telefone</label>
-                      <p className="text-sm" id="detailClientPhone">{selectedAppointment.client.phone}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Informações do Serviço */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold flex items-center space-x-2">
-                    <Archive className="w-5 h-5" />
-                    <span>Detalhes do Serviço</span>
-                  </h3>
-                  <div className="grid grid-cols-1 gap-4 p-4 bg-muted/30 rounded-lg">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground" htmlFor="detailService">Serviço</label>
-                      <p className="text-sm font-medium" id="detailService">{selectedAppointment.service}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground" htmlFor="detailProfessional">Profissional</label>
-                      <div className="flex items-center space-x-2" id="detailProfessional">
-                        <User className="w-4 h-4 text-muted-foreground" />
-                        <p className="text-sm">{selectedAppointment.professional}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Data e Horário */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold flex items-center space-x-2">
-                    <Clock className="w-5 h-5" />
-                    <span>Data e Horário</span>
-                  </h3>
-                  <div className="grid grid-cols-1 gap-4 p-4 bg-muted/30 rounded-lg">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground" htmlFor="detailDate">Data</label>
-                      <div className="flex items-center space-x-2" id="detailDate">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <p className="text-sm">{new Date(selectedAppointment.date).toLocaleDateString('pt-BR')}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground" htmlFor="detailTime">Horário</label>
-                      <div className="flex items-center space-x-2" id="detailTime">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <p className="text-sm">{selectedAppointment.time}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Observações */}
-                {selectedAppointment.notes && (
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold">Observações</h3>
-                    <div className="p-4 bg-muted/30 rounded-lg">
-                      <p className="text-sm">{selectedAppointment.notes}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Ações */}
-                <div className="space-y-4 pt-4 border-t">
-                  {/* Status Actions */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <span className="text-sm font-medium text-muted-foreground">Alterar Status:</span>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedAppointment.status === 'pending' && (
-                        <>
-                          <Button 
-                            size="sm"
-                            variant="outline" 
-                            className="text-green-600 border-green-200 hover:bg-green-50 flex-1 sm:flex-none"
-                            onClick={() => {
-                              updateAppointmentStatus(selectedAppointment.id, 'confirmed');
-                              setIsAppointmentDetailOpen(false);
-                            }}
-                          >
-                            <CheckCircle className="w-4 h-4 mr-2" />
-                            Confirmar
-                          </Button>
-                          <Button 
-                            size="sm"
-                            variant="outline" 
-                            className="text-red-600 border-red-200 hover:bg-red-50 flex-1 sm:flex-none"
-                            onClick={() => {
-                              updateAppointmentStatus(selectedAppointment.id, 'cancelled');
-                              setIsAppointmentDetailOpen(false);
-                            }}
-                          >
-                            <XCircle className="w-4 h-4 mr-2" />
-                            Cancelar
-                          </Button>
-                        </>
-                      )}
-                      
-                      {selectedAppointment.status === 'confirmed' && (
-                        <Button 
-                          size="sm"
-                          variant="outline" 
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer flex-1 sm:flex-none"
-                          onClick={() => {
-                            updateAppointmentStatus(selectedAppointment.id, 'completed');
-                            setIsAppointmentDetailOpen(false);
-                          }}
-                        >
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          Concluir
-                        </Button>
-                      )}
-                      
-                      {selectedAppointment.status === 'completed' && (
-                        <Button 
-                          size="sm"
-                          variant="outline" 
-                          className="text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer flex-1 sm:flex-none"
-                          onClick={() => {
-                            updateAppointmentStatus(selectedAppointment.id, 'cancelled');
-                            setIsAppointmentDetailOpen(false);
-                          }}
-                        >
-                          <XCircle className="w-4 h-4 mr-2" />
-                          Cancelar
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Other Actions */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <span className="text-sm font-medium text-muted-foreground">Outras Ações:</span>
-                    <div className="flex flex-wrap gap-2">
-                      <Button 
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          // Lógica para reenviar confirmação
-                          console.log('Reenviar confirmação para:', selectedAppointment.client.email);
-                          setIsAppointmentDetailOpen(false);
-                        }}
-                        className="cursor-pointer flex-1 sm:flex-none"
-                      >
-                        <Bell className="w-4 h-4 mr-2" />
-                        Reenviar Confirmação
-                      </Button>
-                      
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button size="sm" variant="outline" className="cursor-pointer flex-1 sm:flex-none">
-                            <MoreVertical className="w-4 h-4 mr-2" />
-                            Mais Opções
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          {selectedAppointment.status !== 'cancelled' && selectedAppointment.status !== 'completed' && (
-                            <DropdownMenuItem 
-                              onClick={() => {
-                                console.log('Edit clicked for appointment:', selectedAppointment);
-                                handleEditAppointment(selectedAppointment);
-                              }}
-                            >
-                              <Edit className="mr-2 h-4 w-4" />
-                              Editar Agendamento
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem onClick={() => handleViewClientHistory(selectedAppointment)}>
-                            <User className="mr-2 h-4 w-4" />
-                            Ver Histórico do Cliente
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          {selectedAppointment.status === 'pending' && (
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Excluir Agendamento
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-
-                  {/* Close Button */}
-                  <div className="flex justify-end pt-2">
-                    <Button variant="outline" onClick={() => setIsAppointmentDetailOpen(false)}>
-                      Fechar
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+        <AppointmentDetailsDialog
+          open={isAppointmentDetailOpen}
+          onOpenChange={setIsAppointmentDetailOpen}
+          appointment={selectedAppointment}
+          getStatusColor={getStatusColor}
+          getStatusIcon={getStatusIcon}
+          getStatusText={getStatusText}
+          updateAppointmentStatus={(id, status) => {
+            updateAppointmentStatus(id, status);
+            setIsAppointmentDetailOpen(false);
+          }}
+          onEdit={handleEditAppointment}
+          onViewClientHistory={handleViewClientHistory}
+        />
 
         {/* Modal de Edição do Agendamento */}
-        <Dialog open={isEditAppointmentOpen} onOpenChange={(open) => {
-          console.log('Edit modal open state:', open);
-          setIsEditAppointmentOpen(open);
-        }}>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle className="flex items-center space-x-2">
-                <Edit className="w-5 h-5" />
-                <span>Editar Agendamento</span>
-              </DialogTitle>
-              <DialogDescription>
-                Modifique as informações do agendamento conforme necessário.
-              </DialogDescription>
-            </DialogHeader>
-            {editingAppointment && (
-              <div className="grid gap-4 py-4">
-                <div className="text-sm text-muted-foreground mb-2">
-                  Editando agendamento ID: {editingAppointment.id}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="editClientName">Nome do cliente</Label>
-                    <Input
-                      id="editClientName"
-                      value={editingAppointment.clientName}
-                      onChange={(e) => setEditingAppointment({...editingAppointment, clientName: e.target.value})}
-                      placeholder="Nome completo"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="editClientPhone">Telefone</Label>
-                    <Input
-                      id="editClientPhone"
-                      value={editingAppointment.clientPhone}
-                      onChange={(e) => setEditingAppointment({...editingAppointment, clientPhone: e.target.value})}
-                      placeholder="(11) 99999-9999"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="editClientEmail">Email</Label>
-                  <Input
-                    id="editClientEmail"
-                    type="email"
-                    value={editingAppointment.clientEmail}
-                    onChange={(e) => setEditingAppointment({...editingAppointment, clientEmail: e.target.value})}
-                    placeholder="email@exemplo.com"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="editService">Serviço</Label>
-                    <Select value={editingAppointment.service} onValueChange={(value) => setEditingAppointment({...editingAppointment, service: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o serviço" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Corte Masculino">Corte Masculino</SelectItem>
-                        <SelectItem value="Barba">Barba</SelectItem>
-                        <SelectItem value="Corte + Barba">Corte + Barba</SelectItem>
-                        <SelectItem value="Tratamento Capilar">Tratamento Capilar</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="editProfessional">Profissional</Label>
-                    <Select value={editingAppointment.professional} onValueChange={(value) => setEditingAppointment({...editingAppointment, professional: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o profissional" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="João Barbeiro">João Barbeiro</SelectItem>
-                        <SelectItem value="Maria Silva">Maria Silva</SelectItem>
-                        <SelectItem value="Pedro Costa">Pedro Costa</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="editDate">Data</Label>
-                    <Input
-                      id="editDate"
-                      type="date"
-                      value={editingAppointment.date}
-                      onChange={(e) => setEditingAppointment({...editingAppointment, date: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="editTime">Horário</Label>
-                    <Input
-                      id="editTime"
-                      type="time"
-                      value={editingAppointment.time}
-                      onChange={(e) => setEditingAppointment({...editingAppointment, time: e.target.value})}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="editNotes">Observações</Label>
-                  <textarea
-                    id="editNotes"
-                    value={editingAppointment.notes}
-                    onChange={(e) => setEditingAppointment({...editingAppointment, notes: e.target.value})}
-                    placeholder="Observações sobre o agendamento..."
-                    className="w-full px-3 py-2 border border-input rounded-md text-sm"
-                    rows={3}
-                  />
-                </div>
-              </div>
-            )}
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => {
-                setIsEditAppointmentOpen(false);
-                setEditingAppointment(null);
-              }}>
-                Cancelar
-              </Button>
-              <Button onClick={handleSaveEdit}>
-                Salvar Alterações
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <EditAppointmentDialog
+          open={isEditAppointmentOpen}
+          onOpenChange={setIsEditAppointmentOpen}
+          editingAppointment={editingAppointment}
+          setEditingAppointment={setEditingAppointment}
+          handleSaveEdit={handleSaveEdit}
+        />
 
         {/* Modal de Histórico do Cliente */}
-        <Dialog open={isClientHistoryOpen} onOpenChange={setIsClientHistoryOpen}>
-          <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-[700px] sm:mx-0 max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center space-x-2">
-                <User className="w-5 h-5" />
-                <span>Histórico do Cliente</span>
-              </DialogTitle>
-              <DialogDescription>
-                Visualize o histórico completo de agendamentos do cliente.
-              </DialogDescription>
-            </DialogHeader>
-            {selectedAppointment && (
-              <div className="space-y-4 sm:space-y-6">
-                {/* Informações do Cliente */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold flex items-center space-x-2">
-                    <Users className="w-5 h-5" />
-                    <span>Informações do Cliente</span>
-                  </h3>
-                  <div className="grid grid-cols-1 gap-4 p-4 bg-muted/30 rounded-lg">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Nome</label>
-                      <p className="text-sm font-medium">{selectedAppointment.client.name}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Email</label>
-                      <p className="text-sm">{selectedAppointment.client.email}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Telefone</label>
-                      <p className="text-sm">{selectedAppointment.client.phone}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Estatísticas */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold">Estatísticas</h3>
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                    <div className="p-3 sm:p-4 bg-muted/30 rounded-lg text-center">
-                      <div className="text-xl sm:text-2xl font-bold text-blue-600">12</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Total de Visitas</div>
-                    </div>
-                    <div className="p-3 sm:p-4 bg-muted/30 rounded-lg text-center">
-                      <div className="text-xl sm:text-2xl font-bold text-green-600">8</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Concluídos</div>
-                    </div>
-                    <div className="p-3 sm:p-4 bg-muted/30 rounded-lg text-center">
-                      <div className="text-xl sm:text-2xl font-bold text-yellow-600">2</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Pendentes</div>
-                    </div>
-                    <div className="p-3 sm:p-4 bg-muted/30 rounded-lg text-center">
-                      <div className="text-xl sm:text-2xl font-bold text-red-600">2</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Cancelados</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Histórico de Agendamentos */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold">Histórico de Agendamentos</h3>
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
-                    {appointments
-                      .filter(apt => apt.client.email === selectedAppointment.client.email)
-                      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                      .map((appointment) => (
-                        <div key={appointment.id} className="p-3 border rounded-lg hover:bg-muted/30 transition-colors">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                              <div className="flex items-center space-x-2">
-                                <Calendar className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-sm font-medium">
-                                  {new Date(appointment.date).toLocaleDateString('pt-BR')}
-                                </span>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <Clock className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-sm">{appointment.time}</span>
-                              </div>
-                            </div>
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                              <Badge className={`${getStatusColor(appointment.status)} flex items-center space-x-1 w-fit`}>
-                                {getStatusIcon(appointment.status)}
-                                <span className="text-xs">{getStatusText(appointment.status)}</span>
-                              </Badge>
-                              <span className="text-sm font-medium">{formatToReal(appointment.price)}</span>
-                            </div>
-                          </div>
-                          <div className="mt-2 text-sm text-muted-foreground">
-                            <span className="font-medium">{appointment.service}</span> • {appointment.professional}
-                          </div>
-                          {appointment.notes && (
-                            <div className="mt-2 text-sm text-muted-foreground">
-                              <span className="font-medium">Observações:</span> {appointment.notes}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                  </div>
-                </div>
-
-                {/* Botões de Ação */}
-                <div className="flex justify-end pt-4 border-t">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setIsClientHistoryOpen(false)} 
-                    className="cursor-pointer w-full sm:w-auto"
-                  >
-                    Fechar
-                  </Button>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+        <ClientHistoryDialog
+          open={isClientHistoryOpen}
+          onOpenChange={setIsClientHistoryOpen}
+          selectedAppointment={selectedAppointment}
+          appointments={appointments}
+          getStatusColor={getStatusColor}
+          getStatusIcon={getStatusIcon}
+          getStatusText={getStatusText}
+        />
       </div>
     </div>
   );
