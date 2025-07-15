@@ -2,24 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { formatToReal } from '@/lib/utils';
 import {
-  Plus,
-  Edit,
-  Trash2, Archive,
-  Clock,
-  DollarSign, Search
+  Plus
 } from 'lucide-react';
-import { PaginationBar } from '@/components/ui/pagination';
 import type { Service } from '@/mocks/data';
 import { services, categories } from '@/mocks/data';
-import { Skeleton } from '@/components/ui/skeleton';
+import ServicesTable from '@/components/services/ServicesTable';
+import ServicesListHeader from '@/components/services/ServicesListHeader';
+import ServicesFilters from '@/components/services/ServicesFilters';
+import ServiceDetailsDialog from '@/components/services/ServiceDetailsDialog';
+import EditServiceDialog from '@/components/services/EditServiceDialog';
+import CategoriesDialog from '@/components/services/CategoriesDialog';
+import NoServicesCard from '@/components/services/NoServicesCard';
 
 interface NewService {
   name: string;
@@ -216,568 +210,97 @@ export default function ServicesPage() {
             >
               Gerenciar Categorias
             </Button>
-            <Dialog open={isAddServiceOpen} onOpenChange={setIsAddServiceOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Novo Serviço
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Adicionar Novo Serviço</DialogTitle>
-                  <DialogDescription>
-                    Crie um novo serviço para oferecer aos seus clientes.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="serviceName">Nome do serviço</Label>
-                    <Input
-                      id="serviceName"
-                      value={newService.name}
-                      onChange={(e) => setNewService({...newService, name: e.target.value})}
-                      placeholder="Ex: Corte Masculino"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="serviceDescription">Descrição</Label>
-                    <textarea
-                      id="serviceDescription"
-                      value={newService.description}
-                      onChange={(e) => setNewService({...newService, description: e.target.value})}
-                      placeholder="Descrição do serviço..."
-                      className="w-full px-3 py-2 border border-input rounded-md text-sm"
-                      rows={3}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="serviceDuration">Duração (min)</Label>
-                      <Input
-                        id="serviceDuration"
-                        type="number"
-                        value={newService.duration}
-                        onChange={(e) => setNewService({...newService, duration: e.target.value})}
-                        placeholder="30"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="servicePrice">Preço (R$)</Label>
-                      <Input
-                        id="servicePrice"
-                        type="number"
-                        value={newService.price}
-                        onChange={(e) => setNewService({...newService, price: e.target.value})}
-                        placeholder="35"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="serviceCategory">Categoria</Label>
-                    <Select value={newService.category} onValueChange={(value) => setNewService({...newService, category: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma categoria" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categoriesState.filter(cat => cat.active).map((category) => (
-                          <SelectItem key={category.id} value={category.name}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsAddServiceOpen(false)}>
-                    Cancelar
-                  </Button>
-                  <Button onClick={handleAddService}>
-                    Adicionar Serviço
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer" onClick={() => setIsAddServiceOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Novo Serviço
+            </Button>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            {loading ? (
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Skeleton className="h-10 w-full sm:w-1/2 mb-2" />
-                <Skeleton className="h-10 w-48 mb-2" />
-              </div>
-            ) : (
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input
-                    placeholder="Buscar serviços por nome, descrição ou categoria..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Select value={categoryFilter} onValueChange={(value) => setCategoryFilter(value)}>
-                    <SelectTrigger className="w-[200px]">
-                      <SelectValue placeholder="Filtrar por categoria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todas as categorias</SelectItem>
-                      {categoriesState.filter(cat => cat.active).map((category) => (
-                        <SelectItem key={category.id} value={category.name}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <ServicesFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          categoryFilter={categoryFilter}
+          setCategoryFilter={setCategoryFilter}
+          loading={loading}
+          categories={categoriesState}
+        />
 
-        {/* Services List */}
-        <Card>
-          <CardHeader className="pb-4">
-            <div>
-              <h3 className="text-lg font-semibold">Lista de Serviços</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Mostrando {startIndex + 1}-{Math.min(endIndex, filteredServices.length)} de {filteredServices.length} serviços
-              </p>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            {loading ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="text-left p-4 font-medium text-sm">Serviço</th>
-                      <th className="text-left p-4 font-medium text-sm">Categoria</th>
-                      <th className="text-left p-4 font-medium text-sm">Duração</th>
-                      <th className="text-left p-4 font-medium text-sm">Preço</th>
-                      <th className="text-left p-4 font-medium text-sm">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: 10 }).map((_, i) => (
-                      <tr key={i} className="border-b">
-                        <td className="p-4"><Skeleton className="h-6 w-32" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-24" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="text-left p-4 font-medium text-sm">Serviço</th>
-                      <th className="text-left p-4 font-medium text-sm">Categoria</th>
-                      <th className="text-left p-4 font-medium text-sm">Duração</th>
-                      <th className="text-left p-4 font-medium text-sm">Preço</th>
-                      <th className="text-left p-4 font-medium text-sm">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentServices.map((service) => (
-                      <tr 
-                        key={service.id} 
-                        className="border-b hover:bg-muted/30 transition-colors cursor-pointer"
-                        onClick={() => handleServiceClick(service)}
-                      >
-                        <td className="p-4">
-                          <div className="flex items-center space-x-3">
-                            <Archive className="w-4 h-4 text-muted-foreground" />
-                            <div>
-                              <div className="font-medium">{service.name}</div>
-                              <div className="text-sm text-muted-foreground truncate max-w-[200px]">
-                                {service.description}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <Badge variant="secondary">
-                            {service.category}
-                          </Badge>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center space-x-2">
-                            <Clock className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">{service.duration} min</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center space-x-2">
-                            <DollarSign className="w-4 h-4 text-muted-foreground" />
-                            <span className="font-semibold">{formatToReal(service.price)}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <Badge variant={service.active ? 'default' : 'secondary'}>
-                            {service.active ? 'Ativo' : 'Inativo'}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            {/* Pagination */}
-            {!loading && (
-              <PaginationBar
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                className="py-4"
-              />
-            )}
-          </CardContent>
-        </Card>
+        {/* Services List Header */}
+        <div className="mb-2 mt-6">
+          <ServicesListHeader
+            title="Lista de Serviços"
+            startIndex={startIndex}
+            endIndex={endIndex}
+            totalCount={filteredServices.length}
+          />
+        </div>
 
-        {filteredServices.length === 0 && (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <Archive className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Nenhum serviço encontrado</h3>
-              <p className="text-muted-foreground mb-4">
-                {searchTerm || categoryFilter !== 'all' 
-                  ? 'Tente ajustar os filtros de busca' 
-                  : 'Comece adicionando seu primeiro serviço'
-                }
-              </p>
-              <Button onClick={() => setIsAddServiceOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Novo Serviço
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Services Table */}
+        <ServicesTable
+          services={currentServices}
+          loading={loading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          startIndex={startIndex}
+          endIndex={endIndex}
+          totalCount={filteredServices.length}
+          onPageChange={handlePageChange}
+          onServiceClick={handleServiceClick}
+        />
+
+        {/* Nenhum serviço encontrado */}
+        {filteredServices.length === 0 && !loading && (
+          <NoServicesCard
+            searchTerm={searchTerm}
+            categoryFilter={categoryFilter}
+            onAddService={() => setIsAddServiceOpen(true)}
+          />
         )}
 
         {/* Modal de Detalhes do Serviço */}
-        <Dialog open={isServiceDetailsOpen} onOpenChange={setIsServiceDetailsOpen}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Detalhes do Serviço</DialogTitle>
-              <DialogDescription>
-                Visualize informações completas sobre o serviço selecionado.
-              </DialogDescription>
-            </DialogHeader>
-            {selectedService && (
-              <div className="space-y-6">
-                {/* Informações do Serviço */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                    <Archive className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold">{selectedService.name}</h3>
-                    <Badge variant={selectedService.active ? 'default' : 'secondary'} className="mt-1">
-                      {selectedService.active ? 'Ativo' : 'Inativo'}
-                    </Badge>
-                  </div>
-                </div>
-
-                {/* Descrição */}
-                <div>
-                  <h4 className="font-medium mb-2">Descrição</h4>
-                  <p className="text-sm text-muted-foreground">{selectedService.description}</p>
-                </div>
-
-                {/* Informações do Serviço */}
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium mb-2">Categoria</h4>
-                    <Badge variant="secondary">
-                      {selectedService.category}
-                    </Badge>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="font-medium mb-2">Duração</h4>
-                      <div className="flex items-center space-x-2">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm">{selectedService.duration} minutos</span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="font-medium mb-2">Preço</h4>
-                      <div className="flex items-center space-x-2">
-                        <DollarSign className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-semibold text-lg">{formatToReal(selectedService.price)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Ações */}
-                <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t">
-                  <Button 
-                    variant="outline" 
-                    onClick={handleToggleStatus}
-                    className="flex-1 cursor-pointer"
-                  >
-                    {selectedService.active ? 'Desativar' : 'Ativar'} Serviço
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleEditService}
-                    className="flex-1 cursor-pointer"
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Editar Serviço
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleDeleteService}
-                    className="text-red-600 hover:text-red-700 flex-1 cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Excluir Serviço
-                  </Button>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+        <ServiceDetailsDialog
+          open={isServiceDetailsOpen}
+          onOpenChange={setIsServiceDetailsOpen}
+          service={selectedService}
+          onEdit={handleEditService}
+          onDelete={handleDeleteService}
+          onToggleStatus={handleToggleStatus}
+        />
 
         {/* Modal de Edição de Serviço */}
-        <Dialog open={isEditServiceOpen} onOpenChange={setIsEditServiceOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Editar Serviço</DialogTitle>
-              <DialogDescription>
-                Modifique as informações do serviço conforme necessário.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="editServiceName">Nome do serviço</Label>
-                <Input
-                  id="editServiceName"
-                  value={editService.name}
-                  onChange={(e) => setEditService({...editService, name: e.target.value})}
-                  placeholder="Ex: Corte Masculino"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="editServiceDescription">Descrição</Label>
-                <textarea
-                  id="editServiceDescription"
-                  value={editService.description}
-                  onChange={(e) => setEditService({...editService, description: e.target.value})}
-                  placeholder="Descrição do serviço..."
-                  className="w-full px-3 py-2 border border-input rounded-md text-sm"
-                  rows={3}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="editServiceDuration">Duração (min)</Label>
-                  <Input
-                    id="editServiceDuration"
-                    type="number"
-                    value={editService.duration}
-                    onChange={(e) => setEditService({...editService, duration: e.target.value})}
-                    placeholder="30"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="editServicePrice">Preço (R$)</Label>
-                  <Input
-                    id="editServicePrice"
-                    type="number"
-                    value={editService.price}
-                    onChange={(e) => setEditService({...editService, price: e.target.value})}
-                    placeholder="35"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="editServiceCategory">Categoria</Label>
-                <Select value={editService.category} onValueChange={(value) => setEditService({...editService, category: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione uma categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categoriesState.filter(cat => cat.active).map((category) => (
-                      <SelectItem key={category.id} value={category.name}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setIsEditServiceOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleSaveEditService}>
-                Salvar Alterações
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <EditServiceDialog
+          open={isEditServiceOpen}
+          onOpenChange={setIsEditServiceOpen}
+          editService={editService}
+          setEditService={setEditService}
+          handleSaveEdit={handleSaveEditService}
+          categories={categoriesState}
+        />
 
         {/* Modal de Categorias */}
-        <Dialog open={isCategoriesModalOpen} onOpenChange={setIsCategoriesModalOpen}>
-          <DialogContent className="sm:max-w-[600px] h-screen max-h-full overflow-y-auto my-8">
-            <DialogHeader>
-              <DialogTitle>Gerenciar Categorias</DialogTitle>
-              <DialogDescription>
-                Organize seus serviços em categorias para melhor organização.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-6">
-              {/* Lista de Categorias */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium">Categorias Cadastradas</h3>
-                  <Button 
-                    size="sm" 
-                    onClick={() => setIsAddCategoryOpen(true)}
-                    className="cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Nova Categoria
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {categoriesState.map((category) => (
-                    <div 
-                      key={category.id}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-                      onClick={() => handleCategoryClick(category)}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-r from-slate-800 to-slate-600 rounded-lg flex items-center justify-center">
-                          <Archive className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">{category.name}</h4>
-                          <Badge variant={category.active ? 'default' : 'secondary'} className="text-xs">
-                            {category.active ? 'Ativa' : 'Inativa'}
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggleCategoryStatus(category.id);
-                          }}
-                          className="cursor-pointer"
-                        >
-                          {category.active ? 'Desativar' : 'Ativar'}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCategory(category.id);
-                          }}
-                          className="text-red-600 hover:text-red-700 cursor-pointer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Modal de Adicionar Categoria */}
-        <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Adicionar Nova Categoria</DialogTitle>
-              <DialogDescription>
-                Crie uma nova categoria para organizar seus serviços.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="categoryName">Nome da Categoria</Label>
-                <Input
-                  id="categoryName"
-                  value={newCategory.name}
-                  onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
-                  placeholder="Ex: Cabelo, Barba, Tratamento..."
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleAddCategory();
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setIsAddCategoryOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleAddCategory}>
-                Adicionar Categoria
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Modal de Editar Categoria */}
-        <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Editar Categoria</DialogTitle>
-              <DialogDescription>
-                Modifique o nome da categoria conforme necessário.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="editCategoryName">Nome da Categoria</Label>
-                <Input
-                  id="editCategoryName"
-                  value={editCategory.name}
-                  onChange={(e) => setEditCategory({...editCategory, name: e.target.value})}
-                  placeholder="Ex: Cabelo, Barba, Tratamento..."
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleEditCategory();
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setIsEditCategoryOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleEditCategory}>
-                Salvar Alterações
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <CategoriesDialog
+          open={isCategoriesModalOpen}
+          onOpenChange={setIsCategoriesModalOpen}
+          categories={categoriesState}
+          onAddCategory={(name) => setNewCategory({ name })}
+          onEditCategory={(id, name) => setEditCategory({ name })}
+          onDeleteCategory={handleDeleteCategory}
+          onToggleCategoryStatus={handleToggleCategoryStatus}
+          isAddCategoryOpen={isAddCategoryOpen}
+          setIsAddCategoryOpen={setIsAddCategoryOpen}
+          isEditCategoryOpen={isEditCategoryOpen}
+          setIsEditCategoryOpen={setIsEditCategoryOpen}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          newCategory={newCategory}
+          setNewCategory={setNewCategory}
+          editCategory={editCategory}
+          setEditCategory={setEditCategory}
+          handleAddCategory={handleAddCategory}
+          handleEditCategory={handleEditCategory}
+        />
       </div>
     </div>
   );
