@@ -4,7 +4,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PaginationBar } from '@/components/ui/pagination';
 import { User, Phone, Mail, Clock } from 'lucide-react';
 import type { StaffMember } from '@/mocks/data';
-import React from 'react';
 
 interface StaffTableProps {
   staff: StaffMember[];
@@ -23,9 +22,6 @@ export default function StaffTable({
   loading,
   currentPage,
   totalPages,
-  startIndex,
-  endIndex,
-  totalCount,
   onPageChange,
   onStaffClick,
 }: StaffTableProps) {

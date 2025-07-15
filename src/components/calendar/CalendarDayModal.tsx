@@ -1,12 +1,13 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
+import { Appointment } from '@/mocks/data';
 
 interface CalendarDayModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   dayModalDate: Date | null;
-  getAppointmentsForDate: (date: Date | null) => any[];
+  getAppointmentsForDate: (date: Date | null) => Appointment[];
   getStatusColor: (status: string) => string;
 }
 

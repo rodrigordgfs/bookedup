@@ -15,7 +15,6 @@ interface ReportsTabsProps {
 export default function ReportsTabs({
   selectedReport,
   setSelectedReport,
-  loading,
   OverviewTab,
   FinancialTab,
   ClientsTab,

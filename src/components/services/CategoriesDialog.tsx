@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Archive, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import React from 'react';
 
 interface Category {
   id: number;
@@ -38,15 +37,12 @@ export default function CategoriesDialog({
   open,
   onOpenChange,
   categories,
-  onAddCategory,
-  onEditCategory,
   onDeleteCategory,
   onToggleCategoryStatus,
   isAddCategoryOpen,
   setIsAddCategoryOpen,
   isEditCategoryOpen,
   setIsEditCategoryOpen,
-  selectedCategory,
   setSelectedCategory,
   newCategory,
   setNewCategory,

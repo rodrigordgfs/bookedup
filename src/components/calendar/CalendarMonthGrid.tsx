@@ -1,4 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
+import type { Appointment } from '@/mocks/data';
 
 interface CalendarMonthGridProps {
   loading: boolean;
@@ -7,7 +8,7 @@ interface CalendarMonthGridProps {
   setSelectedDate: (date: Date) => void;
   setDayModalDate: (date: Date) => void;
   getDaysInMonth: (date: Date) => (Date | null)[];
-  getAppointmentsForDate: (date: Date | null) => any[];
+  getAppointmentsForDate: (date: Date | null) => Appointment[];
   dayNames: string[];
 }
 

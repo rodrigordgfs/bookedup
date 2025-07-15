@@ -1,38 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import NewAppointmentDialog from '@/components/appointments/NewAppointmentDialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { formatToReal } from '@/lib/utils';
 import {
-  User,
-  Bell, Plus,
-  Search,
-  Edit,
-  Trash2, Calendar,
-  Clock, CheckCircle,
+  CheckCircle,
   XCircle,
-  AlertCircle,
-  Filter, MoreVertical,
-  Archive,
-  Users
+  AlertCircle
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { PaginationBar } from '@/components/ui/pagination';
 import { appointments } from '@/mocks/data';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import AppointmentsTable from '@/components/appointments/AppointmentsTable';
 import AppointmentsFilters from '@/components/appointments/AppointmentsFilters';
 import AppointmentDetailsDialog from '@/components/appointments/AppointmentDetailsDialog';

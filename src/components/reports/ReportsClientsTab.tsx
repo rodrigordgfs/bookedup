@@ -1,10 +1,13 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import React from 'react';
+import { Client } from '@/mocks/data';
+
+type ClientWithStats = Client & { agendamentos: number; ultimaVisita: string; valor: number };
 
 interface ReportsClientsTabProps {
   loading: boolean;
-  topClients: any[];
+  topClients: ClientWithStats[];
   formatToReal: (value: number) => string;
 }
 
@@ -20,7 +23,7 @@ export default function ReportsClientsTab({ loading, topClients, formatToReal }:
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {topClients.map((client: any, index: number) => (
+              {topClients.map((client: ClientWithStats, index: number) => (
                 <div key={client.name} className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">

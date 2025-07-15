@@ -1,7 +1,6 @@
 import { CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import React from 'react';
 
 interface CalendarHeaderProps {
@@ -21,7 +20,6 @@ export default function CalendarHeader({
   monthNames,
   onNewAppointment,
 }: CalendarHeaderProps) {
-  const router = useRouter();
   return (
     <CardHeader className="px-2 py-2 sm:px-6 sm:py-4">
       {/* MOBILE: Dia a dia */}

@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Filter, Search } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,7 +18,7 @@ interface AppointmentsFiltersProps {
     professional: string;
     dateRange: string;
   };
-  setFilters: (filters: any) => void;
+  setFilters: (filters: AppointmentsFiltersProps['filters']) => void;
   isFilterModalOpen: boolean;
   setIsFilterModalOpen: (open: boolean) => void;
   loading: boolean;

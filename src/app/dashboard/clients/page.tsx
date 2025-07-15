@@ -172,7 +172,7 @@ export default function ClientsPage() {
           selectedClient={selectedClient}
           onSchedule={handleScheduleForClient}
           onEdit={handleEditClient}
-          onDelete={(client) => {
+          onDelete={() => {
             // Aqui você pode implementar lógica de ativar/desativar/excluir
             setIsClientDetailOpen(false);
           }}

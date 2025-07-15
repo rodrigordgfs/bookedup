@@ -2,11 +2,15 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import React from 'react';
+import { Service } from '@/mocks/data';
+import type { Appointment } from '@/mocks/data';
+
+type ServiceWithStats = Service & { agendamentos: number; receita: number; crescimento: number };
 
 interface ReportsFinancialTabProps {
   loading: boolean;
-  appointmentData: any[];
-  topServices: any[];
+  appointmentData: Appointment[];
+  topServices: ServiceWithStats[];
   formatToReal: (value: number) => string;
 }
 
@@ -43,7 +47,7 @@ export default function ReportsFinancialTab({ loading, appointmentData, topServi
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {topServices.map((service: any, index: number) => (
+              {topServices.map((service: ServiceWithStats, index: number) => (
                 <div key={service.name} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">

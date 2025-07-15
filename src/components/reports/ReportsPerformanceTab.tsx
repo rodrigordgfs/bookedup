@@ -1,11 +1,17 @@
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart as RechartsLineChart, Line } from 'recharts';
-import React from 'react';
+
+interface PerformanceData {
+  name: string;
+  atendimentos: number;
+  satisfacao: number;
+}
 
 interface ReportsPerformanceTabProps {
   loading: boolean;
-  performanceData: any[];
+  performanceData: PerformanceData[];
 }
 
 export default function ReportsPerformanceTab({ loading, performanceData }: ReportsPerformanceTabProps) {

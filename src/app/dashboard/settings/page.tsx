@@ -13,7 +13,6 @@ import SettingsWorkingHours from '@/components/SettingsWorkingHours';
 import SettingsNotifications from '@/components/SettingsNotifications';
 import SettingsAppearance from '@/components/SettingsAppearance';
 import SettingsSecurity from '@/components/SettingsSecurity';
-import SettingsSkeleton from '@/components/SettingsSkeleton';
 
 export default function SettingsPage() {
   const [businessInfo, setBusinessInfo] = useState({
@@ -41,8 +40,6 @@ export default function SettingsPage() {
     dailyReport: false
   });
 
-  const [loadingSettings, setLoadingSettings] = useState(false); // Simulação de loading
-
   const dayNames = {
     monday: 'Segunda-feira',
     tuesday: 'Terça-feira',
@@ -64,75 +61,73 @@ export default function SettingsPage() {
         </div>
 
         {/* Skeleton de loading global */}
-        {loadingSettings ? (
-          <SettingsSkeleton />
-        ) : (
-          <Tabs defaultValue="business" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="business" className="flex items-center space-x-2">
-                <Store className="w-4 h-4" />
-                <span className="hidden sm:inline">Negócio</span>
-              </TabsTrigger>
-              <TabsTrigger value="hours" className="flex items-center space-x-2">
-                <Clock className="w-4 h-4" />
-                <span className="hidden sm:inline">Horários</span>
-              </TabsTrigger>
-              <TabsTrigger value="notifications" className="flex items-center space-x-2">
-                <Bell className="w-4 h-4" />
-                <span className="hidden sm:inline">Notificações</span>
-              </TabsTrigger>
-              <TabsTrigger value="appearance" className="flex items-center space-x-2">
-                <Palette className="w-4 h-4" />
-                <span className="hidden sm:inline">Aparência</span>
-              </TabsTrigger>
-              <TabsTrigger value="security" className="flex items-center space-x-2">
-                <Shield className="w-4 h-4" />
-                <span className="hidden sm:inline">Segurança</span>
-              </TabsTrigger>
-            </TabsList>
+        {/* <SettingsSkeleton /> */}
 
-            {/* Business Settings */}
-            <TabsContent value="business">
-              <SettingsBusinessForm 
-                businessInfo={businessInfo}
-                setBusinessInfo={setBusinessInfo}
-                onSave={() => {}}
-              />
-            </TabsContent>
+        <Tabs defaultValue="business" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="business" className="flex items-center space-x-2">
+              <Store className="w-4 h-4" />
+              <span className="hidden sm:inline">Negócio</span>
+            </TabsTrigger>
+            <TabsTrigger value="hours" className="flex items-center space-x-2">
+              <Clock className="w-4 h-4" />
+              <span className="hidden sm:inline">Horários</span>
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center space-x-2">
+              <Bell className="w-4 h-4" />
+              <span className="hidden sm:inline">Notificações</span>
+            </TabsTrigger>
+            <TabsTrigger value="appearance" className="flex items-center space-x-2">
+              <Palette className="w-4 h-4" />
+              <span className="hidden sm:inline">Aparência</span>
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center space-x-2">
+              <Shield className="w-4 h-4" />
+              <span className="hidden sm:inline">Segurança</span>
+            </TabsTrigger>
+          </TabsList>
 
-            {/* Working Hours */}
-            <TabsContent value="hours">
-              <SettingsWorkingHours 
-                workingHours={workingHours}
-                setWorkingHours={(hours) => setWorkingHours(hours as typeof workingHours)}
-                dayNames={dayNames}
-                onSave={() => {}}
-              />
-            </TabsContent>
+          {/* Business Settings */}
+          <TabsContent value="business">
+            <SettingsBusinessForm 
+              businessInfo={businessInfo}
+              setBusinessInfo={setBusinessInfo}
+              onSave={() => {}}
+            />
+          </TabsContent>
 
-            {/* Notifications */}
-            <TabsContent value="notifications">
-              <SettingsNotifications 
-                notifications={notifications}
-                setNotifications={setNotifications}
-                onSave={() => {}}
-              />
-            </TabsContent>
+          {/* Working Hours */}
+          <TabsContent value="hours">
+            <SettingsWorkingHours 
+              workingHours={workingHours}
+              setWorkingHours={(hours) => setWorkingHours(hours as typeof workingHours)}
+              dayNames={dayNames}
+              onSave={() => {}}
+            />
+          </TabsContent>
 
-            {/* Appearance */}
-            <TabsContent value="appearance">
-              <SettingsAppearance onSave={() => {}} />
-            </TabsContent>
+          {/* Notifications */}
+          <TabsContent value="notifications">
+            <SettingsNotifications 
+              notifications={notifications}
+              setNotifications={setNotifications}
+              onSave={() => {}}
+            />
+          </TabsContent>
 
-            {/* Security */}
-            <TabsContent value="security">
-              <SettingsSecurity 
-                onSavePassword={() => {}}
-                on2FAConfig={() => {}}
-              />
-            </TabsContent>
-          </Tabs>
-        )}
+          {/* Appearance */}
+          <TabsContent value="appearance">
+            <SettingsAppearance onSave={() => {}} />
+          </TabsContent>
+
+          {/* Security */}
+          <TabsContent value="security">
+            <SettingsSecurity 
+              onSavePassword={() => {}}
+              on2FAConfig={() => {}}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

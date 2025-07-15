@@ -1,15 +1,16 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
+import { Appointment } from '@/mocks/data';
 
 interface CalendarDayListProps {
   loading: boolean;
-  dayAppointments: any[];
+  dayAppointments: Appointment[];
   selectedDate: Date;
   getStatusColor: (status: string) => string;
 }
 
-export default function CalendarDayList({ loading, dayAppointments, selectedDate, getStatusColor }: CalendarDayListProps) {
+export default function CalendarDayList({ loading, dayAppointments, getStatusColor }: CalendarDayListProps) {
   const router = useRouter();
   return (
     <div className="block sm:hidden">

@@ -32,8 +32,19 @@ interface NewAppointmentDialogProps {
     time: string;
     notes: string;
   };
-  setNewAppointment: (fn: (prev: any) => any) => void;
+  setNewAppointment: (fn: (prev: NewAppointment) => NewAppointment) => void;
   handleAddAppointment: () => void;
+}
+
+interface NewAppointment {
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  service: string;
+  professional: string;
+  date: string;
+  time: string;
+  notes: string;
 }
 
 export default function NewAppointmentDialog({
@@ -109,7 +120,7 @@ export default function NewAppointmentDialog({
                 <Input
                   id="clientPhone"
                   value={newAppointment.clientPhone}
-                  onChange={(e) => setNewAppointment((prev: any) => ({...prev, clientPhone: e.target.value}))}
+                  onChange={(e) => setNewAppointment((prev) => ({...prev, clientPhone: e.target.value}))}
                   placeholder="(11) 99999-9999"
                 />
               </div>
@@ -119,7 +130,7 @@ export default function NewAppointmentDialog({
                   id="clientEmail"
                   type="email"
                   value={newAppointment.clientEmail}
-                  onChange={(e) => setNewAppointment((prev: any) => ({...prev, clientEmail: e.target.value}))}
+                  onChange={(e) => setNewAppointment((prev) => ({...prev, clientEmail: e.target.value}))}
                   placeholder="email@exemplo.com"
                 />
               </div>
@@ -128,7 +139,7 @@ export default function NewAppointmentDialog({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="service">Serviço</Label>
-              <Select value={newAppointment.service} onValueChange={(value) => setNewAppointment((prev: any) => ({...prev, service: value}))}>
+              <Select value={newAppointment.service} onValueChange={(value) => setNewAppointment((prev) => ({...prev, service: value}))}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecione o serviço" />
                 </SelectTrigger>
@@ -142,7 +153,7 @@ export default function NewAppointmentDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="professional">Profissional</Label>
-              <Select value={newAppointment.professional} onValueChange={(value) => setNewAppointment((prev: any) => ({...prev, professional: value}))}>
+              <Select value={newAppointment.professional} onValueChange={(value) => setNewAppointment((prev) => ({...prev, professional: value}))}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecione o profissional" />
                 </SelectTrigger>
@@ -161,7 +172,7 @@ export default function NewAppointmentDialog({
                 id="date"
                 type="date"
                 value={newAppointment.date}
-                onChange={(e) => setNewAppointment((prev: any) => ({...prev, date: e.target.value}))}
+                onChange={(e) => setNewAppointment((prev) => ({...prev, date: e.target.value}))}
               />
             </div>
             <div className="space-y-2">
@@ -170,7 +181,7 @@ export default function NewAppointmentDialog({
                 id="time"
                 type="time"
                 value={newAppointment.time}
-                onChange={(e) => setNewAppointment((prev: any) => ({...prev, time: e.target.value}))}
+                onChange={(e) => setNewAppointment((prev) => ({...prev, time: e.target.value}))}
               />
             </div>
           </div>
@@ -179,7 +190,7 @@ export default function NewAppointmentDialog({
             <textarea
               id="notes"
               value={newAppointment.notes}
-              onChange={(e) => setNewAppointment((prev: any) => ({...prev, notes: e.target.value}))}
+              onChange={(e) => setNewAppointment((prev) => ({...prev, notes: e.target.value}))}
               placeholder="Observações sobre o agendamento..."
               className="w-full px-3 py-2 border border-input rounded-md text-sm"
               rows={3}

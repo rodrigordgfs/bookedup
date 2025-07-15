@@ -4,7 +4,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PaginationBar } from '@/components/ui/pagination';
 import { Archive, Clock, DollarSign } from 'lucide-react';
 import type { Service } from '@/mocks/data';
-import React from 'react';
 
 interface ServicesTableProps {
   services: Service[];
@@ -23,9 +22,6 @@ export default function ServicesTable({
   loading,
   currentPage,
   totalPages,
-  startIndex,
-  endIndex,
-  totalCount,
   onPageChange,
   onServiceClick,
 }: ServicesTableProps) {

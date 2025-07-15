@@ -36,19 +36,12 @@ interface NewCategory {
 export default function ServicesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [isAddServiceOpen, setIsAddServiceOpen] = useState(false);
+  const [setIsAddServiceOpen] = useState(false);
   const [isServiceDetailsOpen, setIsServiceDetailsOpen] = useState(false);
   const [isEditServiceOpen, setIsEditServiceOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [newService, setNewService] = useState<NewService>({
-    name: '',
-    description: '',
-    duration: '',
-    price: '',
-    category: ''
-  });
   const [editService, setEditService] = useState<NewService>({
     name: '',
     description: '',
@@ -77,12 +70,6 @@ export default function ServicesPage() {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
-
-  const handleAddService = () => {
-    console.log('Adding service:', newService);
-    setIsAddServiceOpen(false);
-    setNewService({ name: '', description: '', duration: '', price: '', category: '' });
-  };
 
   const handleServiceClick = (service: Service) => {
     setSelectedService(service);
@@ -162,13 +149,7 @@ export default function ServicesPage() {
           : cat
       )
     );
-  };
-
-  const handleCategoryClick = (category: Category) => {
-    setSelectedCategory(category);
-    setEditCategory({ name: category.name });
-    setIsEditCategoryOpen(true);
-  };
+  }
 
   const filteredServices = services.filter(service => {
     const matchesSearch = 

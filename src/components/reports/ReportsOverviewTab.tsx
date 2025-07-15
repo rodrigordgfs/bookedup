@@ -1,13 +1,28 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart as RechartsLineChart, Line, PieChart as RechartsPieChart, Pie, Cell } from 'recharts';
-import React from 'react';
+import { Client } from '@/mocks/data';
+
+type AppointmentChartData = {
+  name: string;
+  agendamentos: number;
+  cancelamentos: number;
+  receita: number;
+};
+
+type ServiceChartData = {
+  name: string;
+  value: number;
+  color: string;
+};
+
+type ClientWithColor = Client & { color: string };
 
 interface ReportsOverviewTabProps {
   loading: boolean;
-  appointmentData: any[];
-  serviceData: any[];
-  clientData: any[];
+  appointmentData: AppointmentChartData[];
+  serviceData: ServiceChartData[];
+  clientData: ClientWithColor[];
 }
 
 export default function ReportsOverviewTab({ loading, appointmentData, serviceData, clientData }: ReportsOverviewTabProps) {
@@ -76,7 +91,7 @@ export default function ReportsOverviewTab({ loading, appointmentData, serviceDa
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {serviceData.map((entry, index) => (
+                    {serviceData.map((entry: ServiceChartData, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -106,7 +121,7 @@ export default function ReportsOverviewTab({ loading, appointmentData, serviceDa
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {clientData.map((entry, index) => (
+                    {clientData.map((entry: ClientWithColor, index) => (
                       <Cell key={`cell-client-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
