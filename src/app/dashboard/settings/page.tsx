@@ -1,26 +1,19 @@
 'use client';
 
-import { SignOutButton } from '@clerk/nextjs';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { DrawerMenu } from '@/components/DrawerMenu';
-import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import {
-  User,
-  Bell,
-  LogOut, Store,
+  Bell, Store,
   Clock,
   Palette,
-  Shield,
-  Smartphone
+  Shield
 } from 'lucide-react';
+import SettingsBusinessForm from '@/components/SettingsBusinessForm';
+import SettingsWorkingHours from '@/components/SettingsWorkingHours';
+import SettingsNotifications from '@/components/SettingsNotifications';
+import SettingsAppearance from '@/components/SettingsAppearance';
+import SettingsSecurity from '@/components/SettingsSecurity';
+import SettingsSkeleton from '@/components/SettingsSkeleton';
 
 export default function SettingsPage() {
   const [businessInfo, setBusinessInfo] = useState({
@@ -48,6 +41,8 @@ export default function SettingsPage() {
     dailyReport: false
   });
 
+  const [loadingSettings, setLoadingSettings] = useState(false); // Simulação de loading
+
   const dayNames = {
     monday: 'Segunda-feira',
     tuesday: 'Terça-feira',
@@ -68,313 +63,76 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        <Tabs defaultValue="business" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="business" className="flex items-center space-x-2">
-              <Store className="w-4 h-4" />
-              <span className="hidden sm:inline">Negócio</span>
-            </TabsTrigger>
-            <TabsTrigger value="hours" className="flex items-center space-x-2">
-              <Clock className="w-4 h-4" />
-              <span className="hidden sm:inline">Horários</span>
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center space-x-2">
-              <Bell className="w-4 h-4" />
-              <span className="hidden sm:inline">Notificações</span>
-            </TabsTrigger>
-            <TabsTrigger value="appearance" className="flex items-center space-x-2">
-              <Palette className="w-4 h-4" />
-              <span className="hidden sm:inline">Aparência</span>
-            </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center space-x-2">
-              <Shield className="w-4 h-4" />
-              <span className="hidden sm:inline">Segurança</span>
-            </TabsTrigger>
-          </TabsList>
+        {/* Skeleton de loading global */}
+        {loadingSettings ? (
+          <SettingsSkeleton />
+        ) : (
+          <Tabs defaultValue="business" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="business" className="flex items-center space-x-2">
+                <Store className="w-4 h-4" />
+                <span className="hidden sm:inline">Negócio</span>
+              </TabsTrigger>
+              <TabsTrigger value="hours" className="flex items-center space-x-2">
+                <Clock className="w-4 h-4" />
+                <span className="hidden sm:inline">Horários</span>
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="flex items-center space-x-2">
+                <Bell className="w-4 h-4" />
+                <span className="hidden sm:inline">Notificações</span>
+              </TabsTrigger>
+              <TabsTrigger value="appearance" className="flex items-center space-x-2">
+                <Palette className="w-4 h-4" />
+                <span className="hidden sm:inline">Aparência</span>
+              </TabsTrigger>
+              <TabsTrigger value="security" className="flex items-center space-x-2">
+                <Shield className="w-4 h-4" />
+                <span className="hidden sm:inline">Segurança</span>
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Business Settings */}
-          <TabsContent value="business">
-            <Card>
-              <CardHeader>
-                <CardTitle>Informações do Negócio</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="businessName">Nome do negócio</Label>
-                    <Input
-                      id="businessName"
-                      value={businessInfo.name}
-                      onChange={(e) => setBusinessInfo({...businessInfo, name: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="businessEmail">Email</Label>
-                    <Input
-                      id="businessEmail"
-                      type="email"
-                      value={businessInfo.email}
-                      onChange={(e) => setBusinessInfo({...businessInfo, email: e.target.value})}
-                    />
-                  </div>
-                </div>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="businessPhone">Telefone</Label>
-                    <Input
-                      id="businessPhone"
-                      value={businessInfo.phone}
-                      onChange={(e) => setBusinessInfo({...businessInfo, phone: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="businessAddress">Endereço</Label>
-                    <Input
-                      id="businessAddress"
-                      value={businessInfo.address}
-                      onChange={(e) => setBusinessInfo({...businessInfo, address: e.target.value})}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="businessDescription">Descrição</Label>
-                  <textarea
-                    id="businessDescription"
-                    value={businessInfo.description}
-                    onChange={(e) => setBusinessInfo({...businessInfo, description: e.target.value})}
-                    className="w-full px-3 py-2 border border-input rounded-md text-sm"
-                    rows={3}
-                  />
-                </div>
-                <Button>Salvar Alterações</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
+            {/* Business Settings */}
+            <TabsContent value="business">
+              <SettingsBusinessForm 
+                businessInfo={businessInfo}
+                setBusinessInfo={setBusinessInfo}
+                onSave={() => {}}
+              />
+            </TabsContent>
 
-          {/* Working Hours */}
-          <TabsContent value="hours">
-            <Card>
-              <CardHeader>
-                <CardTitle>Horários de Funcionamento</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {Object.entries(workingHours).map(([day, hours]) => (
-                  <div key={day} className="p-4 border border-border rounded-lg">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                      <div className="flex items-center space-x-4">
-                        <Switch
-                          checked={hours.enabled}
-                          onCheckedChange={(checked) => 
-                            setWorkingHours({
-                              ...workingHours,
-                              [day]: { ...hours, enabled: checked }
-                            })
-                          }
-                        />
-                        <span className="font-medium min-w-[120px]">{dayNames[day as keyof typeof dayNames]}</span>
-                      </div>
-                      {hours.enabled && (
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-2">
-                          <Input
-                            type="time"
-                            value={hours.open}
-                            onChange={(e) => 
-                              setWorkingHours({
-                                ...workingHours,
-                                [day]: { ...hours, open: e.target.value }
-                              })
-                            }
-                            className="w-full sm:w-24"
-                          />
-                          <span className="hidden sm:inline">às</span>
-                          <Input
-                            type="time"
-                            value={hours.close}
-                            onChange={(e) => 
-                              setWorkingHours({
-                                ...workingHours,
-                                [day]: { ...hours, close: e.target.value }
-                              })
-                            }
-                            className="w-full sm:w-24"
-                          />
-                        </div>
-                      )}
-                      {!hours.enabled && (
-                        <span className="text-muted-foreground">Fechado</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-                <Button>Salvar Horários</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
+            {/* Working Hours */}
+            <TabsContent value="hours">
+              <SettingsWorkingHours 
+                workingHours={workingHours}
+                setWorkingHours={(hours) => setWorkingHours(hours as typeof workingHours)}
+                dayNames={dayNames}
+                onSave={() => {}}
+              />
+            </TabsContent>
 
-          {/* Notifications */}
-          <TabsContent value="notifications">
-            <Card>
-              <CardHeader>
-                <CardTitle>Preferências de Notificação</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">Notificações por Email</h4>
-                      <p className="text-sm text-muted-foreground">Receber emails sobre novos agendamentos</p>
-                    </div>
-                    <Switch
-                      checked={notifications.emailBookings}
-                      onCheckedChange={(checked) => 
-                        setNotifications({...notifications, emailBookings: checked})
-                      }
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">Lembretes por SMS</h4>
-                      <p className="text-sm text-muted-foreground">Enviar lembretes por SMS para clientes</p>
-                    </div>
-                    <Switch
-                      checked={notifications.smsReminders}
-                      onCheckedChange={(checked) => 
-                        setNotifications({...notifications, smsReminders: checked})
-                      }
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">Notificações WhatsApp</h4>
-                      <p className="text-sm text-muted-foreground">Receber notificações via WhatsApp</p>
-                    </div>
-                    <Switch
-                      checked={notifications.whatsappNotifications}
-                      onCheckedChange={(checked) => 
-                        setNotifications({...notifications, whatsappNotifications: checked})
-                      }
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">Relatório Diário</h4>
-                      <p className="text-sm text-muted-foreground">Receber relatório diário por email</p>
-                    </div>
-                    <Switch
-                      checked={notifications.dailyReport}
-                      onCheckedChange={(checked) => 
-                        setNotifications({...notifications, dailyReport: checked})
-                      }
-                    />
-                  </div>
-                </div>
-                <Button>Salvar Preferências</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
+            {/* Notifications */}
+            <TabsContent value="notifications">
+              <SettingsNotifications 
+                notifications={notifications}
+                setNotifications={setNotifications}
+                onSave={() => {}}
+              />
+            </TabsContent>
 
-          {/* Appearance */}
-          <TabsContent value="appearance">
-            <Card>
-              <CardHeader>
-                <CardTitle>Aparência</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label>Tema</Label>
-                    <div className="flex items-center space-x-4 mt-2">
-                      <ThemeToggle />
-                      <span className="text-sm text-muted-foreground">
-                        Alterne entre modo claro e escuro
-                      </span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Idioma</Label>
-                    <Select defaultValue="pt-BR">
-                      <SelectTrigger className="w-48">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
-                        <SelectItem value="en-US">English (US)</SelectItem>
-                        <SelectItem value="es-ES">Español</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Fuso Horário</Label>
-                    <Select defaultValue="America/Sao_Paulo">
-                      <SelectTrigger className="w-64">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="America/Sao_Paulo">São Paulo (GMT-3)</SelectItem>
-                        <SelectItem value="America/New_York">New York (GMT-5)</SelectItem>
-                        <SelectItem value="Europe/London">London (GMT+0)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <Button>Salvar Configurações</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
+            {/* Appearance */}
+            <TabsContent value="appearance">
+              <SettingsAppearance onSave={() => {}} />
+            </TabsContent>
 
-          {/* Security */}
-          <TabsContent value="security">
-            <Card>
-              <CardHeader>
-                <CardTitle>Segurança</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="currentPassword">Senha atual</Label>
-                    <Input id="currentPassword" type="password" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="newPassword">Nova senha</Label>
-                    <Input id="newPassword" type="password" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirmar nova senha</Label>
-                    <Input id="confirmPassword" type="password" />
-                  </div>
-                </div>
-                <Button>Alterar Senha</Button>
-                
-                <div className="border-t pt-6">
-                  <h4 className="font-medium mb-4">Autenticação de Dois Fatores</h4>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">
-                        Adicione uma camada extra de segurança à sua conta
-                      </p>
-                    </div>
-                    <Button variant="outline">
-                      <Smartphone className="w-4 h-4 mr-2" />
-                      Configurar 2FA
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="border-t pt-6">
-                  <h4 className="font-medium mb-4 text-red-600">Zona de Perigo</h4>
-                  <div className="space-y-4">
-                    <Button variant="destructive" className="w-full">
-                      Excluir Conta
-                    </Button>
-                    <p className="text-xs text-muted-foreground">
-                      Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+            {/* Security */}
+            <TabsContent value="security">
+              <SettingsSecurity 
+                onSavePassword={() => {}}
+                on2FAConfig={() => {}}
+              />
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
     </div>
   );
