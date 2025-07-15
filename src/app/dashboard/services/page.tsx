@@ -10,8 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatToReal } from '@/lib/utils';
 import {
-  Settings,
-  LogOut,
   Plus,
   Edit,
   Trash2, Archive,

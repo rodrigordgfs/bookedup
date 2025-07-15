@@ -1,8 +1,6 @@
 'use client';
 
-import { SignOutButton } from '@clerk/nextjs';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,9 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import {
-  User, Settings,
-  LogOut,
-  Plus,
+  User, Plus,
   Search,
   Edit,
   Trash2,
@@ -43,13 +39,6 @@ export default function ClientsPage() {
     notes: ''
   });
   const [loading, setLoading] = useState(false); // Estado de loading
-
-  const user = {
-    name: 'João Silva',
-    email: 'joao@email.com',
-    avatarUrl: '',
-    role: 'Administrador',
-  };
 
   // Simula o loading ao montar a página
   useEffect(() => {

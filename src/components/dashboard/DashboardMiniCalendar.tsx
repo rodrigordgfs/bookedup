@@ -1,6 +1,5 @@
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar } from 'lucide-react';
 import Link from 'next/link';
 
 export function DashboardMiniCalendar({ loading, selectedDate }: { loading: boolean, selectedDate: Date }) {

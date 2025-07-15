@@ -29,7 +29,7 @@ export default function OnboardingPage() {
           console.error("Erro ao criar usuário no backend:", err);
         });
     }
-  }, [isLoaded, user]);
+  }, [isLoaded, user, router]);
 
   // Animação da barra de progresso
   useEffect(() => {

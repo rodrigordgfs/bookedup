@@ -18,11 +18,18 @@ interface Appointment {
   status: string;
 }
 
+interface AppointmentFilters {
+  status: string;
+  service: string;
+  dateRange: string;
+  professional: string;
+}
+
 interface DashboardAppointmentsListProps {
   loading: boolean;
   todayAppointments: Appointment[];
-  filters: any;
-  setFilters: (filters: any) => void;
+  filters: AppointmentFilters;
+  setFilters: (filters: AppointmentFilters) => void;
   filterOpen: boolean;
   setFilterOpen: (open: boolean) => void;
   getStatusColor: (status: string) => string;
