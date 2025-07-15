@@ -36,6 +36,7 @@ import {
 import { Toolbar } from '@/components/Toolbar';
 import { PaginationBar } from '@/components/ui/pagination';
 import { appointments } from '@/mocks/data';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AppointmentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -103,6 +104,7 @@ export default function AppointmentsPage() {
     time: '',
     notes: ''
   });
+  const [loading, setLoading] = useState(false); // Estado de loading
 
   // Dados dos clientes para o select
   const clients: Client[] = [
@@ -208,6 +210,14 @@ export default function AppointmentsPage() {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   const filteredAppointments = appointments.filter(appointment => {
@@ -535,118 +545,126 @@ export default function AppointmentsPage() {
         {/* Search and Filters */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Buscar por cliente, serviço ou profissional..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+            {loading ? (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Skeleton className="h-10 w-full sm:w-1/2 mb-2" />
+                <Skeleton className="h-10 w-48 mb-2" />
+                <Skeleton className="h-10 w-48 mb-2" />
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Filtrar por status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos os status</SelectItem>
-                  <SelectItem value="confirmed">Confirmado</SelectItem>
-                  <SelectItem value="pending">Pendente</SelectItem>
-                  <SelectItem value="completed">Concluído</SelectItem>
-                  <SelectItem value="cancelled">Cancelado</SelectItem>
-                </SelectContent>
-              </Select>
-              <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="cursor-pointer">
-                    <Filter className="w-4 h-4 mr-2" />
-                    Filtros Avançados
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle>Filtros de Agendamentos</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="filterStatus">Status</Label>
-                      <Select value={filters.status} onValueChange={(value) => setFilters({...filters, status: value})}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione o status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Todos os status</SelectItem>
-                          <SelectItem value="confirmed">Confirmado</SelectItem>
-                          <SelectItem value="pending">Pendente</SelectItem>
-                          <SelectItem value="completed">Concluído</SelectItem>
-                          <SelectItem value="cancelled">Cancelado</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="filterService">Serviço</Label>
-                      <Select value={filters.service} onValueChange={(value) => setFilters({...filters, service: value})}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione o serviço" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Todos os serviços</SelectItem>
-                          <SelectItem value="haircut">Corte Masculino</SelectItem>
-                          <SelectItem value="beard">Barba</SelectItem>
-                          <SelectItem value="haircut-beard">Corte + Barba</SelectItem>
-                          <SelectItem value="treatment">Tratamento Capilar</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="filterProfessional">Profissional</Label>
-                      <Select value={filters.professional} onValueChange={(value) => setFilters({...filters, professional: value})}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione o profissional" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Todos os profissionais</SelectItem>
-                          <SelectItem value="joao">João Barbeiro</SelectItem>
-                          <SelectItem value="maria">Maria Silva</SelectItem>
-                          <SelectItem value="pedro">Pedro Costa</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="filterDateRange">Período</Label>
-                      <Select value={filters.dateRange} onValueChange={(value) => setFilters({...filters, dateRange: value})}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione o período" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Todos os períodos</SelectItem>
-                          <SelectItem value="today">Hoje</SelectItem>
-                          <SelectItem value="week">Esta semana</SelectItem>
-                          <SelectItem value="month">Este mês</SelectItem>
-                          <SelectItem value="past">Passado</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Button variant="outline" onClick={() => {
-                      setFilters({
-                        status: 'all',
-                        service: 'all',
-                        professional: 'all',
-                        dateRange: 'all'
-                      });
-                    }}>
-                      Limpar Filtros
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    placeholder="Buscar por cliente, serviço ou profissional..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Filtrar por status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os status</SelectItem>
+                    <SelectItem value="confirmed">Confirmado</SelectItem>
+                    <SelectItem value="pending">Pendente</SelectItem>
+                    <SelectItem value="completed">Concluído</SelectItem>
+                    <SelectItem value="cancelled">Cancelado</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="cursor-pointer">
+                      <Filter className="w-4 h-4 mr-2" />
+                      Filtros Avançados
                     </Button>
-                    <Button onClick={() => setIsFilterModalOpen(false)}>
-                      Aplicar Filtros
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                      <DialogTitle>Filtros de Agendamentos</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="filterStatus">Status</Label>
+                        <Select value={filters.status} onValueChange={(value) => setFilters({...filters, status: value})}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Todos os status</SelectItem>
+                            <SelectItem value="confirmed">Confirmado</SelectItem>
+                            <SelectItem value="pending">Pendente</SelectItem>
+                            <SelectItem value="completed">Concluído</SelectItem>
+                            <SelectItem value="cancelled">Cancelado</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="filterService">Serviço</Label>
+                        <Select value={filters.service} onValueChange={(value) => setFilters({...filters, service: value})}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione o serviço" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Todos os serviços</SelectItem>
+                            <SelectItem value="haircut">Corte Masculino</SelectItem>
+                            <SelectItem value="beard">Barba</SelectItem>
+                            <SelectItem value="haircut-beard">Corte + Barba</SelectItem>
+                            <SelectItem value="treatment">Tratamento Capilar</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="filterProfessional">Profissional</Label>
+                        <Select value={filters.professional} onValueChange={(value) => setFilters({...filters, professional: value})}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione o profissional" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Todos os profissionais</SelectItem>
+                            <SelectItem value="joao">João Barbeiro</SelectItem>
+                            <SelectItem value="maria">Maria Silva</SelectItem>
+                            <SelectItem value="pedro">Pedro Costa</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="filterDateRange">Período</Label>
+                        <Select value={filters.dateRange} onValueChange={(value) => setFilters({...filters, dateRange: value})}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione o período" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Todos os períodos</SelectItem>
+                            <SelectItem value="today">Hoje</SelectItem>
+                            <SelectItem value="week">Esta semana</SelectItem>
+                            <SelectItem value="month">Este mês</SelectItem>
+                            <SelectItem value="past">Passado</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button variant="outline" onClick={() => {
+                        setFilters({
+                          status: 'all',
+                          service: 'all',
+                          professional: 'all',
+                          dateRange: 'all'
+                        });
+                      }}>
+                        Limpar Filtros
+                      </Button>
+                      <Button onClick={() => setIsFilterModalOpen(false)}>
+                        Aplicar Filtros
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -661,78 +679,111 @@ export default function AppointmentsPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-muted/50">
-                  <tr>
-                    <th className="text-left p-4 font-medium text-sm">Cliente</th>
-                    <th className="text-left p-4 font-medium text-sm">Serviço</th>
-                    <th className="text-left p-4 font-medium text-sm">Data</th>
-                    <th className="text-left p-4 font-medium text-sm">Horário</th>
-                    <th className="text-left p-4 font-medium text-sm">Profissional</th>
-                    <th className="text-left p-4 font-medium text-sm">Valor</th>
-                    <th className="text-left p-4 font-medium text-sm">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentAppointments.map((appointment) => (
-                    <tr 
-                      key={appointment.id} 
-                      className="border-b hover:bg-muted/30 transition-colors cursor-pointer"
-                      onClick={() => handleAppointmentClick(appointment)}
-                    >
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <Users className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-medium">{appointment.client.name}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <Archive className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm">{appointment.service}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm">{new Date(appointment.date).toLocaleDateString('pt-BR')}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <Clock className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm">{appointment.time} ({appointment.duration} min)</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <User className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm">{appointment.professional}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <span className="font-semibold">{formatToReal(appointment.price)}</span>
-                      </td>
-                      <td className="p-4">
-                        <Badge className={`${getStatusColor(appointment.status)} flex items-center space-x-1 w-fit`}>
-                          {getStatusIcon(appointment.status)}
-                          <span className="text-xs">{getStatusText(appointment.status)}</span>
-                        </Badge>
-                      </td>
+            {loading ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 font-medium text-sm">Cliente</th>
+                      <th className="text-left p-4 font-medium text-sm">Serviço</th>
+                      <th className="text-left p-4 font-medium text-sm">Data</th>
+                      <th className="text-left p-4 font-medium text-sm">Horário</th>
+                      <th className="text-left p-4 font-medium text-sm">Profissional</th>
+                      <th className="text-left p-4 font-medium text-sm">Valor</th>
+                      <th className="text-left p-4 font-medium text-sm">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {Array.from({ length: 10 }).map((_, i) => (
+                      <tr key={i} className="border-b">
+                        <td className="p-4"><Skeleton className="h-6 w-32" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-24" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-24" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-16" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 font-medium text-sm">Cliente</th>
+                      <th className="text-left p-4 font-medium text-sm">Serviço</th>
+                      <th className="text-left p-4 font-medium text-sm">Data</th>
+                      <th className="text-left p-4 font-medium text-sm">Horário</th>
+                      <th className="text-left p-4 font-medium text-sm">Profissional</th>
+                      <th className="text-left p-4 font-medium text-sm">Valor</th>
+                      <th className="text-left p-4 font-medium text-sm">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentAppointments.map((appointment) => (
+                      <tr 
+                        key={appointment.id} 
+                        className="border-b hover:bg-muted/30 transition-colors cursor-pointer"
+                        onClick={() => handleAppointmentClick(appointment)}
+                      >
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <Users className="w-4 h-4 text-muted-foreground" />
+                            <span className="font-medium">{appointment.client.name}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <Archive className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm">{appointment.service}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <Calendar className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm">{new Date(appointment.date).toLocaleDateString('pt-BR')}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <Clock className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm">{appointment.time} ({appointment.duration} min)</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <User className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm">{appointment.professional}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className="font-semibold">{formatToReal(appointment.price)}</span>
+                        </td>
+                        <td className="p-4">
+                          <Badge className={`${getStatusColor(appointment.status)} flex items-center space-x-1 w-fit`}>
+                            {getStatusIcon(appointment.status)}
+                            <span className="text-xs">{getStatusText(appointment.status)}</span>
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             
             {/* Pagination */}
-            <PaginationBar
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              className="py-4"
-            />
+            {!loading && (
+              <PaginationBar
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                className="py-4"
+              />
+            )}
           </CardContent>
         </Card>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Toolbar } from '@/components/Toolbar';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   User, Settings,
   LogOut,
@@ -46,6 +47,16 @@ export default function StaffPage() {
     specialties: [] as string[],
     workingHours: ''
   });
+  const [loading, setLoading] = useState(false); // Estado de loading
+
+  // Simula o loading ao montar a página
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleAddStaff = () => {
     console.log('Adding staff:', newStaff);
@@ -216,124 +227,162 @@ export default function StaffPage() {
         {/* Search and Filters */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Buscar funcionários por nome, email, telefone ou especialidade..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+            {loading ? (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Skeleton className="h-10 w-full sm:w-1/2 mb-2" />
+                <Skeleton className="h-10 w-48 mb-2" />
               </div>
-              <div className="flex gap-2">
-                <Button 
-                  variant={statusFilter === 'all' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('all')}
-                >
-                  Todos os status
-                </Button>
-                <Button 
-                  variant={statusFilter === 'active' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('active')}
-                >
-                  Ativos
-                </Button>
-                <Button 
-                  variant={statusFilter === 'inactive' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('inactive')}
-                >
-                  Inativos
-                </Button>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    placeholder="Buscar funcionários por nome, email, telefone ou especialidade..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    variant={statusFilter === 'all' ? 'default' : 'outline'}
+                    onClick={() => setStatusFilter('all')}
+                  >
+                    Todos os status
+                  </Button>
+                  <Button 
+                    variant={statusFilter === 'active' ? 'default' : 'outline'}
+                    onClick={() => setStatusFilter('active')}
+                  >
+                    Ativos
+                  </Button>
+                  <Button 
+                    variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+                    onClick={() => setStatusFilter('inactive')}
+                  >
+                    Inativos
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
         {/* Staff List */}
         <Card>
           <CardHeader className="pb-4">
-            <div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <h3 className="text-lg font-semibold">Lista de Funcionários</h3>
-              <p className="text-sm text-muted-foreground mt-1">
+              <div className="text-sm text-muted-foreground">
                 Mostrando {startIndex + 1}-{Math.min(endIndex, filteredStaff.length)} de {filteredStaff.length} funcionários
-              </p>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-muted/50">
-                  <tr>
-                    <th className="text-left p-4 font-medium text-sm">Funcionário</th>
-                    <th className="text-left p-4 font-medium text-sm">Contato</th>
-                    <th className="text-left p-4 font-medium text-sm">Especialidades</th>
-                    <th className="text-left p-4 font-medium text-sm">Horário</th>
-                    <th className="text-left p-4 font-medium text-sm">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentStaff.map((member) => (
-                    <tr 
-                      key={member.id} 
-                      className="border-b hover:bg-muted/30 transition-colors cursor-pointer"
-                      onClick={() => handleStaffClick(member)}
-                    >
-                      <td className="p-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-slate-800 to-slate-600 rounded-full flex items-center justify-center">
-                            <User className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <div className="font-medium">{member.name}</div>
-                            <div className="text-sm text-muted-foreground">{member.email}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center space-x-2 text-sm">
-                            <Mail className="w-4 h-4 text-muted-foreground" />
-                            <span>{member.email}</span>
-                          </div>
-                          <div className="flex items-center space-x-2 text-sm">
-                            <Phone className="w-4 h-4 text-muted-foreground" />
-                            <span>{member.phone}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex flex-wrap gap-1">
-                          {member.specialties.map((specialty: string) => (
-                            <Badge key={specialty} variant="outline" className="text-xs">
-                              {specialty}
-                            </Badge>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <Clock className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm">{member.workingHours}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <Badge variant={member.active ? 'default' : 'secondary'}>
-                          {member.active ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                      </td>
+            {loading ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 font-medium text-sm">Nome</th>
+                      <th className="text-left p-4 font-medium text-sm">Email</th>
+                      <th className="text-left p-4 font-medium text-sm">Telefone</th>
+                      <th className="text-left p-4 font-medium text-sm">Especialidades</th>
+                      <th className="text-left p-4 font-medium text-sm">Status</th>
+                      <th className="text-left p-4 font-medium text-sm">Ações</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {/* Pagination */}
-            <PaginationBar
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              className="py-4"
-            />
+                  </thead>
+                  <tbody>
+                    {Array.from({ length: 10 }).map((_, i) => (
+                      <tr key={i} className="border-b">
+                        <td className="p-4"><Skeleton className="h-6 w-32" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-40" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-24" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-32" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 font-medium text-sm">Funcionário</th>
+                      <th className="text-left p-4 font-medium text-sm">Contato</th>
+                      <th className="text-left p-4 font-medium text-sm">Especialidades</th>
+                      <th className="text-left p-4 font-medium text-sm">Horário</th>
+                      <th className="text-left p-4 font-medium text-sm">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentStaff.map((member) => (
+                      <tr 
+                        key={member.id} 
+                        className="border-b hover:bg-muted/30 transition-colors cursor-pointer"
+                        onClick={() => handleStaffClick(member)}
+                      >
+                        <td className="p-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gradient-to-r from-slate-800 to-slate-600 rounded-full flex items-center justify-center">
+                              <User className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <div className="font-medium">{member.name}</div>
+                              <div className="text-sm text-muted-foreground">{member.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2 text-sm">
+                              <Mail className="w-4 h-4 text-muted-foreground" />
+                              <span>{member.email}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-sm">
+                              <Phone className="w-4 h-4 text-muted-foreground" />
+                              <span>{member.phone}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex flex-wrap gap-1">
+                            {member.specialties.map((specialty: string) => (
+                              <Badge key={specialty} variant="outline" className="text-xs">
+                                {specialty}
+                              </Badge>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <Clock className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm">{member.workingHours}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <Badge variant={member.active ? 'default' : 'secondary'}>
+                            {member.active ? 'Ativo' : 'Inativo'}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {/* Paginação */}
+            {!loading && (
+              <PaginationBar
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                className="py-4"
+              />
+            )}
           </CardContent>
         </Card>
 

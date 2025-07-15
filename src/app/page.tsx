@@ -108,10 +108,10 @@ export default function LandingPage() {
         showUserMenu={isLoaded && isSignedIn}
         rightActions={
           isLoaded && !isSignedIn && <>
-            <SignInButton mode="modal">
+            <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
               <Button variant="ghost" className="text-muted-foreground hover:text-foreground cursor-pointer">Entrar</Button>
             </SignInButton>
-            <SignUpButton mode="modal">
+            <SignUpButton mode="modal" fallbackRedirectUrl="/onboarding">
               <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer">Cadastrar</Button>
             </SignUpButton>
           </>

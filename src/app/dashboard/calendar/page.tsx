@@ -17,11 +17,22 @@ import { Toolbar } from '@/components/Toolbar';
 import { useRouter } from 'next/navigation';
 import { appointments as mockAppointments } from '@/mocks/data';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [loading, setLoading] = useState(false); // Estado de loading
   const router = useRouter();
+
+  // Simula o loading ao montar a página
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Usar dados mockados
   const appointments = mockAppointments;
@@ -222,105 +233,123 @@ export default function CalendarPage() {
                 {/* MOBILE: Lista de agendamentos do dia */}
                 <div className="block sm:hidden">
                   <div className="space-y-2 mb-4">
-                    {dayAppointments.length === 0 ? (
-                      <p className="text-muted-foreground text-sm text-center">Nenhum agendamento para este dia</p>
+                    {loading ? (
+                      <>
+                        <Skeleton className="h-16 w-full mb-2" />
+                        <Skeleton className="h-16 w-full mb-2" />
+                        <Skeleton className="h-16 w-full mb-2" />
+                      </>
                     ) : (
-                      dayAppointments.map((apt) => (
-                        <div
-                          key={apt.id}
-                          className="p-3 border border-border rounded-lg cursor-pointer hover:bg-muted/30 transition-colors"
-                          onClick={() => {
-                            if (typeof window !== 'undefined') {
-                              localStorage.setItem('openAppointmentDetailId', String(apt.id));
-                              router.push('/dashboard/appointments');
-                            }
-                          }}
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium">{apt.time}</span>
-                            <Badge className={getStatusColor(apt.status)}>
-                              {apt.status === 'confirmed' ? 'Confirmado' : 
-                               apt.status === 'pending' ? 'Pendente' : 'Cancelado'}
-                            </Badge>
+                      dayAppointments.length === 0 ? (
+                        <p className="text-muted-foreground text-sm text-center">Nenhum agendamento para este dia</p>
+                      ) : (
+                        dayAppointments.map((apt) => (
+                          <div
+                            key={apt.id}
+                            className="p-3 border border-border rounded-lg cursor-pointer hover:bg-muted/30 transition-colors"
+                            onClick={() => {
+                              if (typeof window !== 'undefined') {
+                                localStorage.setItem('openAppointmentDetailId', String(apt.id));
+                                router.push('/dashboard/appointments');
+                              }
+                            }}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium">{apt.time}</span>
+                              <Badge className={getStatusColor(apt.status)}>
+                                {apt.status === 'confirmed' ? 'Confirmado' : 
+                                 apt.status === 'pending' ? 'Pendente' : 'Cancelado'}
+                              </Badge>
+                            </div>
+                            <p className="text-sm font-medium">{typeof apt.client === 'object' ? apt.client.name : apt.client}</p>
+                            <p className="text-sm text-muted-foreground">{apt.service}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{apt.professional}</p>
                           </div>
-                          <p className="text-sm font-medium">{typeof apt.client === 'object' ? apt.client.name : apt.client}</p>
-                          <p className="text-sm text-muted-foreground">{apt.service}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{apt.professional}</p>
-                        </div>
-                      ))
+                        ))
+                      )
                     )}
                   </div>
                 </div>
                 {/* DESKTOP: Grid do mês */}
                 <div className="hidden sm:block">
-                  <div className="grid grid-cols-7 gap-1 mb-4">
-                    {dayNames.map((day) => (
-                      <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground">
-                        {day}
+                  {loading ? (
+                    <div className="grid grid-cols-7 gap-1">
+                      {Array.from({ length: 35 }).map((_, i) => (
+                        <Skeleton key={i} className="min-h-[120px] w-full mb-1" />
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-7 gap-1 mb-4">
+                        {dayNames.map((day) => (
+                          <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground">
+                            {day}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-7 gap-1">
-                    {getDaysInMonth(currentDate).map((day) => {
-                      const dayAppointments = getAppointmentsForDate(day);
-                      const isToday = day && day.toDateString() === new Date().toDateString();
-                      const isSelected = day && selectedDate && day.toDateString() === selectedDate.toDateString();
-                      const key = day ? day.toISOString().split('T')[0] : `empty-${Math.random()}`;
-                      if (day) {
-                        return (
-                          <button
-                            key={key}
-                            type="button"
-                            className={`min-h-[120px] w-full text-left p-2 border border-border rounded-lg cursor-pointer transition-colors hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary ${
-                              isSelected ? 'bg-primary/10 border-primary' : ''
-                            } ${isToday ? 'bg-blue-50 dark:bg-blue-950' : ''}`}
-                            onClick={() => {
-                              setSelectedDate(day);
-                              if (window.innerWidth >= 640) { // sm breakpoint
-                                setDayModalDate(day);
-                              }
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                setSelectedDate(day);
-                              }
-                            }}
-                            tabIndex={0}
-                            aria-label={`Selecionar dia ${day.toLocaleDateString('pt-BR')}`}
-                          >
-                            <div className={`text-sm font-medium mb-1 ${
-                              isToday ? 'text-blue-600 dark:text-blue-400' : ''
-                            }`}>
-                              {day.getDate()}
-                            </div>
-                            <div className="space-y-1">
-                              {dayAppointments.slice(0, 3).map((apt) => (
-                                <div
-                                  key={apt.id}
-                                  className="text-xs p-1 rounded bg-primary/10 text-primary truncate"
-                                >
-                                  {apt.time} - {typeof apt.client === 'object' ? apt.client.name : apt.client}
+                      <div className="grid grid-cols-7 gap-1">
+                        {getDaysInMonth(currentDate).map((day) => {
+                          const dayAppointments = getAppointmentsForDate(day);
+                          const isToday = day && day.toDateString() === new Date().toDateString();
+                          const isSelected = day && selectedDate && day.toDateString() === selectedDate.toDateString();
+                          const key = day ? day.toISOString().split('T')[0] : `empty-${Math.random()}`;
+                          if (day) {
+                            return (
+                              <button
+                                key={key}
+                                type="button"
+                                className={`min-h-[120px] w-full text-left p-2 border border-border rounded-lg cursor-pointer transition-colors hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary ${
+                                  isSelected ? 'bg-primary/10 border-primary' : ''
+                                } ${isToday ? 'bg-blue-50 dark:bg-blue-950' : ''}`}
+                                onClick={() => {
+                                  setSelectedDate(day);
+                                  if (window.innerWidth >= 640) { // sm breakpoint
+                                    setDayModalDate(day);
+                                  }
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    setSelectedDate(day);
+                                  }
+                                }}
+                                tabIndex={0}
+                                aria-label={`Selecionar dia ${day.toLocaleDateString('pt-BR')}`}
+                              >
+                                <div className={`text-sm font-medium mb-1 ${
+                                  isToday ? 'text-blue-600 dark:text-blue-400' : ''
+                                }`}>
+                                  {day.getDate()}
                                 </div>
-                              ))}
-                              {dayAppointments.length > 3 && (
-                                <div className="text-xs text-muted-foreground">
-                                  +{dayAppointments.length - 3} mais
+                                <div className="space-y-1">
+                                  {dayAppointments.slice(0, 3).map((apt) => (
+                                    <div
+                                      key={apt.id}
+                                      className="text-xs p-1 rounded bg-primary/10 text-primary truncate"
+                                    >
+                                      {apt.time} - {typeof apt.client === 'object' ? apt.client.name : apt.client}
+                                    </div>
+                                  ))}
+                                  {dayAppointments.length > 3 && (
+                                    <div className="text-xs text-muted-foreground">
+                                      +{dayAppointments.length - 3} mais
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <div
-                            key={key}
-                            className="min-h-[120px] p-2 border border-transparent rounded-lg"
-                            aria-hidden="true"
-                          />
-                        );
-                      }
-                    })}
-                  </div>
+                              </button>
+                            );
+                          } else {
+                            return (
+                              <div
+                                key={key}
+                                className="min-h-[120px] p-2 border border-transparent rounded-lg"
+                                aria-hidden="true"
+                              />
+                            );
+                          }
+                        })}
+                      </div>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -385,30 +414,40 @@ export default function CalendarPage() {
                 <CardTitle className="text-lg">Estatísticas do Mês</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Total de Agendamentos</span>
-                    <span className="font-medium">{monthStats.total}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Confirmados</span>
-                    <span className="font-medium text-green-600">{monthStats.confirmed}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Pendentes</span>
-                    <span className="font-medium text-yellow-600">{monthStats.pending}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Cancelados</span>
-                    <span className="font-medium text-red-600">{monthStats.cancelled}</span>
-                  </div>
-                  <div className="border-t pt-4">
+                {loading ? (
+                  <>
+                    <Skeleton className="h-6 w-2/3 mb-3" />
+                    <Skeleton className="h-6 w-1/2 mb-3" />
+                    <Skeleton className="h-6 w-1/2 mb-3" />
+                    <Skeleton className="h-6 w-1/2 mb-3" />
+                    <Skeleton className="h-8 w-full mt-4" />
+                  </>
+                ) : (
+                  <div className="space-y-4">
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Faturamento</span>
-                      <span className="font-bold">{formatToReal(monthStats.revenue)}</span>
+                      <span className="text-sm text-muted-foreground">Total de Agendamentos</span>
+                      <span className="font-medium">{monthStats.total}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Confirmados</span>
+                      <span className="font-medium text-green-600">{monthStats.confirmed}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Pendentes</span>
+                      <span className="font-medium text-yellow-600">{monthStats.pending}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Cancelados</span>
+                      <span className="font-medium text-red-600">{monthStats.cancelled}</span>
+                    </div>
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-muted-foreground">Faturamento</span>
+                        <span className="font-bold">{formatToReal(monthStats.revenue)}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
 
@@ -418,24 +457,33 @@ export default function CalendarPage() {
                 <CardTitle className="text-lg">Legenda</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-green-500 rounded"></div>
-                    <span className="text-sm">Confirmado</span>
+                {loading ? (
+                  <>
+                    <Skeleton className="h-6 w-1/2 mb-2" />
+                    <Skeleton className="h-6 w-1/2 mb-2" />
+                    <Skeleton className="h-6 w-1/2 mb-2" />
+                    <Skeleton className="h-6 w-1/2 mb-2" />
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-green-500 rounded"></div>
+                      <span className="text-sm">Confirmado</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                      <span className="text-sm">Pendente</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-red-500 rounded"></div>
+                      <span className="text-sm">Cancelado</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                      <span className="text-sm">Hoje</span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-                    <span className="text-sm">Pendente</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-red-500 rounded"></div>
-                    <span className="text-sm">Cancelado</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                    <span className="text-sm">Hoje</span>
-                  </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>

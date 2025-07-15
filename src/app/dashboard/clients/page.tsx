@@ -1,7 +1,7 @@
 'use client';
 
 import { SignOutButton } from '@clerk/nextjs';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation';
 import { PaginationBar } from '@/components/ui/pagination';
 import type { Client } from '@/mocks/data';
 import { clients } from '@/mocks/data';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ClientsPage() {
   const router = useRouter();
@@ -42,6 +43,7 @@ export default function ClientsPage() {
     phone: '',
     notes: ''
   });
+  const [loading, setLoading] = useState(false); // Estado de loading
 
   const user = {
     name: 'João Silva',
@@ -49,6 +51,15 @@ export default function ClientsPage() {
     avatarUrl: '',
     role: 'Administrador',
   };
+
+  // Simula o loading ao montar a página
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredClients = clients.filter(client => {
     const matchesSearch = 
@@ -228,37 +239,44 @@ export default function ClientsPage() {
         {/* Search and Filters */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Buscar clientes por nome, email ou telefone..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+            {loading ? (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Skeleton className="h-10 w-full sm:w-1/2 mb-2" />
+                <Skeleton className="h-10 w-48 mb-2" />
               </div>
-              <div className="flex gap-2">
-                <Button 
-                  variant={statusFilter === 'all' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('all')}
-                >
-                  Todos ({clients.length})
-                </Button>
-                <Button 
-                  variant={statusFilter === 'active' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('active')}
-                >
-                  Ativos ({clients.filter(c => c.status === 'active').length})
-                </Button>
-                <Button 
-                  variant={statusFilter === 'inactive' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('inactive')}
-                >
-                  Inativos ({clients.filter(c => c.status === 'inactive').length})
-                </Button>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    placeholder="Buscar clientes por nome, email ou telefone..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    variant={statusFilter === 'all' ? 'default' : 'outline'}
+                    onClick={() => setStatusFilter('all')}
+                  >
+                    Todos ({clients.length})
+                  </Button>
+                  <Button 
+                    variant={statusFilter === 'active' ? 'default' : 'outline'}
+                    onClick={() => setStatusFilter('active')}
+                  >
+                    Ativos ({clients.filter(c => c.status === 'active').length})
+                  </Button>
+                  <Button 
+                    variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+                    onClick={() => setStatusFilter('inactive')}
+                  >
+                    Inativos ({clients.filter(c => c.status === 'inactive').length})
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
@@ -273,79 +291,110 @@ export default function ClientsPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-muted/50">
-                  <tr>
-                    <th className="text-left p-4 font-medium text-sm">Cliente</th>
-                    <th className="text-left p-4 font-medium text-sm">Contato</th>
-                    <th className="text-left p-4 font-medium text-sm">Agendamentos</th>
-                    <th className="text-left p-4 font-medium text-sm">Última Visita</th>
-                    <th className="text-left p-4 font-medium text-sm">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentClients.map((client) => (
-                    <tr 
-                      key={client.id} 
-                      className="border-b hover:bg-muted/30 transition-colors cursor-pointer"
-                      onClick={() => handleClientClick(client)}
-                    >
-                      <td className="p-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-slate-800 to-slate-600 rounded-full flex items-center justify-center">
-                            <User className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <div className="font-medium">{client.name}</div>
-                            {client.notes && (
-                              <div className="text-sm text-muted-foreground truncate max-w-[200px]">
-                                {client.notes}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center space-x-2">
-                            <Mail className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">{client.email}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Phone className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">{client.phone}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">{client.totalAppointments} agendamentos</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <span className="text-sm">
-                          {new Date(client.lastVisit).toLocaleDateString('pt-BR')}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
-                          {client.status === 'active' ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                      </td>
+            {loading ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 font-medium text-sm">Nome</th>
+                      <th className="text-left p-4 font-medium text-sm">Email</th>
+                      <th className="text-left p-4 font-medium text-sm">Telefone</th>
+                      <th className="text-left p-4 font-medium text-sm">Status</th>
+                      <th className="text-left p-4 font-medium text-sm">Última Visita</th>
+                      <th className="text-left p-4 font-medium text-sm">Ações</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {Array.from({ length: 10 }).map((_, i) => (
+                      <tr key={i} className="border-b">
+                        <td className="p-4"><Skeleton className="h-6 w-32" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-40" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-24" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-24" /></td>
+                        <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 font-medium text-sm">Cliente</th>
+                      <th className="text-left p-4 font-medium text-sm">Contato</th>
+                      <th className="text-left p-4 font-medium text-sm">Agendamentos</th>
+                      <th className="text-left p-4 font-medium text-sm">Última Visita</th>
+                      <th className="text-left p-4 font-medium text-sm">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentClients.map((client) => (
+                      <tr 
+                        key={client.id} 
+                        className="border-b hover:bg-muted/30 transition-colors cursor-pointer"
+                        onClick={() => handleClientClick(client)}
+                      >
+                        <td className="p-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gradient-to-r from-slate-800 to-slate-600 rounded-full flex items-center justify-center">
+                              <User className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <div className="font-medium">{client.name}</div>
+                              {client.notes && (
+                                <div className="text-sm text-muted-foreground truncate max-w-[200px]">
+                                  {client.notes}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <Mail className="w-4 h-4 text-muted-foreground" />
+                              <span className="text-sm">{client.email}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Phone className="w-4 h-4 text-muted-foreground" />
+                              <span className="text-sm">{client.phone}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <Calendar className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm font-medium">{client.totalAppointments} agendamentos</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className="text-sm">
+                            {new Date(client.lastVisit).toLocaleDateString('pt-BR')}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
+                            {client.status === 'active' ? 'Ativo' : 'Inativo'}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             {/* Pagination */}
-            <PaginationBar
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              className="py-4"
-            />
+            {!loading && (
+              <PaginationBar
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                className="py-4"
+              />
+            )}
           </CardContent>
         </Card>
 
