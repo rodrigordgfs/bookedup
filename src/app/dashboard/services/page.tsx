@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,7 +18,6 @@ import {
   Clock,
   DollarSign, Search
 } from 'lucide-react';
-import { Toolbar } from '@/components/Toolbar';
 import { PaginationBar } from '@/components/ui/pagination';
 import type { Service } from '@/mocks/data';
 import { services, categories } from '@/mocks/data';
@@ -203,28 +201,6 @@ export default function ServicesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Toolbar
-        title="BookedUp"
-        subtitle="Serviços"
-        icon={<Archive className="w-5 h-5 text-white" />}
-        showDrawer
-        showNotifications
-        showThemeToggle
-        showUserMenu={false}
-        rightActions={
-          <>
-            <Link href="/dashboard/settings">
-              <Button variant="ghost" size="sm" className="cursor-pointer">
-                <Settings className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </>
-        }
-      />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
@@ -662,7 +638,7 @@ export default function ServicesPage() {
 
         {/* Modal de Categorias */}
         <Dialog open={isCategoriesModalOpen} onOpenChange={setIsCategoriesModalOpen}>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="sm:max-w-[600px] h-screen max-h-full overflow-y-auto my-8">
             <DialogHeader>
               <DialogTitle>Gerenciar Categorias</DialogTitle>
               <DialogDescription>

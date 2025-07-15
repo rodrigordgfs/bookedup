@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,10 +11,7 @@ import { Label } from '@/components/ui/label';
 import { formatToReal } from '@/lib/utils';
 import {
   User,
-  Bell,
-  Settings,
-  LogOut,
-  Plus,
+  Bell, Plus,
   Search,
   Edit,
   Trash2, Calendar,
@@ -33,7 +29,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Toolbar } from '@/components/Toolbar';
 import { PaginationBar } from '@/components/ui/pagination';
 import { appointments } from '@/mocks/data';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -361,28 +356,6 @@ export default function AppointmentsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Toolbar
-        title="BookedUp"
-        subtitle="Agendamentos"
-        icon={<Calendar className="w-5 h-5 text-white" />}
-        showDrawer
-        showNotifications
-        showThemeToggle
-        showUserMenu={false}
-        rightActions={
-          <>
-            <Link href="/dashboard/settings">
-              <Button variant="ghost" size="sm" className="cursor-pointer">
-                <Settings className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </>
-        }
-      />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">

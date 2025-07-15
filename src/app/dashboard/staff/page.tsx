@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Toolbar } from '@/components/Toolbar';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   User, Settings,
@@ -129,28 +128,6 @@ export default function StaffPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Toolbar
-        title="BookedUp"
-        subtitle="Funcionários"
-        icon={<Users className="w-5 h-5 text-white" />}
-        showDrawer
-        showNotifications
-        showThemeToggle
-        showUserMenu={false}
-        rightActions={
-          <>
-            <Link href="/dashboard/settings">
-              <Button variant="ghost" size="sm">
-                <Settings className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </>
-        }
-      />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">

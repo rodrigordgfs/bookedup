@@ -1,19 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatToReal } from '@/lib/utils';
 import {
-  User, Settings,
-  LogOut,
   Plus,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { Toolbar } from '@/components/Toolbar';
 import { useRouter } from 'next/navigation';
 import { appointments as mockAppointments } from '@/mocks/data';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -107,28 +103,6 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Toolbar
-        title="BookedUp"
-        subtitle="Calendário"
-        icon={<User className="w-5 h-5 text-white" />}
-        showDrawer
-        showNotifications
-        showThemeToggle
-        showUserMenu={false}
-        rightActions={
-          <>
-            <Link href="/dashboard/settings">
-              <Button variant="ghost" size="sm">
-                <Settings className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </>
-        }
-      />
-
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-4">
         <div className="flex flex-col lg:grid lg:grid-cols-4 gap-4 lg:gap-8">
           {/* Calendar */}

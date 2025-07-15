@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Toolbar } from '@/components/Toolbar';
 import {
   User, Settings,
   LogOut,
@@ -138,31 +137,6 @@ export default function ClientsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Toolbar
-        title="BookedUp"
-        subtitle="Gerenciar Clientes"
-        icon={<User className="w-5 h-5 text-white" />}
-        showDrawer
-        user={user}
-        showNotifications
-        showThemeToggle
-        showUserMenu={false}
-        rightActions={
-          <>
-            <Link href="/dashboard/settings">
-              <Button variant="ghost" size="sm" className="cursor-pointer">
-                <Settings className="w-5 h-5" />
-              </Button>
-            </Link>
-            <SignOutButton>
-              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 cursor-pointer">
-                <LogOut className="w-5 h-5" />
-              </Button>
-            </SignOutButton>
-          </>
-        }
-      />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
