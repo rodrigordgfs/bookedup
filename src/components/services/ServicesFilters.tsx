@@ -5,7 +5,7 @@ import { Search } from 'lucide-react';
 import React from 'react';
 
 interface Category {
-  id: number;
+  id: string;
   name: string;
   active: boolean;
 }
@@ -50,8 +50,8 @@ export default function ServicesFilters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as categorias</SelectItem>
-            {categories.filter(cat => cat.active).map((category) => (
-              <SelectItem key={category.id} value={category.name}>
+            {categories.filter(category => category.active).map((category) => (
+              <SelectItem key={category.id} value={category.id}>
                 {category.name}
               </SelectItem>
             ))}

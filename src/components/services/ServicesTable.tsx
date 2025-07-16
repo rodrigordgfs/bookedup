@@ -3,10 +3,11 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PaginationBar } from '@/components/ui/pagination';
 import { Archive, Clock, DollarSign } from 'lucide-react';
-import type { Service } from '@/mocks/data';
+import type { Service } from '@/contexts/ServiceContext';
 
+type ServiceWithCategory = Omit<Service, 'category'> & { id: string; category?: { name: string } | string };
 interface ServicesTableProps {
-  services: Service[];
+  services: ServiceWithCategory[];
   loading: boolean;
   currentPage: number;
   totalPages: number;
@@ -14,7 +15,7 @@ interface ServicesTableProps {
   endIndex: number;
   totalCount: number;
   onPageChange: (page: number) => void;
-  onServiceClick: (service: Service) => void;
+  onServiceClick: (service: ServiceWithCategory) => void;
 }
 
 export default function ServicesTable({
@@ -41,15 +42,18 @@ export default function ServicesTable({
                 </tr>
               </thead>
               <tbody>
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <tr key={i} className="border-b">
-                    <td className="p-4"><Skeleton className="h-6 w-32" /></td>
-                    <td className="p-4"><Skeleton className="h-6 w-24" /></td>
-                    <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                    <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                    <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                  </tr>
-                ))}
+                {Array.from({ length: 10 }).map(() => {
+                  const uniqueKey = `skeleton-row-${Math.random().toString(36).substr(2, 9)}`;
+                  return (
+                    <tr key={uniqueKey} className="border-b">
+                      <td className="p-4"><Skeleton className="h-6 w-32" /></td>
+                      <td className="p-4"><Skeleton className="h-6 w-24" /></td>
+                      <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                      <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                      <td className="p-4"><Skeleton className="h-6 w-20" /></td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -85,7 +89,7 @@ export default function ServicesTable({
                     </td>
                     <td className="p-4">
                       <Badge variant="secondary">
-                        {service.category}
+                        {typeof service.category === 'object' ? service.category?.name : service.category}
                       </Badge>
                     </td>
                     <td className="p-4">

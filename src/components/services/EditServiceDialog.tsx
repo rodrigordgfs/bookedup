@@ -14,7 +14,7 @@ interface EditService {
 }
 
 interface Category {
-  id: number;
+  id: string;
   name: string;
   active: boolean;
 }
@@ -26,6 +26,14 @@ interface EditServiceDialogProps {
   setEditService: (service: EditService) => void;
   handleSaveEdit: () => void;
   categories: Category[];
+  title?: string;
+  description?: string;
+  isEdit?: boolean;
+  onDelete?: () => void;
+  onToggleStatus?: () => void;
+  selectedService?: (EditService & { active: boolean });
+  loadingToggleStatus?: boolean;
+  loadingDelete?: boolean;
 }
 
 export default function EditServiceDialog({
@@ -35,14 +43,22 @@ export default function EditServiceDialog({
   setEditService,
   handleSaveEdit,
   categories,
+  title = 'Editar Serviço',
+  description = 'Modifique as informações do serviço conforme necessário.',
+  isEdit = false,
+  onDelete,
+  onToggleStatus,
+  selectedService,
+  loadingToggleStatus = false,
+  loadingDelete = false,
 }: EditServiceDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar Serviço</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            Modifique as informações do serviço conforme necessário.
+            {description}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -91,7 +107,7 @@ export default function EditServiceDialog({
           <div className="space-y-2">
             <Label htmlFor="editServiceCategory">Categoria</Label>
             <Select value={editService.category} onValueChange={(value) => setEditService({ ...editService, category: value })}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecione uma categoria" />
               </SelectTrigger>
               <SelectContent>
@@ -103,12 +119,32 @@ export default function EditServiceDialog({
               </SelectContent>
             </Select>
           </div>
+          {isEdit && selectedService && (
+            <div className="flex gap-2 mt-2">
+              <Button
+                variant="outline"
+                className="cursor-pointer flex-1"
+                onClick={onToggleStatus}
+                disabled={loadingToggleStatus}
+              >
+                {loadingToggleStatus ? 'Aguarde...' : (selectedService.active ? 'Desativar' : 'Ativar') + ' Serviço'}
+              </Button>
+              <Button
+                variant="outline"
+                className="text-red-600 hover:text-red-700 cursor-pointer flex-1"
+                onClick={onDelete}
+                disabled={loadingDelete}
+              >
+                {loadingDelete ? 'Excluindo...' : 'Excluir Serviço'}
+              </Button>
+            </div>
+          )}
         </div>
         <div className="flex justify-end space-x-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button className='cursor-pointer' variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={handleSaveEdit}>
+          <Button className='cursor-pointer' onClick={handleSaveEdit}>
             Salvar Alterações
           </Button>
         </div>

@@ -27,7 +27,7 @@ export const clients: Client[] = [
 
 // Serviços
 export interface Service {
-  id: number;
+  id: string;
   name: string;
   description: string;
   duration: number;
@@ -38,7 +38,7 @@ export interface Service {
 
 export const services: Service[] = [
   ...[...Array(30)].map((_, i) => ({
-    id: i + 1,
+    id: String(i + 1),
     name: `Serviço ${i + 1}`,
     description: `Descrição do serviço ${i + 1}`,
     duration: 20 + (i % 5) * 10,
@@ -178,14 +178,14 @@ export const notifications: Notification[] = [
 
 // Categorias de Serviços
 export interface Category {
-  id: number;
+  id: string;
   name: string;
   active: boolean;
 }
 
 export const categories: Category[] = [
   ...[...Array(30)].map((_, i) => ({
-    id: i + 1,
+    id: String(i + 1),
     name: `Categoria ${i + 1}`,
     active: i % 4 !== 0
   }))

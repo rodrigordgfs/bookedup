@@ -20,12 +20,96 @@ export default function ReportsPage() {
 
   // Dados simulados para os relatórios
   const appointmentData = [
-    { name: 'Jan', agendamentos: 65, cancelamentos: 8, receita: 8500 },
-    { name: 'Fev', agendamentos: 72, cancelamentos: 5, receita: 9200 },
-    { name: 'Mar', agendamentos: 85, cancelamentos: 12, receita: 10800 },
-    { name: 'Abr', agendamentos: 78, cancelamentos: 7, receita: 9800 },
-    { name: 'Mai', agendamentos: 92, cancelamentos: 9, receita: 11500 },
-    { name: 'Jun', agendamentos: 88, cancelamentos: 6, receita: 11200 },
+    { 
+      id: 1,
+      client: { id: 1, name: 'Cliente Janeiro', email: 'jan@email.com', phone: '11999999999' },
+      service: 'Consultoria',
+      professional: 'João Silva',
+      date: '2024-01-15',
+      time: '09:00',
+      duration: 60,
+      status: 'completed',
+      price: 100,
+      name: 'Jan',
+      agendamentos: 65,
+      cancelamentos: 8,
+      receita: 8500
+    },
+    { 
+      id: 2,
+      client: { id: 2, name: 'Cliente Fevereiro', email: 'fev@email.com', phone: '11999999999' },
+      service: 'Avaliação',
+      professional: 'Maria Santos',
+      date: '2024-02-15',
+      time: '10:00',
+      duration: 45,
+      status: 'completed',
+      price: 80,
+      name: 'Fev',
+      agendamentos: 72,
+      cancelamentos: 5,
+      receita: 9200
+    },
+    { 
+      id: 3,
+      client: { id: 3, name: 'Cliente Março', email: 'mar@email.com', phone: '11999999999' },
+      service: 'Sessão Completa',
+      professional: 'Carlos Lima',
+      date: '2024-03-15',
+      time: '14:00',
+      duration: 90,
+      status: 'completed',
+      price: 150,
+      name: 'Mar',
+      agendamentos: 85,
+      cancelamentos: 12,
+      receita: 10800
+    },
+    { 
+      id: 4,
+      client: { id: 4, name: 'Cliente Abril', email: 'abr@email.com', phone: '11999999999' },
+      service: 'Manutenção',
+      professional: 'Ana Costa',
+      date: '2024-04-15',
+      time: '15:00',
+      duration: 30,
+      status: 'completed',
+      price: 60,
+      name: 'Abr',
+      agendamentos: 78,
+      cancelamentos: 7,
+      receita: 9800
+    },
+    { 
+      id: 5,
+      client: { id: 5, name: 'Cliente Maio', email: 'mai@email.com', phone: '11999999999' },
+      service: 'Consultoria',
+      professional: 'Pedro Silva',
+      date: '2024-05-15',
+      time: '16:00',
+      duration: 60,
+      status: 'completed',
+      price: 100,
+      name: 'Mai',
+      agendamentos: 92,
+      cancelamentos: 9,
+      receita: 11500
+    },
+    { 
+      id: 6,
+      client: { id: 6, name: 'Cliente Junho', email: 'jun@email.com', phone: '11999999999' },
+      service: 'Avaliação',
+      professional: 'Lucia Santos',
+      date: '2024-06-15',
+      time: '11:00',
+      duration: 45,
+      status: 'completed',
+      price: 80,
+      name: 'Jun',
+      agendamentos: 88,
+      cancelamentos: 6,
+      receita: 11200
+    }
   ];
 
   const serviceData = [
@@ -36,8 +120,32 @@ export default function ReportsPage() {
   ];
 
   const clientData = [
-    { name: 'Novos', value: 45, color: '#8884d8' },
-    { name: 'Recorrentes', value: 55, color: '#82ca9d' },
+    { 
+      id: 1,
+      name: 'Novos', 
+      email: 'novos@example.com',
+      phone: '11999999999',
+      totalAppointments: 45,
+      totalSpent: 4500,
+      lastVisit: '2024-01-15',
+      status: 'active' as const,
+      notes: 'Clientes novos',
+      value: 45, 
+      color: '#8884d8' 
+    },
+    { 
+      id: 2,
+      name: 'Recorrentes', 
+      email: 'recorrentes@example.com',
+      phone: '11999999998',
+      totalAppointments: 55,
+      totalSpent: 5500,
+      lastVisit: '2024-01-12',
+      status: 'active' as const,
+      notes: 'Clientes recorrentes',
+      value: 55, 
+      color: '#82ca9d' 
+    },
   ];
 
   const performanceData = [
@@ -51,17 +159,113 @@ export default function ReportsPage() {
   ];
 
   const topServices = [
-    { name: 'Consultoria', agendamentos: 156, receita: 23400, crescimento: 12 },
-    { name: 'Sessão Completa', agendamentos: 142, receita: 28400, crescimento: 8 },
-    { name: 'Avaliação', agendamentos: 98, receita: 7840, crescimento: 15 },
-    { name: 'Manutenção', agendamentos: 67, receita: 8040, crescimento: 5 },
+    { 
+      id: '1',
+      name: 'Consultoria', 
+      description: 'Serviço de consultoria especializada',
+      duration: 60,
+      price: 150,
+      category: 'Consultoria',
+      active: true,
+      agendamentos: 156, 
+      receita: 23400, 
+      crescimento: 12 
+    },
+    { 
+      id: '2',
+      name: 'Sessão Completa', 
+      description: 'Sessão completa de atendimento',
+      duration: 90,
+      price: 200,
+      category: 'Atendimento',
+      active: true,
+      agendamentos: 142, 
+      receita: 28400, 
+      crescimento: 8 
+    },
+    { 
+      id: '3',
+      name: 'Avaliação', 
+      description: 'Avaliação técnica detalhada',
+      duration: 45,
+      price: 80,
+      category: 'Avaliação',
+      active: true,
+      agendamentos: 98, 
+      receita: 7840, 
+      crescimento: 15 
+    },
+    { 
+      id: '4',
+      name: 'Manutenção', 
+      description: 'Serviço de manutenção preventiva',
+      duration: 30,
+      price: 120,
+      category: 'Manutenção',
+      active: true,
+      agendamentos: 67, 
+      receita: 8040, 
+      crescimento: 5 
+    },
   ];
 
   const topClients = [
-    { name: 'João Silva', agendamentos: 12, valor: 2400, ultimaVisita: '2024-01-15' },
-    { name: 'Maria Santos', agendamentos: 10, valor: 2100, ultimaVisita: '2024-01-12' },
-    { name: 'Carlos Lima', agendamentos: 8, valor: 1800, ultimaVisita: '2024-01-10' },
-    { name: 'Ana Costa', agendamentos: 7, valor: 1500, ultimaVisita: '2024-01-08' },
+    { 
+      id: 1,
+      name: 'João Silva', 
+      email: 'joao@email.com',
+      phone: '11999999999',
+      totalAppointments: 12,
+      totalSpent: 2400,
+      lastVisit: '2024-01-15',
+      status: 'active' as const,
+      notes: 'Cliente VIP',
+      agendamentos: 12, 
+      valor: 2400, 
+      ultimaVisita: '2024-01-15' 
+    },
+    { 
+      id: 2,
+      name: 'Maria Santos', 
+      email: 'maria@email.com',
+      phone: '11999999998',
+      totalAppointments: 10,
+      totalSpent: 2100,
+      lastVisit: '2024-01-12',
+      status: 'active' as const,
+      notes: 'Cliente frequente',
+      agendamentos: 10, 
+      valor: 2100, 
+      ultimaVisita: '2024-01-12' 
+    },
+    { 
+      id: 3,
+      name: 'Carlos Lima', 
+      email: 'carlos@email.com',
+      phone: '11999999997',
+      totalAppointments: 8,
+      totalSpent: 1800,
+      lastVisit: '2024-01-10',
+      status: 'active' as const,
+      notes: 'Cliente regular',
+      agendamentos: 8, 
+      valor: 1800, 
+      ultimaVisita: '2024-01-10' 
+    },
+    { 
+      id: 4,
+      name: 'Ana Costa', 
+      email: 'ana@email.com',
+      phone: '11999999996',
+      totalAppointments: 7,
+      totalSpent: 1500,
+      lastVisit: '2024-01-08',
+      status: 'active' as const,
+      notes: 'Cliente novo',
+      agendamentos: 7, 
+      valor: 1500, 
+      ultimaVisita: '2024-01-08' 
+    },
   ];
 
   const exportReport = (type: string) => {

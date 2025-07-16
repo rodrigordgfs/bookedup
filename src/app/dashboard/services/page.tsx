@@ -5,15 +5,17 @@ import { Button } from '@/components/ui/button';
 import {
   Plus
 } from 'lucide-react';
-import type { Service } from '@/mocks/data';
-import { services, categories } from '@/mocks/data';
 import ServicesTable from '@/components/services/ServicesTable';
 import ServicesListHeader from '@/components/services/ServicesListHeader';
 import ServicesFilters from '@/components/services/ServicesFilters';
-import ServiceDetailsDialog from '@/components/services/ServiceDetailsDialog';
 import EditServiceDialog from '@/components/services/EditServiceDialog';
 import CategoriesDialog from '@/components/services/CategoriesDialog';
 import NoServicesCard from '@/components/services/NoServicesCard';
+import { useCategories } from '@/contexts/CategoriesContext';
+import { useUser } from '@clerk/nextjs';
+import { useService } from '@/contexts/ServiceContext';
+import { toast } from 'sonner';
+import type { Service } from '@/contexts/ServiceContext';
 
 interface NewService {
   name: string;
@@ -24,9 +26,12 @@ interface NewService {
 }
 
 interface Category {
-  id: number;
+  id: string;
   name: string;
   active: boolean;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface NewCategory {
@@ -35,9 +40,9 @@ interface NewCategory {
 
 export default function ServicesPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchTermDebounced, setSearchTermDebounced] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [setIsAddServiceOpen] = useState(false);
-  const [isServiceDetailsOpen, setIsServiceDetailsOpen] = useState(false);
+  const [isAddServiceOpen, setIsAddServiceOpen] = useState(false);
   const [isEditServiceOpen, setIsEditServiceOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,114 +64,97 @@ export default function ServicesPage() {
   const [editCategory, setEditCategory] = useState<NewCategory>({ name: '' });
 
   // Dados das categorias
-  const [categoriesState, setCategoriesState] = useState<Category[]>(categories);
-  const [loading, setLoading] = useState(false); // Estado de loading
+  const { categories } = useCategories();
+  const { user } = useUser();
+  const { services, addService, editService: editServiceCtx, deleteService, toggleStatus, fetchServices, loading } = useService();
 
-  // Simula o loading ao montar a página
+  // Buscar serviços da API ao montar e ao filtrar
   useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    const params: { name?: string; categoryId?: string } = {};
+    if (searchTermDebounced) params.name = searchTermDebounced;
+    if (categoryFilter !== 'all') params.categoryId = categoryFilter;
+    fetchServices(params);
+  }, [searchTermDebounced, categoryFilter, fetchServices]);
+
+  // Debounce de 2 segundos para searchTerm
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchTermDebounced(searchTerm);
+    }, 2000);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   const handleServiceClick = (service: Service) => {
     setSelectedService(service);
-    setIsServiceDetailsOpen(true);
+    setEditService({
+      name: service.name,
+      description: service.description,
+      duration: service.duration.toString(),
+      price: service.price.toString(),
+      category: typeof service.category === 'object' ? service.category?.name || '' : (service.category || '')
+    });
+    setIsEditServiceOpen(true);
+    setIsAddServiceOpen(false);
   };
 
-  const handleEditService = () => {
-    if (selectedService) {
-      setEditService({
-        name: selectedService.name,
-        description: selectedService.description,
-        duration: selectedService.duration.toString(),
-        price: selectedService.price.toString(),
-        category: selectedService.category
-      });
-      setIsServiceDetailsOpen(false);
-      setIsEditServiceOpen(true);
+  const handleSaveEditService = async () => {
+    const categoryObj = categories.find(cat => cat.name === editService.category);
+    const categoryId = categoryObj ? categoryObj.id : undefined;
+    if (!categoryId) {
+      toast.error('Selecione uma categoria válida.');
+      return;
     }
-  };
-
-  const handleSaveEditService = () => {
-    console.log('Saving edited service:', editService);
-    // Implementar lógica de salvamento
+    if (isAddServiceOpen) {
+      if (!user?.id) {
+        toast.error('Usuário não autenticado.');
+        return;
+      }
+      await addService({
+        name: editService.name,
+        description: editService.description,
+        duration: Number(editService.duration),
+        price: Number(editService.price),
+        categoryId,
+        userId: user.id,
+      });
+    } else if (isEditServiceOpen && selectedService) {
+      await editServiceCtx(selectedService.id, {
+        name: editService.name,
+        description: editService.description,
+        duration: Number(editService.duration),
+        price: Number(editService.price),
+        categoryId,
+      });
+    }
     setIsEditServiceOpen(false);
+    setIsAddServiceOpen(false);
     setEditService({ name: '', description: '', duration: '', price: '', category: '' });
   };
 
-  const handleDeleteService = () => {
-    console.log('Deleting service:', selectedService);
-    setIsServiceDetailsOpen(false);
+  const [loadingToggleStatus, setLoadingToggleStatus] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
+  const handleDeleteService = async () => {
+    if (!selectedService) return;
+    setLoadingDelete(true);
+    await deleteService(selectedService.id);
+    setIsEditServiceOpen(false);
     setSelectedService(null);
+    setLoadingDelete(false);
   };
 
-  const handleToggleStatus = () => {
-    console.log('Toggling status for service:', selectedService);
-    // Implementar lógica de alteração de status
+  const handleToggleStatus = async () => {
+    if (!selectedService) return;
+    setLoadingToggleStatus(true);
+    await toggleStatus(selectedService.id, !selectedService.active);
+    setSelectedService(prev => prev ? { ...prev, active: !prev.active } : prev);
+    setLoadingToggleStatus(false);
   };
-
-  // Funções para gerenciar categorias
-  const handleAddCategory = () => {
-    if (newCategory.name.trim()) {
-      const newCategoryObj: Category = {
-        id: Date.now(),
-        name: newCategory.name.trim(),
-        active: true
-      };
-      setCategoriesState(prev => [...prev, newCategoryObj]);
-      setNewCategory({ name: '' });
-      setIsAddCategoryOpen(false);
-    }
-  };
-
-  const handleEditCategory = () => {
-    if (selectedCategory && editCategory.name.trim()) {
-      setCategoriesState(prev => 
-        prev.map(cat => 
-          cat.id === selectedCategory.id 
-            ? { ...cat, name: editCategory.name.trim() }
-            : cat
-        )
-      );
-      setEditCategory({ name: '' });
-      setIsEditCategoryOpen(false);
-      setSelectedCategory(null);
-    }
-  };
-
-  const handleDeleteCategory = (categoryId: number) => {
-    setCategoriesState(prev => prev.filter(cat => cat.id !== categoryId));
-  };
-
-  const handleToggleCategoryStatus = (categoryId: number) => {
-    setCategoriesState(prev => 
-      prev.map(cat => 
-        cat.id === categoryId 
-          ? { ...cat, active: !cat.active }
-          : cat
-      )
-    );
-  }
-
-  const filteredServices = services.filter(service => {
-    const matchesSearch = 
-      service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.category.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
-    
-    return matchesSearch && matchesCategory;
-  });
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
+  const totalPages = Math.ceil(services.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentServices = filteredServices.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -191,7 +179,10 @@ export default function ServicesPage() {
             >
               Gerenciar Categorias
             </Button>
-            <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer" onClick={() => setIsAddServiceOpen(true)}>
+            <Button className="bg-foreground text-background hover:bg-foreground/90 cursor-pointer" onClick={() => {
+              setEditService({ name: '', description: '', duration: '', price: '', category: '' });
+              setIsAddServiceOpen(true);
+            }}>
               <Plus className="w-4 h-4 mr-2" />
               Novo Serviço
             </Button>
@@ -205,7 +196,7 @@ export default function ServicesPage() {
           categoryFilter={categoryFilter}
           setCategoryFilter={setCategoryFilter}
           loading={loading}
-          categories={categoriesState}
+          categories={categories}
         />
 
         {/* Services List Header */}
@@ -214,73 +205,81 @@ export default function ServicesPage() {
             title="Lista de Serviços"
             startIndex={startIndex}
             endIndex={endIndex}
-            totalCount={filteredServices.length}
+            totalCount={services.length}
           />
         </div>
 
         {/* Services Table */}
         <ServicesTable
-          services={currentServices}
+          services={services.slice(startIndex, endIndex)}
           loading={loading}
           currentPage={currentPage}
           totalPages={totalPages}
           startIndex={startIndex}
           endIndex={endIndex}
-          totalCount={filteredServices.length}
+          totalCount={services.length}
           onPageChange={handlePageChange}
-          onServiceClick={handleServiceClick}
+          onServiceClick={(service: unknown) => handleServiceClick(service as Service)}
         />
 
         {/* Nenhum serviço encontrado */}
-        {filteredServices.length === 0 && !loading && (
+        {services.length === 0 && !loading && (
           <NoServicesCard
             searchTerm={searchTerm}
             categoryFilter={categoryFilter}
-            onAddService={() => setIsAddServiceOpen(true)}
+            onAddService={() => {
+              setEditService({ name: '', description: '', duration: '', price: '', category: '' });
+              setIsAddServiceOpen(true);
+            }}
           />
         )}
 
-        {/* Modal de Detalhes do Serviço */}
-        <ServiceDetailsDialog
-          open={isServiceDetailsOpen}
-          onOpenChange={setIsServiceDetailsOpen}
-          service={selectedService}
-          onEdit={handleEditService}
-          onDelete={handleDeleteService}
-          onToggleStatus={handleToggleStatus}
-        />
-
         {/* Modal de Edição de Serviço */}
         <EditServiceDialog
-          open={isEditServiceOpen}
-          onOpenChange={setIsEditServiceOpen}
+          open={isAddServiceOpen || isEditServiceOpen}
+          onOpenChange={(open) => {
+            setIsEditServiceOpen(open);
+            setIsAddServiceOpen(false);
+          }}
           editService={editService}
           setEditService={setEditService}
           handleSaveEdit={handleSaveEditService}
-          categories={categoriesState}
+          categories={categories.filter(cat => cat.active)}
+          title={isAddServiceOpen ? 'Novo Serviço' : 'Editar Serviço'}
+          description={isAddServiceOpen ? 'Preencha as informações para criar um novo serviço.' : 'Modifique as informações do serviço conforme necessário.'}
+          isEdit={isEditServiceOpen}
+          onDelete={handleDeleteService}
+          onToggleStatus={handleToggleStatus}
+          selectedService={
+            selectedService
+              ? {
+                  ...selectedService,
+                  duration: selectedService.duration.toString(),
+                  price: selectedService.price.toString(),
+                  category: typeof selectedService.category === 'object'
+                    ? selectedService.category?.name || ''
+                    : (selectedService.category || ''),
+                }
+              : undefined
+          }
+          loadingToggleStatus={loadingToggleStatus}
+          loadingDelete={loadingDelete}
         />
 
         {/* Modal de Categorias */}
         <CategoriesDialog
           open={isCategoriesModalOpen}
           onOpenChange={setIsCategoriesModalOpen}
-          categories={categoriesState}
-          onAddCategory={(name) => setNewCategory({ name })}
-          onEditCategory={(id, name) => setEditCategory({ name })}
-          onDeleteCategory={handleDeleteCategory}
-          onToggleCategoryStatus={handleToggleCategoryStatus}
           isAddCategoryOpen={isAddCategoryOpen}
           setIsAddCategoryOpen={setIsAddCategoryOpen}
           isEditCategoryOpen={isEditCategoryOpen}
           setIsEditCategoryOpen={setIsEditCategoryOpen}
           selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
+          setSelectedCategory={(cat: unknown) => setSelectedCategory(cat as Category | null)}
           newCategory={newCategory}
           setNewCategory={setNewCategory}
           editCategory={editCategory}
           setEditCategory={setEditCategory}
-          handleAddCategory={handleAddCategory}
-          handleEditCategory={handleEditCategory}
         />
       </div>
     </div>

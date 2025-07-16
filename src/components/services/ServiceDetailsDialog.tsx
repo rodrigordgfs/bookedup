@@ -5,10 +5,11 @@ import { Archive, Clock, DollarSign, Edit, Trash2 } from 'lucide-react';
 import type { Service } from '@/mocks/data';
 import React from 'react';
 
+type ServiceWithCategory = Omit<Service, 'category'> & { id: string; category?: { name: string } | string };
 interface ServiceDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  service: Service | null;
+  service: ServiceWithCategory | null;
   onEdit: () => void;
   onDelete: () => void;
   onToggleStatus: () => void;
@@ -57,7 +58,7 @@ export default function ServiceDetailsDialog({
               <div>
                 <h4 className="font-medium mb-2">Categoria</h4>
                 <Badge variant="secondary">
-                  {service.category}
+                  {typeof service.category === 'object' ? service.category?.name : service.category}
                 </Badge>
               </div>
 
