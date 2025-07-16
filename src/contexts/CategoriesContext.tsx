@@ -39,10 +39,12 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
   const [togglingStatusId, setTogglingStatusId] = useState<string | null>(null);
   const [deletingCategoryId, setDeletingCategoryId] = useState<string | null>(null);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const fetchCategories = React.useCallback(() => {
     if (!userId) return;
     setLoading(true);
-    fetch(`http://127.0.0.1:3333/categories?userId=${userId}`)
+    fetch(`${API_URL}/categories?userId=${userId}`)
       .then(res => res.json())
       .then(data => setCategories(data))
       .catch(() => {
@@ -50,7 +52,7 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
         toast.error('Erro ao carregar categorias');
       })
       .finally(() => setLoading(false));
-  }, [userId]);
+  }, [userId, API_URL]);
 
   useEffect(() => {
     if (isLoaded && userId) {
@@ -63,7 +65,7 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
     setAddingCategory(true);
     setError(null);
     try {
-      const res = await fetch('http://127.0.0.1:3333/categories', {
+      const res = await fetch(`${API_URL}/categories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, name }),
@@ -84,7 +86,7 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
     setEditingCategory(true);
     setError(null);
     try {
-      const res = await fetch(`http://127.0.0.1:3333/categories/${id}`, {
+      const res = await fetch(`${API_URL}/categories/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
@@ -105,7 +107,7 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
     setDeletingCategoryId(id);
     setError(null);
     try {
-      const res = await fetch(`http://127.0.0.1:3333/categories/${id}`, {
+      const res = await fetch(`${API_URL}/categories/${id}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error('Erro ao deletar categoria');
@@ -123,7 +125,7 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
     setTogglingStatusId(id);
     setError(null);
     try {
-      const res = await fetch(`http://127.0.0.1:3333/categories/${id}`, {
+      const res = await fetch(`${API_URL}/categories/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ active }),

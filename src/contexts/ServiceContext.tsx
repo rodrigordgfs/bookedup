@@ -43,6 +43,8 @@ export function ServiceProvider({ children }: { children: ReactNode }) {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const fetchServices = React.useCallback(
     async (params?: { name?: string; categoryId?: string }) => {
       if (!user?.id) return;
@@ -52,7 +54,7 @@ export function ServiceProvider({ children }: { children: ReactNode }) {
         urlParams.append('userId', user.id);
         if (params?.name) urlParams.append('name', params.name);
         if (params?.categoryId) urlParams.append('categoryId', params.categoryId);
-        const res = await fetch(`http://127.0.0.1:3333/services?${urlParams.toString()}`);
+        const res = await fetch(`${API_URL}/services?${urlParams.toString()}`);
         const data = await res.json();
         setServices(data);
       } catch {
@@ -66,7 +68,7 @@ export function ServiceProvider({ children }: { children: ReactNode }) {
 
   const addService = async (data: Omit<Service, 'id' | 'createdAt' | 'updatedAt' | 'active' | 'category'>) => {
     try {
-      const res = await fetch('http://127.0.0.1:3333/services', {
+      const res = await fetch(`${API_URL}/services`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -85,7 +87,7 @@ export function ServiceProvider({ children }: { children: ReactNode }) {
 
   const editService = async (id: string, data: Partial<Service>) => {
     try {
-      const res = await fetch(`http://127.0.0.1:3333/services/${id}`, {
+      const res = await fetch(`${API_URL}/services/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -104,7 +106,7 @@ export function ServiceProvider({ children }: { children: ReactNode }) {
 
   const deleteService = async (id: string) => {
     try {
-      const res = await fetch(`http://127.0.0.1:3333/services/${id}`, {
+      const res = await fetch(`${API_URL}/services/${id}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error('Erro ao deletar serviço');
@@ -120,7 +122,7 @@ export function ServiceProvider({ children }: { children: ReactNode }) {
 
   const toggleStatus = async (id: string, active: boolean) => {
     try {
-      const res = await fetch(`http://127.0.0.1:3333/services/${id}`, {
+      const res = await fetch(`${API_URL}/services/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ active })
